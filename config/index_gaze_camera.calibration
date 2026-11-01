@@ -1,0 +1,11 @@
+# Gaze camera (on by default with -Controls; mod/src/VrGazeCamera.h, docs/INTERACTION.md).
+# The native right stick turns the game's own camera toward the headset gaze, so the game's
+# interaction cone, focus and "hold X" markers follow where you look. Fitted 2026-10-21 to the
+# native stick response measured live (scripts/fit_gaze_response.py).
+response_per_second=6
+deadband_degrees=2
+reengage_degrees=5
+boost_degrees=15
+max_stick=1
+rate_scale=1
+pitch_sign=1

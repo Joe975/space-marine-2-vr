@@ -1,0 +1,18 @@
+# The game's own crosshair moved to the aim point (docs/THIRD_PERSON.md "Crosshair at the aim point"):
+# a patch of the native HUD canvas around the crosshair (with the reload, plasma heat bars and hit markers
+# the game draws on and beside it) drawn where the aim ray hits, at its own angular size, and left out of
+# the canvas. height and width: fractions of the canvas height. centre_x, centre_y: where the game draws
+# its crosshair on the canvas. first_person=0 keeps it on the canvas in first person.
+# ammo_width, ammo_below: a narrow column under the band for the magazine count and reload bullets, its
+# width and how far below the crosshair it ends, in canvas heights. ammo_below=0: no column.
+# stand_aside=1 leaves the canvas whole while other UI (a pickup hint, a marker) is beside the patch, so
+# nothing is cut out of it. The crosshair then shows at the aim point and on the canvas for that moment.
+enabled=1
+height=0.08
+width=0.3
+centre_x=0.5
+centre_y=0.4225
+first_person=1
+ammo_width=0.1
+ammo_below=0.125
+stand_aside=1

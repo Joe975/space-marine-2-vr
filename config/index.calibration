@@ -1,0 +1,22 @@
+# Joe confirmed improved head placement (2026-10-13): raise 5 cm and retract 20 cm.
+# Joe 2026-10-26: eyes another 5 cm up in the armour (0.05 -> 0.10 m); hands rise with them.
+# Prior physically confirmed locomotion preset: index_walking_baseline.calibration.
+units_per_metre=0.9
+height_offset_metres=0.10
+head_forward_offset_metres=-0.2
+# Joe 2026-10-20: sprinting showed the back of the backpack; 2026-10-21 he chose 0.20 m.
+# Added to the forward offset only while sprinting (not ordinary running), ramped in/out
+# over sprint_blend_seconds (docs/SPRINT_CAMERA.md).
+sprint_forward_offset_metres=0.2
+sprint_blend_seconds=0.25
+# Joe's standing eye height (docs/BODY_SCALE.md): median 1.644 m of 60,199 armed, level-gaze
+# samples from four headset sessions, 21-22 Oct (scripts/measure_eye_height.py; per-session
+# medians 1.628-1.659). A player measured at recenter gets the first-person scale multiplied
+# by this over their own eye height, clamped to 0.75-1.35.
+reference_eye_height_metres=1.644
+# Game units per real metre of the first-person eyes and hands, not of the offsets above, which
+# keep their place in the armour (docs/BODY_SCALE.md). 31 Oct measurement: the eye sits 2.39 units
+# over the Marine's boots, so 2.39 / 1.644 = 1.45 puts a hand on the real floor on the game's
+# ground; at 0.9 it landed 0.9 units up, at his knee. Each 0.1 lower lifts the floor 0.16 units.
+# Save while playing: it applies within a second and recenters. Absent: units_per_metre.
+first_person_units_per_metre=1.45

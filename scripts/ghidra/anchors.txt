@@ -1,0 +1,27 @@
+slSetConstants
+slGetNewFrameToken
+slPCLSetMarker
+slReflexSleep
+COMMON_VIEWPROJ_MATRIX
+COMMON_VIEWPROJ_MATRIX_NO_JIT
+COMMON_VIEWPROJ_MATRIX_PREV
+COMMON_PROJ_MATRIX
+COMMON_JITTER_OFFSET_IN_PIXELS
+COMMON_FPMODEL_VIEWPROJ_MATRIX
+COMMON_CAMERA_NEAR_FAR_Z
+CSII_MAIN_CAM_VIEWPROJ
+VIS_HZB_CAM_VIEWPROJ
+render/pip_camera
+PIP camera cannot be created, because camList is full
+PIP camera cannot be created, because source camera == nullptr
+EnablePIPCamRender
+Video.CamFovScale
+Video.CamBaseFovHorizontalDeg
+Video.UseLetterbox
+Video.WindowMode
+GetGameCamera
+SetCameraFrustum
+SetCameraPosition
+SetCameraDirection
+render_first_person_model
+No attached render camera

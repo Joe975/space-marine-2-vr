@@ -1,0 +1,103 @@
+{
+  "_about": "What a normal run logs. scripts/run_report.py marks anything not listed here as NEW. Values are labels; add one only after reading the run that showed it. Seeded 26 Oct 2026 from the 424 logs under build/run and the player runs (docs/GENERIC_GUARDS_2026-10-26.md).",
+  "bloom_refusals": {
+    "5": "continuity: a job that cannot chain to the last accepted one (restart bootstraps since 24 Oct)",
+    "6": "contract: the render-target pool's layout changed (rebuild renews since 24 Oct)",
+    "12": "packet: the tracked packet refused the job (see packet_refusals)"
+  },
+  "doubled_hooks": {},
+  "missing_hooks": {
+    "sharpen": "TAA: the game runs no sharpen pass (docs/TAA_STEREO.md)",
+    "sdk_evaluate": "TAA: the game makes no DLSS evaluation (docs/TAA_STEREO.md)"
+  },
+  "fallback_reasons": {
+    "none": "stereo flowing, no flat fallback",
+    "stopped": "owned stereo stopped: flat game on the panel",
+    "suspended": "owned stereo suspended: flat game on the panel",
+    "waiting": "no stereo pair for 500 ms: flat game on the panel (loads, title, readiness blocks)"
+  },
+  "masks": {
+    "0x0": "gameplay (also startup before the title)",
+    "0x10": "cutscene",
+    "0x108": "photo mode",
+    "0x400": "paused, no menu (transient)",
+    "0x800": "hub: the walkable Battle Barge, the main menu, a load",
+    "0x810": "cutscene in the Battle Barge",
+    "0x908": "pause menu",
+    "0x918": "pause menu over a cutscene",
+    "0xc00": "front-end menu (main menu, mission select)",
+    "0x1000": "startup screens",
+    "0x1400": "title (press button)",
+    "0x1800": "dialog (Game files modified)",
+    "0x1c00": "quitting to the title",
+    "0x4010": "loading screen into a mission",
+    "0x4410": "loading screen into a mission",
+    "0x4c10": "loading screen into a mission",
+    "0x5410": "loading screen into a mission",
+    "0xc010": "loading screen into a mission"
+  },
+  "packet_refusals": {
+    "4": "left eye's current camera fields differ from the native builder (level loads, cutscene starts): recoverable",
+    "9": "SDK: the private DLSS eye refused the frame (a poisoned private context)",
+    "12": "entries no longer hold the producer's tracked pose: recoverable",
+    "13": "tracked math refuses the inputs: recoverable"
+  },
+  "readiness_reasons": {
+    "actor_missing": "no player actor (story cutscene, load)",
+    "cutscene": "cutscene: every job ready, no player needed",
+    "disabled": "owned readiness off",
+    "future": "a pose time-stamped after now",
+    "job": "no job or an old job",
+    "loading": "the loading screen: stand down",
+    "menu": "a menu over a rendered world: stand down for the panel",
+    "owner_changed": "the player's owner changed: settle again",
+    "owner_invalid": "incomplete or stale owner",
+    "pose_missing": "no player pose yet",
+    "ready": "three jobs with the same owner",
+    "settling": "fewer than three jobs with the same owner",
+    "stale": "pose older than 100 ms",
+    "viewer": "viewer mode owns the view",
+    "world_invalid": "the pose's world transform is invalid"
+  },
+  "scene_modes": {
+    "cutscene": "the game's cutscene flag, no loading screen",
+    "gameplay": "plain play (0x0)",
+    "hub": "the walkable Battle Barge, the main menu or a load (0x800 without a menu over it)",
+    "loading": "the loading screen (0x4000)",
+    "pause_menu": "the pause menu (0x908)",
+    "paused": "0x400 alone (transient)",
+    "photo": "photo mode (0x100 without 0x800)",
+    "screen_menu": "a full-screen menu over a rendered world (UI coverage)",
+    "title": "startup screens, the title and its dialogs (0x1000)",
+    "unavailable": "the flags can't be read",
+    "unknown": "a mask the classifier has no rule for"
+  },
+  "warning_kinds": {
+    "CallCensus": "a hook doubled or missing in stereo (the hook is NEW in doubled_hooks/missing_hooks until triaged)",
+    "HangWatchdog": "a hang (also a verdict)",
+    "NativeHud": "",
+    "OrdinaryBloomContractRebased": "",
+    "OrdinaryBloomRenewed": "the pool was rebuilt and the owned pair renewed (reused=true: a retired pair made for that layout is current again)",
+    "OrdinaryClockGap": "a gap in the frame clock",
+    "OrdinaryHeadsetColdRestart": "an unknown refusal restarted stereo from scratch",
+    "OrdinaryHeadsetRestarted": "a camera cut bootstrapped the chain",
+    "OrdinaryHeadsetStopped": "stereo stopped (a verdict unless re-armed)",
+    "OrdinaryHeadsetSuspended": "stereo suspended (a verdict unless recovered)",
+    "OrdinaryNativeCreate": "",
+    "OrdinaryObserver": "",
+    "OrdinaryPairRetention": "",
+    "OrdinaryProviderFailure": "",
+    "PipLensHistory": "",
+    "PipLensHistoryClock": "",
+    "PipLensRejectedPose": "",
+    "PipLensRejection": "",
+    "PipLensRejectionCount": "",
+    "PipLensSkip": "",
+    "StereoStall": "readiness blocked on the player in plain play: the probes re-learn the level (a verdict only at action=give_up)",
+    "SceneMode": "a mask the classifier has no rule for, or a bit no rule reads (the mask is NEW too unless already in the table)",
+    "SecondCameraId": "",
+    "VrBodyScale": "",
+    "VrEyeSourceDiagnostic": "",
+    "VrTestDriver": "the scripted test driver's notices"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "Move the virtual right wrist to the right hip, squeeze grip, release, then return. Tests the real holster detector and native action mapping.",
+  "duration_ms": 5000,
+  "frames": [
+    {"ms": 0},
+    {"ms": 1000, "right": [0.3, -0.65, 0, 0, 0, 0]},
+    {"ms": 1500, "right": [0.3, -0.65, 0, 0, 0, 0], "right_grip": 1},
+    {"ms": 1800, "right": [0.3, -0.65, 0, 0, 0, 0]},
+    {"ms": 3000},
+    {"ms": 5000}
+  ]
+}

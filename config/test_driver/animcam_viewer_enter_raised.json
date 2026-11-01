@@ -1,0 +1,90 @@
+{
+ "description": "Viewer entry from first person (scripted head): hold Left B 1.3 s. The driver cancels with clock_gap when the pause menu stops stereo; queue animcam_viewer_presets.json next. Unattended variant: head raised 1.4 m (desk-level HMD).",
+ "mode": "scripted_head",
+ "duration_ms": 5500,
+ "frames": [
+  {
+   "ms": 0,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 200,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ],
+   "buttons": [
+    "recenter"
+   ]
+  },
+  {
+   "ms": 1700,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 3000,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 3500,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ],
+   "buttons": [
+    "menu"
+   ]
+  },
+  {
+   "ms": 4800,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 5500,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ ]
+}

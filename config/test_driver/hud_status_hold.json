@@ -1,0 +1,9 @@
+{
+  "description": "Hold a level scripted head with both hands lowered and all controls neutral, for inspection of actual native health/ammo HUD pixels. Sends no movement or combat actions.",
+  "mode": "scripted_head",
+  "duration_ms": 120000,
+  "frames": [
+    {"ms": 0, "left": [-0.3, -0.6, -0.2, 0, 0, 0], "right": [0.3, -0.6, -0.2, 0, 0, 0]},
+    {"ms": 120000, "left": [-0.3, -0.6, -0.2, 0, 0, 0], "right": [0.3, -0.6, -0.2, 0, 0, 0]}
+  ]
+}

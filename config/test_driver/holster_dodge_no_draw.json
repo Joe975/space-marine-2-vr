@@ -1,0 +1,15 @@
+{
+  "description": "Start with the bolter out. Right hand at the hip, dodge (right A) while the grip rises past the holster threshold, as the thumb does on an Index (30 Oct playtest): one dodge, no pistol draw. Then a deliberate hip squeeze draws the pistol.",
+  "mode": "scripted_head",
+  "duration_ms": 7000,
+  "frames": [
+    {"ms": 0, "right": [0.25, -0.7, 0, 0, 0, 0], "left": [-0.3, -0.15, -0.5, 0, 0, 0], "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 1000, "buttons": ["dodge"], "right_grip": 0.2, "right": [0.25, -0.7, 0, 0, 0, 0], "left": [-0.3, -0.15, -0.5, 0, 0, 0], "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 1100, "buttons": ["dodge"], "right_grip": 0.7, "right": [0.25, -0.7, 0, 0, 0, 0], "left": [-0.3, -0.15, -0.5, 0, 0, 0], "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 1250, "right_grip": 0.7, "right": [0.25, -0.7, 0, 0, 0, 0], "left": [-0.3, -0.15, -0.5, 0, 0, 0], "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 1400, "right": [0.25, -0.7, 0, 0, 0, 0], "left": [-0.3, -0.15, -0.5, 0, 0, 0], "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 4000, "right_grip": 1, "right": [0.25, -0.7, 0, 0, 0, 0], "left": [-0.3, -0.15, -0.5, 0, 0, 0], "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 4200, "right": [0.25, -0.7, 0, 0, 0, 0], "left": [-0.3, -0.15, -0.5, 0, 0, 0], "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 7000, "right": [0.25, -0.7, 0, 0, 0, 0], "left": [-0.3, -0.15, -0.5, 0, 0, 0], "head": [0, 0, 0, 0, 0, 0]}
+  ]
+}

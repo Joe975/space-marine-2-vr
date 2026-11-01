@@ -1,0 +1,8 @@
+# Uncalibrated prototype controller origins. Translation is metres; rotations are XYZ degrees.
+# Elbow poles are directions in character axes. Save tuned values here after the first arm test.
+left_grip_metres=0 0 0
+left_grip_degrees=0 0 0
+left_elbow_pole=0.4 -0.8 0
+right_grip_metres=0 0 0
+right_grip_degrees=0 0 0
+right_elbow_pole=-0.4 -0.8 0

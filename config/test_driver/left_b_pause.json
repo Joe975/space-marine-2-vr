@@ -1,0 +1,15 @@
+{
+ "description": "Left B pause rule (31 Oct): a 40 ms brush must not pause; a plain 100 ms tap pauses on release; a Left B tap on the pause menu closes it. Expect SceneMode pause_menu (0x908) after about 2.6 s and gameplay again after about 5.1 s, and no pause before 2.6 s.",
+ "mode": "scripted_head",
+ "duration_ms": 7000,
+ "frames": [
+  {"ms": 0, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]},
+  {"ms": 800, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0], "buttons": ["menu"]},
+  {"ms": 840, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]},
+  {"ms": 2500, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0], "buttons": ["menu"]},
+  {"ms": 2600, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]},
+  {"ms": 5000, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0], "buttons": ["menu"]},
+  {"ms": 5100, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]},
+  {"ms": 7000, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]}
+ ]
+}

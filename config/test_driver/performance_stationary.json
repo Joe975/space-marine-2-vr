@@ -1,0 +1,9 @@
+{
+  "description": "Repeatable OpenVR performance hold: neutral controls, both hands 50cm forward, fixed scripted head. Capture only after preroll and settling.",
+  "mode": "scripted_head",
+  "duration_ms": 45000,
+  "frames": [
+    {"ms": 0, "left": [-0.18, -0.1, -0.5, 0, 0, 0], "right": [0.18, -0.1, -0.5, 0, 0, 0]},
+    {"ms": 45000, "left": [-0.18, -0.1, -0.5, 0, 0, 0], "right": [0.18, -0.1, -0.5, 0, 0, 0]}
+  ]
+}

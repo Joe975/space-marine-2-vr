@@ -1,0 +1,54 @@
+{
+ "description": "Leave the viewer (scripted head): tap Left B. Unattended variant: head raised 1.4 m (desk-level HMD).",
+ "mode": "scripted_head",
+ "duration_ms": 2000,
+ "frames": [
+  {
+   "ms": 0,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 300,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ],
+   "buttons": [
+    "menu"
+   ]
+  },
+  {
+   "ms": 500,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 2000,
+   "head": [
+    0,
+    1.4,
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ ]
+}

@@ -1,0 +1,10 @@
+# The native gameplay HUD canvas in the eyes (the "hold X" prompt and every world marker), shown
+# with the native HUD (on by default with -Controls). The whole canvas since 25 Oct; was the centre crop
+# 0.36,0.32 0.28x0.36. docs/INTERACTION.md. Canvas UV, metres, degrees.
+enabled=1
+prompt_x=0
+prompt_y=0
+prompt_width=1
+prompt_height=1
+distance_metres=1.5
+native_horizontal_fov_degrees=110

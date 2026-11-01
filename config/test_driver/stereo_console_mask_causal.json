@@ -1,0 +1,61 @@
+{
+  "description": "Settled yaw90 pitch-10 with lowered hands and no actions for same-process native/union/expired console input-mask causal captures. Control file and submitted images are requested separately; driver completion is required independently.",
+  "mode": "scripted_head",
+  "duration_ms": 26000,
+  "frames": [
+    {
+      "ms": 0,
+      "head": [
+        0,
+        0,
+        0,
+        90,
+        -10,
+        0
+      ],
+      "left": [
+        -0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ],
+      "right": [
+        0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "ms": 25000,
+      "head": [
+        0,
+        0,
+        0,
+        90,
+        -10,
+        0
+      ],
+      "left": [
+        -0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ],
+      "right": [
+        0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

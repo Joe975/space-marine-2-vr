@@ -1,0 +1,7 @@
+# Candidate grip adjustment relative to the native gun-to-right-wrist pose.
+grip_x_metres=0
+grip_y_metres=0
+grip_z_metres=0
+pitch_degrees=0
+yaw_degrees=0
+roll_degrees=0

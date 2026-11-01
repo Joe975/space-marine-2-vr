@@ -1,0 +1,7 @@
+# Candidate physical swing request thresholds; no headset acceptance yet.
+speed_metres_per_second=1.5
+travel_metres=0.18
+reach_metres=0.45
+rearm_metres_per_second=0.5
+pulse_ms=140
+cooldown_ms=450

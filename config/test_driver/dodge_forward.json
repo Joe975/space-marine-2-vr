@@ -1,0 +1,12 @@
+{
+  "description": "Hold forward, dodge, release and observe recovery.",
+  "duration_ms": 4500,
+  "frames": [
+    {"ms": 0},
+    {"ms": 500, "move": [0, 1]},
+    {"ms": 800, "move": [0, 1], "buttons": ["dodge"]},
+    {"ms": 1000, "move": [0, 1]},
+    {"ms": 1400},
+    {"ms": 4500}
+  ]
+}

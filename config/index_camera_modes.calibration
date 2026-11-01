@@ -1,0 +1,12 @@
+# F8 cycles modes; F9 or gamepad Back/View recenters third person; Back held + D-pad up/down scales the world.
+mode=first_person
+diorama_scale=10
+diorama_distance=0.5
+diorama_height=0.6
+diorama_pitch=0
+diorama_follow=0
+diorama_recenter=1.5
+shoulder_distance=2
+shoulder_height=0.25
+shoulder_side=0.4
+chase_scale=1

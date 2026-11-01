@@ -1,0 +1,11 @@
+{
+  "description": "Fire the equipped primary briefly, then hold neutral poses for submitted-eye native ammo HUD inspection.",
+  "mode": "scripted_head",
+  "duration_ms": 30000,
+  "frames": [
+    {"ms": 0},
+    {"ms": 2000, "fire": 0.8},
+    {"ms": 2500},
+    {"ms": 30000}
+  ]
+}

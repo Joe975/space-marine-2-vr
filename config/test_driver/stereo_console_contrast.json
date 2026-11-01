@@ -1,0 +1,115 @@
+{
+  "description": "Contrast reproduction for right-eye console omission: yaw90 at pitch-10 then+10, hands lowered, stationary camera and no actions. Two settled captures consume two of the eight snapshot slots. CPU draw receipts and submitted images carry separate actual dispatch IDs.",
+  "mode": "scripted_head",
+  "duration_ms": 28000,
+  "frames": [
+    {
+      "ms": 0,
+      "head": [
+        0,
+        0,
+        0,
+        90,
+        -10,
+        0
+      ],
+      "left": [
+        -0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ],
+      "right": [
+        0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "ms": 10000,
+      "head": [
+        0,
+        0,
+        0,
+        90,
+        -10,
+        0
+      ],
+      "left": [
+        -0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ],
+      "right": [
+        0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "ms": 14000,
+      "head": [
+        0,
+        0,
+        0,
+        90,
+        10,
+        0
+      ],
+      "left": [
+        -0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ],
+      "right": [
+        0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "ms": 24000,
+      "head": [
+        0,
+        0,
+        0,
+        90,
+        10,
+        0
+      ],
+      "left": [
+        -0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ],
+      "right": [
+        0.25,
+        -0.6,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

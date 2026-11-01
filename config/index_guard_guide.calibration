@@ -1,0 +1,5 @@
+enabled=1
+bar_length_metres=0.16
+bar_thickness_metres=0.01
+grip_metres=0.03
+opacity=0.35

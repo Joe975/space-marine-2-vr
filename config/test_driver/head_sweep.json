@@ -1,0 +1,13 @@
+{
+  "description": "UNATTENDED ONLY: look 180 degrees around and back, keeping hands in view. Requires -ScriptedHead.",
+  "mode": "scripted_head",
+  "duration_ms": 12000,
+  "frames": [
+    {"ms": 0},
+    {"ms": 1000},
+    {"ms": 5000, "head": [0, 0, 0, 180, 0, 0]},
+    {"ms": 7000, "head": [0, 0, 0, 180, 0, 0]},
+    {"ms": 11000},
+    {"ms": 12000}
+  ]
+}

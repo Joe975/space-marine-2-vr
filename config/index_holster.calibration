@@ -1,0 +1,9 @@
+shoulder_min_height=-0.4
+shoulder_max_forward=0.1
+shoulder_min_lateral=-0.15
+hip_max_height=-0.42
+hip_min_height=-1.1
+hip_min_lateral=0.1
+fist_min_height=0.35
+fist_max_lateral=0.8
+fist_max_abs_forward=0.4

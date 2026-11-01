@@ -1,0 +1,9 @@
+{
+  "description": "Settled far-hands discriminator for near-body armour. Hold the head level at yaw zero and both hands 1.1 physical metres forward. Use separate captures in one process with live body placement set to 0 and 0.2; confirm the applied setting and actual submitted camera rather than inferring them from the request.",
+  "mode": "scripted_head",
+  "duration_ms": 5000,
+  "frames": [
+    {"ms": 0, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.15, -1.1, 0, 0, 0], "right": [0.25, -0.15, -1.1, 0, 0, 0]},
+    {"ms": 5000, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.15, -1.1, 0, 0, 0], "right": [0.25, -0.15, -1.1, 0, 0, 0]}
+  ]
+}

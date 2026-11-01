@@ -1,0 +1,17 @@
+{
+  "description": "Head turned 60 degrees left (no snap), then a left-hip grab and a fast throw 40 degrees right of the gaze. Default grenade aim (follow the hand) should launch about 40 degrees right of the gaze, i.e. 20 degrees left of the starting facing.",
+  "mode": "scripted_head",
+  "duration_ms": 9000,
+  "frames": [
+    {"ms": 0, "left": [-0.25, -0.65, 0, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 0, -15, 0]},
+    {"ms": 1000, "left": [-0.25, -0.65, 0, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 60, -15, 0]},
+    {"ms": 3000, "left": [-0.25, -0.65, 0, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 60, -15, 0], "left_grip": 1},
+    {"ms": 3500, "left": [-0.25, -0.65, 0, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 60, -15, 0], "left_grip": 1},
+    {"ms": 5000, "left": [-0.45, -0.15, 0.2, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 60, -15, 0], "left_grip": 1},
+    {"ms": 5500, "left": [-0.45, -0.15, 0.2, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 60, -15, 0], "left_grip": 1},
+    {"ms": 5780, "left": [0.09, 0.1, -0.44, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 60, -15, 0], "left_grip": 1},
+    {"ms": 5800, "left": [0.13, 0.1, -0.49, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 60, -15, 0]},
+    {"ms": 7500, "left": [-0.25, -0.65, 0, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 60, -15, 0]},
+    {"ms": 9000, "left": [-0.25, -0.65, 0, 0, 0, 0], "right": [0.5, -0.7, -0.1, 0, 0, 0], "head": [0, 0, 0, 0, -15, 0]}
+  ]
+}

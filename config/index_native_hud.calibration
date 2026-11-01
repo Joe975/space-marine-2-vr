@@ -1,0 +1,9 @@
+# Normalized source regions on the native gameplay HUD canvas.
+health_x=0.045
+health_y=0.035
+health_width=0.23
+health_height=0.085
+inventory_x=0.40
+inventory_y=0.84
+inventory_width=0.22
+inventory_height=0.13

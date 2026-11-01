@@ -1,0 +1,23 @@
+# Candidate first-person envelope. External cameras retain their native origin.
+camera_radius_metres=1
+camera_height_metres=4
+# Standing still, the body turns only once the head is this far from it (0: always follows).
+turn_threshold_degrees=30
+# First person rides along with travel at least this fast, horizontally or up (the jump pack: docs/ANIMATION_CAMERA.md).
+ride_speed_metres_per_second=13
+# Comfort vignette while riding: 0 none, 1 narrowest.
+ride_vignette=0
+# A takeover returns to first person once the Marine walks along the stick this fast (0: wait for the game's camera, docs/TAKEOVER_RETURN_2026-10-26.md).
+release_speed_metres_per_second=1.5
+# ... for this long.
+release_seconds=0.1
+# A takeover also returns once its animation has settled: the Marine's root, head and hands moved and then stayed under 0.35 m/s for this long (0: off; docs/ANIMATION_CAMERA.md).
+execution_still_seconds=0.3
+# A melee combo's final strike stays in first person: the game's camera may trail this far before a hold (0: off, a strike holds past camera_radius_metres; docs/ANIMATION_CAMERA.md).
+combo_camera_radius_metres=2.5
+# ... once this many strikes (RB or D-pad up) have chained; a parry or a finisher press starts the count again.
+combo_strikes=3
+# ... each within this long of the one before, and the camera leaving the envelope within this long of the last.
+combo_gap_seconds=1.6
+# ... for at most this long, then the usual hold.
+combo_camera_seconds=5

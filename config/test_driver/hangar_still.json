@@ -1,0 +1,1 @@
+{"description": "stand still, head level, 40 s: a steady window for pair rate and pose age (OPENXR_OWN_QUEUE.md)", "mode": "scripted_head", "duration_ms": 40000, "frames": [{"ms": 0, "head": [0, 1.4, 0, 0, -10, 0]}, {"ms": 40000, "head": [0, 1.4, 0, 0, -10, 0]}]}

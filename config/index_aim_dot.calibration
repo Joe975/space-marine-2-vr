@@ -1,0 +1,8 @@
+# The aim dot (docs/THIRD_PERSON.md "Aim dot"), off by default since the game's crosshair moves to the aim point
+# (index_hud_reticle.calibration): a round marker in both eyes where the game's aim ray
+# hits, so the aim reads from any angle in diorama, shoulder and chase. Degrees of angular diameter.
+# first_person=1 also draws it in first person (with motion controls: where the controller gun's shots land).
+enabled=0
+size_degrees=0.7
+opacity=0.9
+first_person=1

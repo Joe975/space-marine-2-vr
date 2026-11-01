@@ -1,0 +1,10 @@
+# OpenXR /input/grip/pose -> raw OpenVR controller origin, per hand (OpenXR backend only).
+# Values are the grip frame expressed in the raw device frame: metres, XYZ degrees.
+# Fitted by scripts/fit_openxr_grip_offset.py from witness_fit.csv + openxr_grips.csv.
+# left: 8789 pairs, position median/p95 0.05/0.30 mm, angle 0.015/0.077 deg
+# right: 8789 pairs, position median/p95 0.05/0.29 mm, angle 0.017/0.083 deg
+left_grip_in_raw_metres=-0.000001 -0.015004 0.129989
+left_grip_in_raw_degrees=15.3923 -2.0705 0.3028
+right_grip_in_raw_metres=0.000000 -0.015001 0.129994
+right_grip_in_raw_degrees=15.3919 2.0708 -0.3033
+measured=1

@@ -1,0 +1,5 @@
+# Confirmed walking, body yaw and level floor on 2026-10-13.
+# Before head-placement correction: about 5 cm low / 20 cm forward by physical feedback.
+units_per_metre=0.9
+height_offset_metres=0
+head_forward_offset_metres=0

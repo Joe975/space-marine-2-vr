@@ -1,0 +1,118 @@
+{
+ "description": "Hold right B (native B) for 2.5 s. Viewer-mode probe from 20 Oct, when right B was native X: the pause screen's photo mode hold now needs left A.",
+ "mode": "scripted_head",
+ "duration_ms": 5000,
+ "frames": [
+  {
+   "ms": 0,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "left": [
+    -0.25,
+    -0.6,
+    -0.1,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.25,
+    -0.6,
+    -0.1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 500,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "left": [
+    -0.25,
+    -0.6,
+    -0.1,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.25,
+    -0.6,
+    -0.1,
+    0,
+    0,
+    0
+   ],
+   "buttons": [
+    "interact"
+   ]
+  },
+  {
+   "ms": 3000,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "left": [
+    -0.25,
+    -0.6,
+    -0.1,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.25,
+    -0.6,
+    -0.1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 5000,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "left": [
+    -0.25,
+    -0.6,
+    -0.1,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.25,
+    -0.6,
+    -0.1,
+    0,
+    0,
+    0
+   ]
+  }
+ ]
+}

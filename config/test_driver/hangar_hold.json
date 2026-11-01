@@ -1,0 +1,1 @@
+{"description": "hold the head still for 15 s: a still view for counting one-eye image changes (RIGHT_EYE_FLICKER_2026-10-28.md); in camera mode after animcam_viewer_enter_raised", "mode": "scripted_head", "duration_ms": 15000, "frames": [{"ms": 0, "head": [0, 1.4, 0, 0, -10, 0]}, {"ms": 15000, "head": [0, 1.4, 0, 0, -10, 0]}]}

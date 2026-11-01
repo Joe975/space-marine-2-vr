@@ -1,0 +1,10 @@
+# Right A in the viewer (docs/VIEWER_MODE.md "Watch it play out"): the game runs under the free
+# camera, then the viewer closes and the player is back in the game. Read live.
+# mode: 0 off, 1 animation (until the Marine has moved and then stayed still: an execution plays
+# out; clip_seconds if it never moves), 2 fixed (clip_seconds), 3 hold (while Right A is held;
+# letting go freezes). limit_seconds caps every mode. Speeds are metres per second at life size.
+mode=1
+still_speed_metres_per_second=0.35
+still_seconds=0.5
+clip_seconds=3
+limit_seconds=10

@@ -1,0 +1,124 @@
+{
+ "description": "Analog rev: with pistol/chainsword drawn, hold the right trigger at 20%, 50% and 100% for 6 s each, then release. Check ChainswordRev play_rate/audio_gain per level and teeth speed.",
+ "mode": "scripted_head",
+ "duration_ms": 24000,
+ "frames": [
+  {
+   "left": [
+    -0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "ms": 0
+  },
+  {
+   "left": [
+    -0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "ms": 2000,
+   "fire": 0.2
+  },
+  {
+   "left": [
+    -0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "ms": 8000,
+   "fire": 0.5
+  },
+  {
+   "left": [
+    -0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "ms": 14000,
+   "fire": 1.0
+  },
+  {
+   "left": [
+    -0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "ms": 20000
+  },
+  {
+   "left": [
+    -0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "right": [
+    0.2,
+    -0.1,
+    -0.5,
+    0,
+    0,
+    0
+   ],
+   "ms": 24000
+  }
+ ]
+}

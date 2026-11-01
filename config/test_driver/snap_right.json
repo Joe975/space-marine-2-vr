@@ -1,0 +1,10 @@
+{
+  "description": "One right snap-turn, then settle before a directional movement comparison.",
+  "duration_ms": 2000,
+  "frames": [
+    {"ms": 0},
+    {"ms": 500, "turn": 1},
+    {"ms": 700},
+    {"ms": 2000}
+  ]
+}

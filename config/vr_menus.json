@@ -1,0 +1,9 @@
+{
+  "scale": 0.6,
+  "centre_x": 0.5,
+  "centre_y": 0.5,
+  "content_anchor_x": {
+    "settings": 0.267,
+    "pause": 0.1666666667
+  }
+}

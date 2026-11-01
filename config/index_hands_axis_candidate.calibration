@@ -1,0 +1,9 @@
+# Candidate native finger/thumb axis alignment; physical wrist tilt still needs validation.
+# Translation is metres; rotations are XYZ degrees. Raw baseline saved separately.
+# Native left fingers +X/thumb -Y; right fingers -X/thumb +Y -> device -Z/+Y.
+left_grip_metres=0 0 0
+left_grip_degrees=180 90 0
+left_elbow_pole=0.4 -0.8 0
+right_grip_metres=0 0 0
+right_grip_degrees=0 -90 0
+right_elbow_pole=-0.4 -0.8 0

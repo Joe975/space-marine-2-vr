@@ -1,0 +1,22 @@
+{
+  "description": "UNATTENDED ONLY (-ScriptedHead; gaze camera on by default with -Controls): look left, down, right, up-ahead, snap right, then walk forward. The native camera should follow each look within about 1.5 s (check_interaction_alignment.py --follow) and walking stays head-relative.",
+  "mode": "scripted_head",
+  "duration_ms": 26000,
+  "frames": [
+    {"ms": 0},
+    {"ms": 1000},
+    {"ms": 2000, "head": [0, 0, 0, 90, 0, 0]},
+    {"ms": 5000, "head": [0, 0, 0, 90, 0, 0]},
+    {"ms": 6000, "head": [0, 0, 0, 90, -35, 0]},
+    {"ms": 9000, "head": [0, 0, 0, 90, -35, 0]},
+    {"ms": 10500, "head": [0, 0, 0, -90, -10, 0]},
+    {"ms": 14000, "head": [0, 0, 0, -90, -10, 0]},
+    {"ms": 15000, "head": [0, 0, 0, 0, 15, 0]},
+    {"ms": 18000, "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 18500, "head": [0, 0, 0, 0, 0, 0], "turn": 1},
+    {"ms": 18700, "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 21500, "head": [0, 0, 0, 0, 0, 0], "move": [0, 1]},
+    {"ms": 24000, "head": [0, 0, 0, 0, 0, 0]},
+    {"ms": 26000, "head": [0, 0, 0, 0, 0, 0]}
+  ]
+}

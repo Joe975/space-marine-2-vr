@@ -1,0 +1,106 @@
+{
+ "description": "Animation takeover with -TakeoverControl (docs/ANIMATION_CAMERA.md): first person, then capture_animcam_live.py writes 'takeover' at 3.5 s (a pulled-back, bobbing animation camera) and 'off' at 14 s. Look left at the character during the takeover. Requires -ScriptedHead.",
+ "mode": "scripted_head",
+ "duration_ms": 20000,
+ "frames": [
+  {
+   "ms": 0,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 3000,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 7000,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 8500,
+   "head": [
+    0,
+    0,
+    0,
+    60,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 11000,
+   "head": [
+    0,
+    0,
+    0,
+    60,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 12500,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 17000,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "ms": 17500,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    -30,
+    0
+   ]
+  },
+  {
+   "ms": 20000,
+   "head": [
+    0,
+    0,
+    0,
+    0,
+    -30,
+    0
+   ]
+  }
+ ]
+}

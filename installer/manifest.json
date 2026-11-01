@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "channels": {
+    "beta": {
+      "version": "1.0.0",
+      "url": "https://github.com/Joe975/space-marine-2-vr/releases/download/v1.0.0/SM2VR-1.0.0.zip",
+      "sha256": "7680765b4a8c8db83eb82918d25640c26bca1e45537160bcf7ea8d593ba41909",
+      "size": 17864400,
+      "game_exe_timestamp": "0x6ad10fcb",
+      "game_build_date": "2026-10-21",
+      "changelog": "First release baseline: motion controls, chase camera and frozen camera mode. Rough alpha; large battles perform poorly.",
+      "published_utc": "2026-11-01T04:34:38.0000000Z"
+    }
+  }
+}

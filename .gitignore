@@ -1,0 +1,6 @@
+refs/
+tools/
+build/
+*.gzf
+*.rep/
+backups/

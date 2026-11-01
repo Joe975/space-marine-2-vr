@@ -1,0 +1,5 @@
+# Left grip under a primary barrel; physical metres in right controller pointing frame.
+min_forward_metres=0.1
+max_forward_metres=0.65
+radius_metres=0.22
+release_margin_metres=0.06

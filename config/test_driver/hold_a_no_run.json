@@ -1,0 +1,13 @@
+{
+ "description": "Held right A (31 Oct): dodge held 3 s with the stick centred. Expect A_dodge_confirm down at about 1.0 s and up at about 1.35 s, one dash, and no run: the root stops moving by about 2.5 s while the button is still held. Then a 100 ms tap at 5 s dodges as before.",
+ "mode": "scripted_head",
+ "duration_ms": 7000,
+ "frames": [
+  {"ms": 0, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]},
+  {"ms": 1000, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0], "buttons": ["dodge"]},
+  {"ms": 4000, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]},
+  {"ms": 5000, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0], "buttons": ["dodge"]},
+  {"ms": 5100, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]},
+  {"ms": 7000, "head": [0, 0, 0, 0, 0, 0], "left": [-0.25, -0.6, -0.1, 0, 0, 0], "right": [0.25, -0.6, -0.1, 0, 0, 0]}
+ ]
+}

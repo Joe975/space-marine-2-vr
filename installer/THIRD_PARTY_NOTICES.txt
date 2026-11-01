@@ -1,0 +1,28 @@
+SM2VR third-party notices
+
+SM2VR's dxgi.dll is built with the open-source code below. openvr_api.dll is Valve's OpenVR
+runtime library, shipped unmodified. python\ is the python.org embeddable CPython. Each
+license's full text is in the licenses folder.
+
+Component             License              Source                                        File
+vrframework-core      MIT                  mutars; github.com/joeyhodge/vrframework      vrframework-core.txt
+REFramework           MIT                  github.com/praydog/REFramework                reframework.txt
+OpenVR                BSD-3-Clause         github.com/ValveSoftware/openvr               openvr.txt
+OpenXR SDK loader     Apache-2.0           github.com/KhronosGroup/OpenXR-SDK            openxr-sdk.txt
+bddisasm              Apache-2.0           github.com/bitdefender/bddisasm               bddisasm.txt
+DirectXTK             MIT                  github.com/microsoft/DirectXTK                directxtk.txt
+DirectXTK12           MIT                  github.com/microsoft/DirectXTK12              directxtk12.txt
+FidelityFX SDK        MIT                  github.com/GPUOpen-LibrariesAndSDKs           fidelityfx.txt
+GLM                   MIT / Happy Bunny    github.com/g-truc/glm                         glm.txt
+Dear ImGui            MIT                  github.com/ocornut/imgui                      imgui.txt
+ImGuizmo              MIT                  github.com/CedricGuillemet/ImGuizmo           imguizmo.txt
+kananlib              BSL-1.0              github.com/cursey/kananlib                    kananlib.txt
+MinHook               BSD-2-Clause         github.com/TsudaKageyu/minhook                minhook.txt
+safetyhook            BSL-1.0              github.com/cursey/safetyhook                  safetyhook.txt
+spdlog                MIT                  github.com/gabime/spdlog                      spdlog.txt
+{fmt} (in spdlog)     MIT, binary exception                                              (no notice required)
+NVIDIA Streamline     MIT                  github.com/NVIDIAGameWorks/Streamline         streamline.txt
+Xbyak                 BSD-3-Clause         github.com/herumi/xbyak                       xbyak.txt
+Zydis                 MIT                  github.com/zyantific/zydis                    zydis.txt
+JSON for Modern C++   MIT                  github.com/nlohmann/json                      nlohmann-json.txt
+Python                PSF License          python.org                                    python.txt

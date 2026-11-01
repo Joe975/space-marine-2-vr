@@ -1,0 +1,17 @@
+# The right-hand corners of the native HUD canvas on a low panel in front of you, under the
+# health/inventory strip (with the native HUD, on by default with -Controls). Left half: top right of the
+# canvas (objective, squad, Edit Squad). Right half: bottom right (the mission card, Reject
+# Mission). Canvas UV for the regions; metres for the panel. docs/INTERACTION.md. About 27 degrees
+# below straight ahead (21 until 30 Oct, lowered with the strip to keep the gap).
+enabled=1
+top_right_x=0.7
+top_right_y=0.03
+top_right_width=0.28
+top_right_height=0.27
+bottom_right_x=0.72
+bottom_right_y=0.58
+bottom_right_width=0.28
+bottom_right_height=0.4
+width_metres=0.6
+centre_y_metres=-0.62
+distance_metres=1.2

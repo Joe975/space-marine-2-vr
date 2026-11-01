@@ -1,0 +1,9 @@
+{
+  "head_height": 2.5,
+  "distance": 0.0,
+  "lateral": 0.0,
+  "forward": 0.15,
+  "fov": 80.0,
+  "opacity_padding": 0.1,
+  "opacity_offset": 0.4
+}

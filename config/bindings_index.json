@@ -1,0 +1,148 @@
+{
+  "action_manifest_version": 1,
+  "controller_type": "knuckles",
+  "name": "Index locomotion, interaction and combat",
+  "description": "Sticks walk/snap. Right A dodge/confirm, B interact/reload. Triggers fire/aim; squeeze right/left grip melee/parry. Right stick click finisher; right trackpad press grenade. Left trackpad press: up ability, down weapon, right stim, left scoreboard. Left stick click sprint. Left A tap class ability, hold recenter. Left B tap pause menu, hold viewer mode.",
+  "bindings": {
+    "/actions/sm2vr": {
+      "skeleton": [
+        {
+          "path": "/user/hand/left/input/skeleton/left",
+          "output": "/actions/sm2vr/in/left_fingers"
+        },
+        {
+          "path": "/user/hand/right/input/skeleton/right",
+          "output": "/actions/sm2vr/in/right_fingers"
+        }
+      ],
+      "sources": [
+        {
+          "path": "/user/hand/left/input/thumbstick",
+          "mode": "joystick",
+          "inputs": {
+            "position": {
+              "output": "/actions/sm2vr/in/move"
+            },
+            "click": {
+              "output": "/actions/sm2vr/in/sprint"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/thumbstick",
+          "mode": "joystick",
+          "inputs": {
+            "position": {
+              "output": "/actions/sm2vr/in/turn"
+            },
+            "click": {
+              "output": "/actions/sm2vr/in/finisher"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/a",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/sm2vr/in/confirm"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/b",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/sm2vr/in/interact"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/b",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/sm2vr/in/menu"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/a",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/sm2vr/in/recenter"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/trigger",
+          "mode": "trigger",
+          "inputs": {
+            "pull": {
+              "output": "/actions/sm2vr/in/fire"
+            },
+            "touch": {
+              "output": "/actions/sm2vr/in/fire_touch"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/trigger",
+          "mode": "trigger",
+          "inputs": {
+            "pull": {
+              "output": "/actions/sm2vr/in/aim"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/grip",
+          "mode": "force_sensor",
+          "inputs": {
+            "force": {
+              "output": "/actions/sm2vr/in/melee"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/grip",
+          "mode": "force_sensor",
+          "inputs": {
+            "force": {
+              "output": "/actions/sm2vr/in/parry"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/trackpad",
+          "mode": "force_sensor",
+          "inputs": {
+            "force": {
+              "output": "/actions/sm2vr/in/grenade"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/trackpad",
+          "mode": "trackpad",
+          "inputs": {
+            "position": {
+              "output": "/actions/sm2vr/in/utility"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/trackpad",
+          "mode": "force_sensor",
+          "inputs": {
+            "force": {
+              "output": "/actions/sm2vr/in/utility_press"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

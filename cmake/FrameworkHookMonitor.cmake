@@ -1,0 +1,72 @@
+# Keep the framework's hook monitor from rehooking D3D12 while its present detour is intact
+# (mod/src/FrameworkHookMonitor.h, docs/FREEZE_REHOOK_2026-10-27.md). Generated translation units;
+# never edit ignored framework refs.
+
+function(sm2_framework_monitor_newline source out_var)
+  string(FIND "${source}" "\r\n" crlf)
+  if(crlf LESS 0)
+    set(${out_var} "\n" PARENT_SCOPE)
+  else()
+    set(${out_var} "\r\n" PARENT_SCOPE)
+  endif()
+endfunction()
+
+# Replace exactly one occurrence of needle, or stop the configure.
+function(sm2_framework_monitor_replace_once source needle replacement out_var what)
+  string(FIND "${source}" "${needle}" first)
+  if(first LESS 0)
+    message(FATAL_ERROR "Framework hook monitor: ${what} not found; requires source review")
+  endif()
+  string(LENGTH "${needle}" needle_length)
+  math(EXPR after "${first}+${needle_length}")
+  string(SUBSTRING "${source}" ${after} -1 remaining)
+  string(FIND "${remaining}" "${needle}" second)
+  if(NOT second LESS 0)
+    message(FATAL_ERROR "Framework hook monitor: ${what} found more than once; requires source review")
+  endif()
+  string(REPLACE "${needle}" "${replacement}" patched "${source}")
+  set(${out_var} "${patched}" PARENT_SCOPE)
+endfunction()
+
+# D3D12Hook::hook(): record the present vtable slot right after the framework's PointerHook writes it.
+# Runs on the D3D12Hook.cpp that sm2_framework_capture_source generated (whose hash it checked).
+function(sm2_framework_monitor_d3d12 generated_file)
+  file(READ "${generated_file}" source)
+  sm2_framework_monitor_newline("${source}" nl)
+  set(needle "        m_present_hook = std::make_unique<PointerHook>(&present_fn, (void*)&D3D12Hook::present);")
+  set(replacement "${needle}${nl}        sm2_framework_monitor::remember(&present_fn, (void*)&D3D12Hook::present);")
+  sm2_framework_monitor_replace_once("${source}" "${needle}" "${replacement}" patched "the present PointerHook")
+  file(WRITE "${generated_file}" "#include \"FrameworkHookMonitor.h\"${nl}${patched}")
+endfunction()
+
+# Framework::hook_monitor(): before the rehook, skip it while the recorded slot still holds the detour,
+# the way the monitor already skips the message hook while that hook is intact.
+function(sm2_framework_monitor_source source_file output_dir)
+  file(SHA256 "${source_file}" source_hash)
+  if(NOT source_hash STREQUAL "a330b8a0b76b1c965e6ae6456e9013446743e6703a188505072c90f9b759232f")
+    message(FATAL_ERROR "Unsupported framework Framework.cpp; hook monitor patch requires source review")
+  endif()
+  file(READ "${source_file}" source)
+  sm2_framework_monitor_newline("${source}" nl)
+  set(needle "            if (!m_has_last_chance && now - m_last_chance_time > std::chrono::seconds(1)) {")
+  set(guard "            if (!m_has_last_chance && now - m_last_chance_time > std::chrono::seconds(1) && !m_is_d3d11 && d3d12 != nullptr && sm2_framework_monitor::present_hook_intact(d3d12->is_hooked())) {${nl}")
+  string(APPEND guard "                spdlog::info(\"D3D12 present hook is still intact, ignoring...\");${nl}")
+  string(APPEND guard "                m_last_present_time = now;${nl}")
+  string(APPEND guard "                m_last_chance_time = now;${nl}")
+  string(APPEND guard "                m_has_last_chance = true;${nl}")
+  string(APPEND guard "            }${nl}")
+  sm2_framework_monitor_replace_once("${source}" "${needle}" "${guard}${needle}" patched "the rehook condition")
+  file(MAKE_DIRECTORY "${output_dir}")
+  file(WRITE "${output_dir}/Framework.cpp" "#include \"FrameworkHookMonitor.h\"${nl}${patched}")
+  # The CPU fixture compiles the exact generated stall branch (presents stopped: last chance, rehook).
+  set(begin_marker "        // check if present time is more than 5 seconds ago")
+  set(end_marker "        if (m_initialized && m_wnd != 0 && now - m_last_message_time")
+  string(FIND "${patched}" "${begin_marker}" begin)
+  string(FIND "${patched}" "${end_marker}" end)
+  if(begin LESS 0 OR end LESS_EQUAL begin)
+    message(FATAL_ERROR "Unsupported hook monitor fixture boundaries")
+  endif()
+  math(EXPR length "${end}-${begin}")
+  string(SUBSTRING "${patched}" ${begin} ${length} stall_block)
+  file(WRITE "${output_dir}/framework_monitor_stall.inc" "${stall_block}")
+endfunction()

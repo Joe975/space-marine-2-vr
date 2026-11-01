@@ -1,0 +1,9 @@
+# Accepted Index wrist alignment, physically confirmed 2026-10-13.
+# Translation is metres; rotations are XYZ degrees. Raw baseline saved separately.
+# Composes Rz(45) before the previous mirrored axis mapping; palm normal stays fixed.
+left_grip_metres=0 0 0
+left_grip_degrees=90 45 -90
+left_elbow_pole=0.4 -0.8 0
+right_grip_metres=0 0 0
+right_grip_degrees=-90 -45 90
+right_elbow_pole=-0.4 -0.8 0

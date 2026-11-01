@@ -1,0 +1,116 @@
+{
+  "actions": [
+    {
+      "name": "/actions/sm2vr/in/move",
+      "type": "vector2",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/sm2vr/in/turn",
+      "type": "vector2",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/sm2vr/in/confirm",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/sm2vr/in/interact",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/sm2vr/in/sprint",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/sm2vr/in/menu",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/sm2vr/in/recenter",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/sm2vr/in/left_fingers",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/left"
+    },
+    {
+      "name": "/actions/sm2vr/in/right_fingers",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/right"
+    },
+    {
+      "name": "/actions/sm2vr/in/fire",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/sm2vr/in/fire_touch",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/sm2vr/in/aim",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/sm2vr/in/melee",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/sm2vr/in/parry",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/sm2vr/in/grenade",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/sm2vr/in/utility",
+      "type": "vector2"
+    },
+    {
+      "name": "/actions/sm2vr/in/utility_press",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/sm2vr/in/finisher",
+      "type": "boolean"
+    }
+  ],
+  "action_sets": [
+    {
+      "name": "/actions/sm2vr",
+      "usage": "leftright"
+    }
+  ],
+  "default_bindings": [
+    {
+      "controller_type": "knuckles",
+      "binding_url": "bindings_index.json"
+    }
+  ],
+  "localization": [
+    {
+      "language_tag": "en_us",
+      "/actions/sm2vr": "Space Marine 2 VR controls",
+      "/actions/sm2vr/in/move": "Walk",
+      "/actions/sm2vr/in/turn": "Snap turn",
+      "/actions/sm2vr/in/confirm": "Confirm / dodge",
+      "/actions/sm2vr/in/interact": "Interact / reload (hold for marker activation)",
+      "/actions/sm2vr/in/sprint": "Sprint",
+      "/actions/sm2vr/in/menu": "Left B: tap pause menu, hold viewer mode",
+      "/actions/sm2vr/in/recenter": "Left A: tap class ability, hold recenter",
+      "/actions/sm2vr/in/left_fingers": "Left finger tracking",
+      "/actions/sm2vr/in/right_fingers": "Right finger tracking",
+      "/actions/sm2vr/in/fire": "Fire weapon",
+      "/actions/sm2vr/in/fire_touch": "Trigger finger resting (blocks physical melee swings)",
+      "/actions/sm2vr/in/aim": "Aim / zoom",
+      "/actions/sm2vr/in/melee": "Right grip squeeze (holster grab; melee only if grip melee is enabled)",
+      "/actions/sm2vr/in/parry": "Parry (squeeze left grip)",
+      "/actions/sm2vr/in/grenade": "Grenade (press right trackpad)",
+      "/actions/sm2vr/in/utility": "Left trackpad utility direction",
+      "/actions/sm2vr/in/utility_press": "Left trackpad press",
+      "/actions/sm2vr/in/finisher": "Finisher / target lock"
+    }
+  ]
+}

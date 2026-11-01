@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "runtime": "OpenXR",
+  "controls": true,
+  "gestures": true,
+  "upright_torso": true,
+  "haptics": true,
+  "haptics_gain": 1,
+  "compact_hud": true,
+  "chainsword_rev": true,
+  "gaze_camera": true,
+  "guard_guide": false,
+  "grenade_aim": true,
+  "native_shadows": false,
+  "keep_head_visible": false,
+  "photo_native_pose": false,
+  "thumbs_up": "play",
+  "trace": false,
+  "snap_degrees": 30
+}
