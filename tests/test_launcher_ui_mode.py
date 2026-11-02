@@ -392,6 +392,7 @@ param([int]$Seconds,[string]$Tag,[switch]$NoUiAutomation,[string]$DataPak,[strin
                                    (['-OutputSize','1944x2160','-OutputSizeMode','both','-ExperimentalOutputSize'],'-OutputSizeMode must be device or config'),
                                    # Diagnostic only: without the explicit switch it never reaches the game.
                                    (['-OutputSize','1944x2160'],'add -ExperimentalOutputSize'),
+                                   (['-OutputSize','1944x2160','-ExperimentalOutputSize','-WindowMode','Windowed','-DesktopWindow','972x1080'],'halves the render targets'),
                                    (['-OutputSize','1944x2160','-OutputSizeMode','config'],'docs/EYE_SIZE.md'),
                                    (['-ExperimentalOutputSize'],'-ExperimentalOutputSize needs -OutputSize')):
                 with self.subTest(flags=flags):

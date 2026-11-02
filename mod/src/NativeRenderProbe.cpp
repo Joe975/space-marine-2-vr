@@ -1,4 +1,5 @@
 #include "NativeRenderProbe.h"
+#include "ForeignViewHold.h"
 #include "GameBuild.h"
 #include "NativeOrdinaryPacket.h"
 #include "NativeSceneFaultEvidence.h"
@@ -93,6 +94,22 @@ std::optional<std::vector<NativeRenderProbe::View>> NativeRenderProbe::read_view
     }
     return result.empty()?std::nullopt:std::optional{result};
 }
+// Raw entries, not read_views: that skips a view whose matrices it doesn't accept, and this must not
+// miss the one frame that crashes. Flags alone in the common case, which is every dispatch.
+bool NativeRenderProbe::remap_pip_hdr(uintptr_t list) {
+    if(!list || list>UINTPTR_MAX-0x2996c) return false;
+    int32_t count{};if(!read(list+0x29968,count) || count<3 || count>64) return false;
+    const auto entry=[&](int32_t slot){return list+0x168+size_t(slot)*0xa60;};
+    std::array<ForeignViewHold::View,16> views{};size_t n{};
+    for(int32_t i=0;i<count && n<views.size();++i) {views[n].slot=i;if(!read(entry(i),views[n].flags)) return false;++n;}
+    const std::span<const ForeignViewHold::View> seen{views.data(),n};
+    if(!ForeignViewHold::behind_pair(seen)) return false;
+    for(size_t i=0;i<n;++i) if(!read(entry(views[i].slot)+0x188,views[i].hdr)) return false;
+    const auto slot=ForeignViewHold::hdr_remap(seen);if(!slot) return false;
+    const int32_t index=ForeignViewHold::PIP_HDR_INDEX;SIZE_T written{};
+    if(!WriteProcessMemory(GetCurrentProcess(),reinterpret_cast<void*>(entry(*slot)+0x188),&index,sizeof(index),&written) || written!=sizeof(index)) return false;
+    ForeignViewHold::get().remapped();return true;
+}
 void NativeRenderProbe::on_dispatch(void* renderer,uint32_t flags) {
     PerformanceTrace::Scope timing{"ordinary_dispatch_total_cpu"};
     struct Scope {
@@ -107,6 +124,7 @@ void NativeRenderProbe::on_dispatch(void* renderer,uint32_t flags) {
         if(probe.m_enabled()) {
             Snapshot value;value.sequence=++probe.m_sequence;value.renderer=reinterpret_cast<uintptr_t>(renderer);value.flags=flags;
             value.begin=std::chrono::steady_clock::now();value.list=probe.m_list();
+            remap_pip_hdr(value.list);
             const auto revision=NativeCameraEntries::get().revision(value.list);
             value.camera_revision=revision;value.scene_observer=probe.scene_installed();value.scenes.reserve(MAX_SCENES);
             if(auto before=read_views(value.list)) {

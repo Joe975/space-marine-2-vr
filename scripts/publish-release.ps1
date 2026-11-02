@@ -12,7 +12,7 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'installer-package.ps1')
 . (Join-Path $repo 'installer\app\sm2-update.ps1')
-$tag = 'player-releases'
+$tag = "v$Version"
 # The public repo; scripts/export_public.py builds its tree from this one.
 $ghRepo = 'Joe975/space-marine-2-vr'
 
@@ -73,7 +73,7 @@ if ($DryRun) {
     return
 }
 gh release view $tag --repo $ghRepo *> $null
-if ($LASTEXITCODE -ne 0) { gh release create $tag --repo $ghRepo --title 'SM2VR player releases' --notes 'Downloads for the SM2VR window. Start with README.txt.' }
+if ($LASTEXITCODE -ne 0) { gh release create $tag --repo $ghRepo --title "SM2VR $Version" --notes $Changelog }
 gh release upload $tag $zipPath --repo $ghRepo --clobber
 if ($LASTEXITCODE -ne 0) { throw 'Upload failed; the manifest was not changed.' }
 [IO.File]::WriteAllText($manifestPath, $json, (New-Object Text.UTF8Encoding $false))

@@ -1,5 +1,6 @@
 // Left-hand gestures (guard, grenade) and the playtest trace: startup, overlay, logging.
 // Kept out of Sm2Probe.cpp so the gesture work stays a small, separate diff.
+#include "PathText.h"
 #include "Sm2Probe.h"
 #include "EngineBodyFollowing.h"
 #include "EngineWeaponProbe.h"
@@ -78,7 +79,7 @@ void Sm2Probe::setup_gestures_and_trace() {
         if(path.empty()) { wchar_t local[32768]{};if(GetEnvironmentVariableW(L"LOCALAPPDATA",local,32768)) path=std::filesystem::path{local}/"sm2vr"/"sm2vr_trace.jsonl"; }
         std::error_code ec;std::filesystem::create_directories(path.parent_path(),ec);
         const bool opened=!path.empty() && vr_trace::Recorder::get().open(path,hz);
-        spdlog::info("VrTrace: enabled={} hz={} path={}",opened,hz,path.string());
+        spdlog::info("VrTrace: enabled={} hz={} path={}",opened,hz,path_text(path));
     }
 }
 
@@ -91,6 +92,7 @@ void Sm2Probe::trace_camera(const vr_camera::Matrix& game,const vr_camera::Matri
     vr_trace::Camera record;record.time=std::chrono::steady_clock::now();record.game=game;record.anchor=anchor;record.units_per_metre=eye.units_per_metre;
     record.actor=follow.follow.actor;record.camera_mode=eye.viewer_anchor?5:static_cast<int>(follow.follow.camera_mode);record.anchored=follow.follow.anchored && !eye.viewer_anchor;
     record.body_yaw=follow.follow.yaw;record.facing_error_degrees=follow.facing_error_degrees;record.melee_facing=follow.follow.melee_facing;record.room_error=follow.follow.room_error;
+    record.room_steps=follow.follow.room_steps;record.room_blocked=follow.follow.room_blocked;record.room_held=follow.follow.room_held;record.room_rebases=follow.follow.room_rebases;record.room_rebased=follow.follow.room_rebased;record.room_consumed=follow.follow.consumed;
     record.riding=follow.follow.riding;record.travel_speed=follow.follow.travel_speed;record.vignette=follow.follow.vignette;record.released=follow.follow.released;record.combo_camera=follow.follow.combo_camera;
     record.eye_forward=vr_trace::Vector{world[8],world[9],world[10]};
     vr_trace::Recorder::get().camera(record,eye.eye,{world[12],world[13],world[14]});
@@ -192,7 +194,7 @@ void Sm2Probe::draw_gesture_overlay() {
     }
     auto& trace=vr_trace::Recorder::get();
     if(trace.enabled()) {
-        ImGui::Text("Playtest trace: %llu samples -> %s",static_cast<unsigned long long>(trace.samples()),trace.path().string().c_str());
+        ImGui::Text("Playtest trace: %llu samples -> %s",static_cast<unsigned long long>(trace.samples()),path_text(trace.path()).c_str());
         if(ImGui::Button("Mark moment in trace")) trace.note("marker","overlay button");
     } else ImGui::TextUnformatted("Playtest trace: off (set SM2VR_TRACE=1)");
 }

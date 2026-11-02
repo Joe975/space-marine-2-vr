@@ -235,6 +235,7 @@ inline constexpr Entry ENTRIES_EXE_6AD10FCB[]{
     {0x1e798d0,0x1e79c10,90,{}},
     {0x1e8a900,0x1e8ac40,90,{}},
     {0x1e8ac40,0x1e8af80,95,{}},
+    {0x1e8d1c0,0x1e8d500,96,{}},
     {0x1e90410,0x1e90750,91,{}},
     {0x1e92740,0x1e92a80,96,DELTA_EXE_6AD10FCB_1E92740},
     {0x1ed7ba0,0x1ed7ee0,93,{}},

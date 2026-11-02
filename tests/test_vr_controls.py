@@ -271,10 +271,15 @@ class VrControlsTests(unittest.TestCase):
         # 31 Oct 20:51:20: "there's a Y for edit squad, but I don't have that". Y is left trackpad up there.
         for text in (HUB_SCREEN, SQUAD_PANEL):
             patched = controls.patch_squad_prompt(text)
-            self.assertIn('"Edit Squad (VR: left trackpad up)"', patched)
-            self.assertEqual(patched.replace('"Edit Squad (VR: left trackpad up)"', '"UI_SQUAD_EDIT_SQUAD"'), text)
+            self.assertIn('"Squad: left pad up"', patched)
+            self.assertEqual(patched.replace('"Squad: left pad up"', '"UI_SQUAD_EDIT_SQUAD"'), text)
             with self.assertRaises(ValueError):
                 controls.patch_squad_prompt(text.replace("UI_SQUAD_EDIT_SQUAD", "UI_SQUAD_OTHER"))
+
+    def test_edit_squad_prompt_stays_on_the_corners_panel(self):
+        # 1 Nov: the 33-character prompt grew left over x 0.70 and showed "(Y) Edit Sq" at the lens edge.
+        self.assertLessEqual(len(controls.SQUAD_PROMPT), controls.SQUAD_PROMPT_MAX)
+        self.assertIn("left", controls.SQUAD_PROMPT)  # A press up on the right pad is a grenade.
 
     def test_stim_stays_on_native_dpad_right_through_the_pack(self):
         # Stim is the left trackpad's right side (VrControllerInput.h): native key 5, the game's

@@ -11,10 +11,11 @@ void require(bool value,const std::string& message) { if (!value) { throw std::r
 bool close(float a,float b) { return std::abs(a-b)<0.0001f; }
 template<class T> void write(void* object,size_t offset,const T& value) { std::memcpy(static_cast<uint8_t*>(object)+offset,&value,sizeof(T)); }
 uint64_t native_context_calls{},yaw_calls{},native_body_calls{},native_world_calls{};
+std::array<float,3> native_input{}; // The physics velocity the game's character update was handed.
 void* yaw_actor{}; float yaw_degrees{};
 __declspec(noinline) void native_update(void*,void*) { ++native_body_calls; }
 __declspec(noinline) uint8_t native_world(void*,float*) { ++native_world_calls;return 1; }
-__declspec(noinline) void native_context(void*,void*,float* out) { ++native_context_calls; out[0]=0; out[1]=-0.1f; out[2]=0; out[3]=123; out[4]=321; }
+__declspec(noinline) void native_context(void*,void* parameters,float* out) { ++native_context_calls; std::memcpy(native_input.data(),static_cast<uint8_t*>(parameters)+0xa0,sizeof native_input); out[0]=0; out[1]=-0.1f; out[2]=0; out[3]=123; out[4]=321; }
 void set_yaw(void* actor,float yaw) { ++yaw_calls; yaw_actor=actor; yaw_degrees=yaw; }
 void math() {
     {   // The head reaches body following in the Marine's metres, its rotation untouched.
@@ -52,8 +53,8 @@ void math() {
         "camera must consume only observed accepted body movement and retain the HMD position once");
     core.velocity(3,{0,0,0},0.02f,now);
     require(close(core.snapshot().consumed[0],0.01f),"blocked solver with no body displacement must not consume requested motion");
-    require(core.velocity(3,{1,0,0},0.02f,now)==VrBodyFollowing::Vector{},"first prototype must defer room catch-up while native horizontal locomotion is active");
-    settings.gain=10; core.set_settings(settings);
+    require(core.velocity(3,{1,0,0},0.02f,now)==VrBodyFollowing::Vector{},"with the stick neutral, whatever moves the Marine natively keeps it");
+    settings.gain=10; settings.max_speed=1.5f; core.set_settings(settings);
     requested=core.velocity(3,{0,0,0},0.02f,now);
     require(close(requested[0],1.5f),"live response and speed cap must change actual submitted velocity");
     settings.max_speed=0.5f; core.set_settings(settings);
@@ -1195,6 +1196,352 @@ void ground_speed() {
     require(!core.ground_speed(t+std::chrono::milliseconds(5)),"a different native body restarts the measurement (no teleport speed)");
     core.identify(2);require(!core.ground_speed(t+std::chrono::milliseconds(5)),"actor change clears the speed");
 }
+// The game step as it runs: the character update accelerates from the physics velocity it is
+// handed towards what it wants (native, at the 9 units/s^2 the 2 Nov trace shows the Marine stopping
+// at), the room velocity goes on top, collision takes what it must, and the result is the physics
+// velocity of the next step. The game's camera sits on the root unless a test moves it.
+struct RoomSim {
+    using Clock=VrBodyFollowing::Clock;using Vector=VrBodyFollowing::Vector;
+    static constexpr float SCALE=.9f,FIT=1.6f,DT=1/30.f,ACCELERATION=9;
+    static constexpr float UNITS=SCALE*FIT; // World units per metre the player walks.
+    VrBodyFollowing core;
+    Clock::time_point t=Clock::now();
+    Vector root{},physics{},wanted{},eye{},native{},room{};
+    std::array<float,2> head{}; // The player's metres from the reference, x and z.
+    float head_yaw{}; // Radians, rig snaps included: the rig turns about the head's own position.
+    uint64_t reference{1};uintptr_t actor{1};
+    bool stick{},scripted{},body_updates{true},viewer{},allowed{true};
+    std::optional<float> wall; // No world x past this.
+    float contact_jitter{};int jitter_frames{}; // How far the contact pushes the body off the wall every other step.
+    std::optional<vr_camera::Matrix> camera;
+    float native_peak{};
+    RoomSim() {core.identify(actor);core.allow(true);frame();frame();}
+    vr_camera::Matrix game() const {auto g=vr_camera::IDENTITY;g[10]=-1;g[12]=root[0];g[13]=root[1]+2.3f;g[14]=root[2];return g;}
+    vr_camera::Matrix head_matrix() const {
+        const float c=std::cos(head_yaw),s=std::sin(head_yaw);
+        vr_camera::Matrix m=vr_camera::IDENTITY;m[0]=m[10]=c;m[2]=s;m[8]=-s;m[12]=head[0];m[14]=head[1];
+        return VrBodyFollowing::marine_head(m,FIT);
+    }
+    void frame() {
+        t+=std::chrono::milliseconds(33);
+        core.identify(actor);
+        if(viewer) core.viewer_frame();
+        core.allow(allowed && !viewer);
+        core.stick(stick?1.f:0.f,0,t);
+        if(body_updates) core.body(actor,2,3,root,t);
+        if(!viewer) {
+            const auto h=head_matrix();
+            const auto anchor=core.camera(camera?*camera:game(),h,reference,SCALE,t,scripted);
+            vr_camera::Matrix world{},view{};
+            require(vr_camera::compose(anchor,h,SCALE,world,view),"the eye composes");
+            eye={world[12],world[13],world[14]};
+        }
+        if(body_updates) {
+            Vector input=physics;
+            const auto left=core.room_feedback(3,input);
+            for(int j:{0,2}) input[j]-=left[j];
+            const std::array<float,2> change{wanted[0]-input[0],wanted[2]-input[2]};
+            const float size=std::hypot(change[0],change[1]),limit=ACCELERATION*DT,part=size>limit?limit/size:1;
+            native={input[0]+change[0]*part,0,input[2]+change[1]*part};
+            native_peak=std::max(native_peak,std::hypot(native[0],native[2]));
+            room=core.velocity(3,native,DT,t);
+            Vector total{native[0]+room[0],0,native[2]+room[2]};
+            if(wall && root[0]+total[0]*DT>*wall) total[0]=std::max(0.f,(*wall-root[0])/DT);
+            root[0]+=total[0]*DT;root[2]+=total[2]*DT;physics=total;
+            if(wall && root[0]>=*wall && contact_jitter>0) root[0]-=(++jitter_frames%2)?contact_jitter:0; // The solver's push back.
+        }
+    }
+    void run(int frames) {for(int i=0;i<frames;++i) frame();}
+    // The head walks there in a straight line at metres_per_second.
+    void walk(float x,float z,float metres_per_second=1) {
+        const auto from=head;const int frames=std::max(1,int(std::hypot(x-from[0],z-from[1])/metres_per_second/DT));
+        for(int i=1;i<=frames;++i) {head={from[0]+(x-from[0])*i/frames,from[1]+(z-from[1])*i/frames};frame();}
+    }
+    float eye_off_root() const {return std::hypot(eye[0]-root[0],eye[2]-root[2]);}
+    uint64_t steps() const {return core.snapshot().room_steps;}
+    // The body is under the head and stays there: no slide, jump or offset left over.
+    void settled_under_head(const char* what) {
+        require(eye_off_root()<.01f,std::string(what)+": the eye is on the body at once, off by "+std::to_string(eye_off_root()));
+        const auto steps_then=steps();const auto at=root;
+        run(60);
+        require(steps()==steps_then && root==at && eye_off_root()<.01f,std::string(what)+": nothing slides afterwards, steps "+std::to_string(steps()-steps_then)+" moved "+std::to_string(std::hypot(root[0]-at[0],root[2]-at[2])));
+    }
+};
+void room_walking_follows_the_head() {
+    {   // A walk: the view is the head's and only the head's, and the body arrives under it.
+        RoomSim s;require(s.core.settings().room_on(),"walking in the play space is on by default");
+        for(int i=1;i<=30;++i) {
+            s.head={i/30.f,0};s.frame();
+            require(std::abs(s.eye[0]-s.head[0]*RoomSim::UNITS)<.02f && std::abs(s.eye[2])<.02f,"the view follows the head one to one while the body catches up: off by "+std::to_string(s.eye[0]-s.head[0]*RoomSim::UNITS));
+            require(s.eye_off_root()<.2f*RoomSim::SCALE+.2f,"walking, the head stays inside the body: "+std::to_string(s.eye_off_root()));
+        }
+        s.run(45);
+        require(std::abs(s.root[0]-RoomSim::UNITS)<.05f && s.eye_off_root()<.05f,"the body ends under the head: root "+std::to_string(s.root[0]));
+        require(s.root[0]<RoomSim::UNITS+.05f,"and doesn't overshoot it");
+        const auto rest=s.steps();s.run(30);require(s.steps()==rest,"then it stands still");
+        // Mutation guard: without the feedback correction the game's update carries each room step on.
+        require(s.native_peak<.001f,"the game's own update never sees the room velocity: native peaked at "+std::to_string(s.native_peak));
+    }
+    {   // Standing still: head bob, sway and looking around up to the dead zone never move the body.
+        RoomSim s;float a=0;
+        for(int i=0;i<900;++i,a+=RoomSim::DT) {s.head={.07f*std::sin(a*3)+.02f*std::sin(a*12),.05f*std::cos(a*2)};s.frame();}
+        require(s.root==RoomSim::Vector{} && s.steps()==0,"standing, sway inside the dead zone moves nothing");
+    }
+    {   // Leaning out past the dead zone and back, over and over: nothing builds up.
+        RoomSim s;
+        for(int i=0;i<10;++i) {s.walk(.3f,.1f,.6f);s.run(15);s.walk(0,0,.6f);s.run(15);}
+        require(std::hypot(s.root[0],s.root[2])<=.2f*RoomSim::SCALE+.01f && std::hypot(s.eye[0],s.eye[2])<.03f,"ten leans leave the body at the head and the view where it was");
+    }
+    {   // A step just past the dead zone runs on until the body is right under the head, then rests.
+        RoomSim s;s.walk(.13f,0,.5f);s.run(30);
+        require(s.eye_off_root()<=.05f*RoomSim::SCALE+.01f,"the catch-up finishes inside the settled distance: "+std::to_string(s.eye_off_root()));
+    }
+    {   // A slow body: the head leads, the body catches up, the speed limit holds.
+        RoomSim s;auto settings=s.core.settings();settings.max_speed=.5f;require(s.core.set_settings(settings),"slow body");
+        s.walk(1,0,1.4f);float fastest=0;
+        for(int i=0;i<30;++i) {s.frame();fastest=std::max(fastest,std::hypot(s.room[0],s.room[2]));}
+        require(close(fastest,.5f*RoomSim::SCALE),"the speed limit is the Marine's metres a second");
+    }
+    {   // Snap turns turn about the head, so nothing moves or jumps however far the head has walked.
+        RoomSim s;s.walk(1,.5f);s.run(30);const auto steps=s.steps();const auto at=s.root;const auto before=s.eye;
+        s.head_yaw=.7854f;s.frame();
+        require(std::hypot(s.eye[0]-before[0],s.eye[2]-before[2])<.001f && s.root==at && s.steps()==steps,"a snap neither jumps the view nor walks the body");
+    }
+    {   // A recenter takes the head where it stands: no slide, the eye back on the body at once.
+        RoomSim s;s.walk(.6f,.2f);s.head[0]+=.1f;s.frame(); // Mid-walk, the head ahead of the body.
+        s.reference=2;s.head={};s.frame();
+        require(s.core.snapshot().consumed==RoomSim::Vector{} && s.core.snapshot().room_error==0,"a recenter starts the room again");
+        s.settled_under_head("recenter");
+    }
+    {   // Off: the old rule, the head moves the eye and nothing else.
+        RoomSim s;auto settings=s.core.settings();settings.room_enabled=0;require(s.core.set_settings(settings),"off is valid");
+        s.walk(1,0);s.run(30);
+        require(s.root==RoomSim::Vector{} && s.steps()==0 && s.core.snapshot().consumed==RoomSim::Vector{} && close(s.eye[0],RoomSim::UNITS),"room_enabled=0 leaves the body and the view as they were");
+    }
+    {   // Not first person (allow is off in the viewer, third person and without tracking): nothing.
+        RoomSim s;s.allowed=false;s.walk(1,0);
+        require(s.root==RoomSim::Vector{} && s.steps()==0,"third-person views never walk the body");
+    }
+    // The camera guard file carries the switch and the tuning; older files keep the defaults.
+    const std::string limits="camera_radius_metres=1\ncamera_height_metres=4\n";
+    std::istringstream old{limits};const auto loaded=VrBodyFollowing::Settings::read_camera_guard(old);
+    require(loaded && loaded->room_on() && close(loaded->max_speed,2.5f) && close(loaded->deadzone,.2f),"a file without the keys walks with the defaults");
+    std::istringstream off{limits+"room_enabled=0\nroom_gain=8\nroom_max_speed=1\nroom_deadzone=.3\nroom_wall_metres=.7\n"};const auto tuned=VrBodyFollowing::Settings::read_camera_guard(off);
+    require(tuned && !tuned->room_on() && tuned->gain==8 && tuned->max_speed==1 && close(tuned->deadzone,.3f) && close(tuned->room_wall_metres,.7f),"the file turns it off and tunes it");
+    std::istringstream bad{limits+"room_deadzone=.6\nroom_wall_metres=.5\n"};require(!VrBodyFollowing::Settings::read_camera_guard(bad),"an out-of-range dead zone rejects the file");
+    std::istringstream crossed{limits+"room_deadzone=.4\nroom_wall_metres=.3\n"};require(!VrBodyFollowing::Settings::read_camera_guard(crossed),"a wall limit inside the dead zone rejects the file");
+}
+void room_walking_at_walls() {
+    {   // Head into a wall: the body stops, the view stops a lean past it, a step back moves the body at once.
+        RoomSim s;s.wall=.5f;
+        const float limit=s.core.settings().room_wall_metres*RoomSim::SCALE;
+        float jump=0;auto last=s.eye;
+        const auto watch=[&]{jump=std::max(jump,std::hypot(s.eye[0]-last[0],s.eye[2]-last[2]));last=s.eye;};
+        for(int i=1;i<=60;++i) {s.head={i/30.f,0};s.frame();watch();}
+        require(close(s.root[0],.5f) && s.core.snapshot().room_blocked,"the wall stops the body and the follower sees it");
+        require(s.eye[0]<.5f+limit+.15f,"the view stops a lean past the body, the catch-up's lag behind a walking head at most: "+std::to_string(s.eye[0]));
+        for(int i=0;i<15;++i) {s.frame();watch();}
+        require(std::abs(s.eye[0]-(.5f+limit))<.02f,"and settles at the limit: "+std::to_string(s.eye[0]));
+        require(s.core.snapshot().room_held>1,"the head movement the view didn't follow is counted");
+        // Back away: the eye comes straight back with the head, it doesn't wait for the head to retrace the wall.
+        const float eye_then=s.eye[0];
+        for(int i=59;i>=30;--i) {s.head={i/30.f,0};s.frame();watch();}
+        require(s.eye[0]<eye_then-RoomSim::UNITS*.8f,"the first step back is seen at once: "+std::to_string(eye_then-s.eye[0]));
+        for(int i=0;i<45;++i) {s.frame();watch();}
+        require(s.root[0]<.5f-.1f && s.eye_off_root()<.06f && !s.core.snapshot().room_blocked,"the body leaves the wall under the head: root "+std::to_string(s.root[0]));
+        require(jump<.1f,"nothing about the wall jumps the view: "+std::to_string(jump));
+    }
+    {   // Held against a wall the contact jitters the body. Seen in the hangar: crediting only the forward
+        // half walked the view off the wall at about 1 cm a second, with nobody moving.
+        RoomSim s;s.wall=.5f;s.contact_jitter=.003f;s.walk(.6f,0,.6f);s.run(30);
+        require(s.core.snapshot().room_blocked,"against the wall");
+        const auto before=s.eye;const auto walked=s.core.snapshot().consumed;
+        s.run(150);
+        require(std::abs(s.eye[0]-before[0])<.006f && std::abs(s.core.snapshot().consumed[0]-walked[0])<.006f,"the view stays put against a wall: "+std::to_string(s.eye[0]-before[0]));
+    }
+    {   // Diagonally into a wall: the body slides along it, and along the wall the view stays the head's.
+        RoomSim s;s.wall=.3f;
+        for(int i=1;i<=45;++i) {
+            s.head={i/30.f,i/30.f};s.frame();
+            require(std::abs(s.eye[2]-s.head[1]*RoomSim::UNITS)<.06f,"along a wall the view keeps following the head: "+std::to_string(s.eye[2]-s.head[1]*RoomSim::UNITS));
+        }
+        s.run(45);
+        require(close(s.root[0],.3f) && std::abs(s.root[2]-1.5f*RoomSim::UNITS)<.06f,"the body slides along the wall to the head: "+std::to_string(s.root[2]));
+    }
+}
+void room_walking_mixes_with_the_game() {
+    {   // The stick and a side step together: the game's movement isn't mistaken for the room's.
+        RoomSim s;s.stick=true;s.wanted={0,0,3};s.run(15);
+        s.walk(.4f,0,.4f); // 30 frames at 3 units/s forward, 0.4 m aside.
+        require(s.steps()>0 && std::abs(s.root[0]-.4f*RoomSim::UNITS)<.25f,"the step joins the stick while it runs, it doesn't wait for it: "+std::to_string(s.root[0]));
+        s.stick=false;s.wanted={};s.run(30);
+        const auto consumed=s.core.snapshot().consumed;
+        require(std::abs(consumed[2])<.03f,"the stick's distance is never consumed: "+std::to_string(consumed[2]));
+        require(std::abs(s.root[0]-.4f*RoomSim::UNITS)<.06f && s.root[2]>2.5f,"the body took both: root "+std::to_string(s.root[0])+","+std::to_string(s.root[2]));
+        require(s.eye_off_root()<.07f,"and the head is over it: "+std::to_string(s.eye_off_root()));
+    }
+    {   // An animation moving the Marine with the stick neutral keeps it; the body catches up after.
+        RoomSim s;s.wanted={2,0,0};s.run(15);const auto steps=s.steps();
+        s.walk(.4f,0,.4f);
+        require(s.steps()==steps,"nothing joins an animation's movement");
+        s.wanted={};s.run(60);
+        require(s.steps()>steps && s.eye_off_root()<.06f,"after it the body comes back under the head");
+    }
+    {   // Dodges and melee keep their root motion and facing; the head waits, then the body catches up.
+        RoomSim s;s.core.dodge(true,s.t);s.core.dodge(false,s.t);
+        s.walk(.4f,0,.4f);
+        require(s.steps()==0,"a dodge's 1.8 s stays the game's");
+        s.run(40);require(s.steps()>0 && s.eye_off_root()<.06f,"then the body follows");
+        RoomSim m;m.core.melee(true,m.t);m.core.melee(false,m.t);
+        m.walk(.2f,0,.4f);require(m.steps()==0,"so does melee's hold");
+        m.run(40);require(m.steps()>0 && m.eye_off_root()<.06f,"and it follows after that too");
+    }
+    {   // A shove against the walk isn't the room's either: what the head has walked doesn't shrink.
+        RoomSim s;s.head={.3f,0};s.frame();s.frame();
+        float most=0;
+        for(int i=0;i<12;++i) {s.head[0]+=.02f;s.root[0]-=.12f;s.frame();most=std::max(most,s.core.snapshot().consumed[0]);
+            require(s.core.snapshot().consumed[0]>=most,"a shove the other way is never credited to the walk");}
+    }
+    {   // A teleport (a checkpoint, a correction) isn't the room's movement.
+        RoomSim s;s.walk(.5f,0,1);const auto before=s.core.snapshot().consumed;s.root[2]+=20;s.frame();s.frame();
+        require(std::abs(s.core.snapshot().consumed[2]-before[2])<.01f,"a teleport isn't consumed");
+    }
+}
+// Back from everything that isn't first person, the body is under the head at once. Each starts
+// after a 1.2 m walk, so the head is far from where the reference left it: the leftovers are metres.
+void room_returns_under_the_head() {
+    const auto walked=[](RoomSim& s){s.walk(1,.6f);s.run(45);};
+    const auto pulled=[](const RoomSim& s,float seconds){return VrBodyFollowing::pulled_back(s.game(),s.root,RoomSim::SCALE,seconds);};
+    const auto held=[](const RoomSim& s){return s.core.snapshot().camera_mode==VrBodyFollowing::CameraMode::takeover;};
+    const auto first_person=[](const RoomSim& s){return s.core.snapshot().camera_mode==VrBodyFollowing::CameraMode::body && s.core.snapshot().anchored;};
+    {   // An execution, gun strike, rock kick or get-up: the takeover hold. The Marine moves, the player steps aside.
+        RoomSim s;walked(s);const auto before=s.eye;float seconds=0;
+        s.camera=pulled(s,seconds);s.frame();
+        require(held(s) && std::hypot(s.eye[0]-before[0],s.eye[2]-before[2])<.06f,"a hold starts where first person was, however far the head has walked: "+std::to_string(std::hypot(s.eye[0]-before[0],s.eye[2]-before[2])));
+        const auto dropped=s.head;
+        for(int i=0;i<60;++i) {seconds+=RoomSim::DT;s.root[0]+=.03f;s.head[1]+=.002f;s.camera=pulled(s,seconds);s.frame();require(held(s),"the hold lasts");}
+        require(s.head!=dropped,"the player moved meanwhile");
+        s.camera.reset();
+        for(int i=0;i<60 && !first_person(s);++i) s.frame();
+        require(first_person(s) && s.core.snapshot().room_rebases>0,"the hold ends and the return takes the head where it stands");
+        s.settled_under_head("takeover");
+    }
+    {   // The stick's early return: first person with the game's camera still out.
+        RoomSim s;walked(s);float seconds=0;
+        s.camera=pulled(s,seconds);s.frame();require(held(s),"held");
+        s.head[0]+=.1f; // A step during the hold.
+        s.stick=true;s.core.stick(1,0,s.t);
+        for(int i=0;i<30 && held(s);++i) {
+            seconds+=RoomSim::DT;
+            // The Marine walks along the stick: x is the game camera's right, world +x here.
+            s.root[0]+=3*RoomSim::DT;s.camera=pulled(s,seconds);s.frame();
+        }
+        require(s.core.snapshot().releases==1 && s.core.snapshot().released,"the stick takes the Marine back");
+        require(s.eye_off_root()<.02f,"on the body at once, not where the step left it: "+std::to_string(s.eye_off_root()));
+        const auto steps=s.steps();s.stick=false;s.camera.reset();s.run(60);
+        require(first_person(s) && s.eye_off_root()<.02f && s.steps()==steps,"and when the game's camera comes back nothing moves");
+    }
+    {   // An animation that has run and settled ends its hold the same way.
+        RoomSim s;walked(s);float seconds=0;
+        s.camera=pulled(s,seconds);s.frame();require(held(s),"held");
+        s.head[1]+=.1f;
+        const auto pose=[&](float height){s.core.character_motion({s.t,1,{std::array<float,3>{s.root[0],height,s.root[2]},std::array<float,3>{0,height,0},std::array<float,3>{1,height,0},std::array<float,3>{-1,height,0}}});};
+        for(int i=0;i<10;++i) {seconds+=RoomSim::DT;pose(i*.1f);s.camera=pulled(s,seconds);s.frame();}
+        for(int i=0;i<30 && held(s);++i) {seconds+=RoomSim::DT;pose(1);s.camera=pulled(s,seconds);s.frame();}
+        require(s.core.snapshot().still_releases==1,"the settled animation hands back");
+        require(s.eye_off_root()<.02f,"under the head: "+std::to_string(s.eye_off_root()));
+    }
+    {   // The jump pack: the eye rides on the Marine, the player leans, and the landing blends back.
+        RoomSim s;walked(s);float seconds=0;
+        s.camera=pulled(s,seconds);s.frame();require(held(s),"held");
+        for(int i=0;i<30;++i) {seconds+=RoomSim::DT;s.root[0]+=16*RoomSim::DT;s.camera=pulled(s,seconds);s.frame();}
+        require(s.core.snapshot().riding,"the eye rides");
+        require(s.eye_off_root()<.05f,"on the Marine, not where the head started: "+std::to_string(s.eye_off_root()));
+        s.head[0]+=.15f;
+        s.camera=pulled(s,seconds);s.run(20); // The landing: 400 ms under the ride speed.
+        require(!s.core.snapshot().riding,"the ride ends");
+        s.camera.reset();
+        for(int i=0;i<60 && !first_person(s);++i) s.frame();
+        require(first_person(s),"first person again");
+        s.run(30); // The blend from the last eye decays in 0.12 s.
+        s.settled_under_head("jump pack");
+    }
+    {   // A far camera (a remote shot, a respawn view): the eye keeps the game's camera, not the walk, then returns.
+        RoomSim s;walked(s);auto shot=s.game();shot[12]+=30;shot[14]-=12;s.camera=shot;s.frame();
+        require(s.core.snapshot().camera_mode==VrBodyFollowing::CameraMode::external,"external");
+        require(std::hypot(s.eye[0]-shot[12],s.eye[2]-shot[14])<.06f,"the walked distance doesn't sit on top of the game's camera: "+std::to_string(std::hypot(s.eye[0]-shot[12],s.eye[2]-shot[14])));
+        s.head[0]+=.2f;s.frame();s.camera.reset();s.frame();
+        require(first_person(s),"back");
+        s.settled_under_head("external camera");
+    }
+    {   // A story cutscene held at its spot, the Marine moved far away by it, the player wandering.
+        RoomSim s;walked(s);const auto before=s.eye;
+        s.scripted=true;s.camera=s.game();s.frame();
+        require(s.core.snapshot().cutscene_hold && std::hypot(s.eye[0]-before[0],s.eye[2]-before[2])<.06f,"the cutscene holds the last first-person spot");
+        s.root={40,-530,12};s.head={.3f,1};s.camera=s.game();s.run(60);
+        s.scripted=false;s.camera.reset();s.frame();
+        require(first_person(s),"gameplay again");
+        s.settled_under_head("cutscene");
+    }
+    {   // The same with the hold off: the game's cinematic camera.
+        RoomSim s;walked(s);auto settings=s.core.settings();settings.cutscene_hold=false;require(s.core.set_settings(settings),"native cutscenes");
+        s.scripted=true;auto shot=s.game();shot[12]+=9;s.camera=shot;s.frame();
+        require(std::hypot(s.eye[0]-shot[12],s.eye[2]-shot[14])<.06f,"the cinematic camera shows without the walked distance: "+std::to_string(std::hypot(s.eye[0]-shot[12],s.eye[2]-shot[14])));
+        s.head={.2f,.2f};s.run(30);s.scripted=false;s.camera.reset();s.frame();
+        s.settled_under_head("native cutscene");
+    }
+    {   // Camera mode, frozen or not: the player walks round the Marine and comes back to it.
+        RoomSim s;walked(s);s.viewer=true;s.run(10);s.head={1.8f,-.4f};s.run(120);s.viewer=false;s.frame();
+        require(first_person(s) && s.core.snapshot().room_rebases>0,"the game's own state never changed, so only the viewer can say");
+        s.settled_under_head("camera mode");
+    }
+    {   // Camera mode with the game let go (Right A): the execution ends with the Marine elsewhere
+        // and the game's camera still out, so the view comes back through the hold, on the Marine.
+        RoomSim s;walked(s);s.viewer=true;s.run(5);
+        s.root={6,0,-3};s.head={1.5f,.2f};s.camera=pulled(s,0);s.run(40);s.viewer=false;s.frame();
+        require(held(s),"the takeover rules hand the view back");
+        require(s.eye_off_root()<.02f,"the hold starts on the Marine, not where the head walked: "+std::to_string(s.eye_off_root()));
+        s.camera.reset();
+        for(int i=0;i<60 && !first_person(s);++i) s.frame();
+        require(first_person(s),"first person again");
+        s.settled_under_head("camera mode play");
+    }
+    {   // Camera mode entered from a hold, as on 2 Nov at 08:10:52: back in the hold, then first person.
+        RoomSim s;walked(s);float seconds=0;s.camera=pulled(s,seconds);s.frame();require(held(s),"held");
+        s.viewer=true;s.head={.2f,1.2f};s.run(40);s.viewer=false;s.frame();
+        s.camera.reset();
+        for(int i=0;i<60 && !first_person(s);++i) s.frame();
+        require(first_person(s),"first person again");
+        s.settled_under_head("camera mode from a hold");
+    }
+    {   // A hitch or a load: no body positions for a while, the game's camera shows, then the same.
+        RoomSim s;walked(s);s.body_updates=false;s.run(6);
+        require(s.core.snapshot().camera_mode==VrBodyFollowing::CameraMode::unavailable,"no body, no anchor");
+        require(s.eye_off_root()<.06f,"the walked distance doesn't throw the eye off the game's camera: "+std::to_string(s.eye_off_root()));
+        s.head[0]+=.2f;s.run(3);s.body_updates=true;s.frame();
+        require(first_person(s),"back");
+        s.settled_under_head("hitch");
+    }
+    {   // A recenter under a game camera (a far shot, or the hold off): the old walk must not stay on it.
+        RoomSim s;walked(s);auto settings=s.core.settings();settings.cutscene_hold=false;require(s.core.set_settings(settings),"native cutscenes");
+        s.scripted=true;s.camera=s.game();s.frame();s.reference=2;s.head={};s.frame();
+        require(s.eye_off_root()<.001f,"a recenter takes the walk off the game's camera too: "+std::to_string(s.eye_off_root()));
+    }
+    {   // A new character with no body position yet: the game's camera, still without the walk.
+        RoomSim s;walked(s);s.actor=7;s.body_updates=false;s.frame();
+        require(s.eye_off_root()<.06f,"the walk stays off the game's camera across a change of character: "+std::to_string(s.eye_off_root()));
+    }
+    {   // A respawn or a class change: a new character, the head still where it walked to.
+        RoomSim s;walked(s);s.actor=7;s.root={5,0,5};s.frame();s.frame();
+        require(first_person(s),"the new character anchors");
+        s.settled_under_head("new character");
+    }
+    {   // Room walking off: returns keep the rule from before, the head's offset stays.
+        RoomSim s;auto settings=s.core.settings();settings.room_enabled=0;require(s.core.set_settings(settings),"off");
+        s.head={.5f,0};s.frame();s.viewer=true;s.run(5);s.viewer=false;s.frame();
+        require(close(s.eye_off_root(),.5f*RoomSim::UNITS) && s.core.snapshot().room_rebases==0,"off, a return changes nothing");
+    }
+}
 void detours() {
     auto& probe=EngineBodyProbe::get(); auto& follow=EngineBodyFollowing::get();native_cutscenes(follow);
     require(probe.install(reinterpret_cast<void*>(&native_update),reinterpret_cast<void*>(&native_world),0x140000000,0x5000000),"native ownership hooks must install");
@@ -1246,8 +1593,35 @@ void detours() {
     write(body.data(),0x578,0.02f); std::array<float,8> output{};
     void(*volatile update)(void*,void*,float*)=native_context;
     update(&context,body.data()+0x4f0,output.data());
-    require(native_context_calls==1 && follow.snapshot().matched_contexts==1 && output[1]==-0.1f && output[3]==123 && output[4]==321,
-        "context detour must identify exact body-owned context/parameters and preserve native velocity/remaining output with room mode off");
+    require(follow.settings().room_on() && native_context_calls==1 && follow.snapshot().matched_contexts==1 && output[1]==-0.1f && output[3]==123 && output[4]==321,
+        "context detour must identify exact body-owned context/parameters and preserve native velocity/remaining output with the head at rest");
+    {   // A room step on the real detour: added to the output, the update's input corrected and restored.
+        const auto yaws=yaw_calls;const auto updates=native_body_calls; // This block's own ticks don't count below.
+        auto walking=eye;walking.reference_epoch=2;walking.captured=std::chrono::steady_clock::now(); // A recenter ends the hold above.
+        follow.camera(game,walking);
+        walking.relative_head[12]=1;
+        const auto input=[&]{std::array<float,3> v{};std::memcpy(v.data(),body.data()+0x4f0+0xa0,sizeof v);return v;};
+        const auto input_is=[&](const std::array<float,3>& v){write(body.data(),0x4f0+0xa0,v);};
+        follow.camera(game,walking);tick(body.data(),args.data());
+        std::fill(output.begin(),output.end(),0.f);
+        update(&context,body.data()+0x4f0,output.data());
+        const std::array<float,3> room{output[0],0,output[2]};
+        require(std::hypot(room[0],room[2])>.1f && output[1]==-0.1f && output[3]==123 && output[4]==321,"the room velocity joins the output's horizontal only");
+        require(follow.snapshot().follow.requested==room,"the snapshot shows what was sent");
+        input_is(room); // The physics body took it.
+        tick(body.data(),args.data());
+        update(&context,body.data()+0x4f0,output.data());
+        require(std::hypot(native_input[0],native_input[2])<1e-5f,"the game's update never sees last step's room velocity");
+        require(input()==room,"and the field goes back as the game wrote it");
+        const std::array<float,3> kept{.25f*(output[0]),0,.25f*(output[2])};
+        input_is(kept); // A wall took most of it.
+        tick(body.data(),args.data());
+        update(&context,body.data()+0x4f0,output.data());
+        require(std::hypot(native_input[0],native_input[2])<1e-5f && input()==kept,"only what survived the collision comes off");
+        input_is({0,0,0});
+        follow.camera(game,eye);
+        yaw_calls=yaws;native_body_calls=updates;
+    }
     follow.allow(false); tick(body.data(),args.data()); require(yaw_calls==1,"focus/tracking/neutral gate must stop further native facing");
     require(native_body_calls==7,"body following must preserve every original native body update");
     require(!probe.active_actor(std::chrono::steady_clock::now()+std::chrono::milliseconds(101)),"expired root ownership must not select an actor");
@@ -1264,5 +1638,5 @@ void detours() {
     follow.uninstall(); probe.uninstall();
 }
 }
-int main(int argc,char** argv) { try { if(argc>1) camera_guard_file(argv[1]); if(argc>2) takeover_replay(argv[2]); if(argc>3) combo_replay(argv[3]); math(); dodge_facing_authority(); movement_camera_frames(); gaze_steered_native_camera(); head_placement_turns(); turn_threshold(); melee_facing(); external_camera_handover(); dodge_camera_recovery(); animation_takeover_holds_place(); animation_takeover_levels(); animation_takeover_head(); animation_takeover_return(); takeover_stick_follows_view(); takeover_early_return(); takeover_settled_return(); combo_stays_first_person(); jump_pack_rides_along(); height_lead_on_slopes(); cutscene_holds_trigger_spot(); native_cinematic_state(); close_scripted_handover(); scripted_heading_sweep(); ground_speed(); detours(); std::cout << "camera-owned native facing, reference isolation and accepted room-motion bookkeeping passed\n"; return 0; }
+int main(int argc,char** argv) { try { if(argc>1) camera_guard_file(argv[1]); if(argc>2) takeover_replay(argv[2]); if(argc>3) combo_replay(argv[3]); math(); dodge_facing_authority(); movement_camera_frames(); gaze_steered_native_camera(); head_placement_turns(); turn_threshold(); melee_facing(); external_camera_handover(); dodge_camera_recovery(); animation_takeover_holds_place(); animation_takeover_levels(); animation_takeover_head(); animation_takeover_return(); takeover_stick_follows_view(); takeover_early_return(); takeover_settled_return(); combo_stays_first_person(); jump_pack_rides_along(); room_walking_follows_the_head(); room_walking_at_walls(); room_walking_mixes_with_the_game(); room_returns_under_the_head(); height_lead_on_slopes(); cutscene_holds_trigger_spot(); native_cinematic_state(); close_scripted_handover(); scripted_heading_sweep(); ground_speed(); detours(); std::cout << "camera-owned native facing, reference isolation and accepted room-motion bookkeeping passed\n"; return 0; }
 catch (const std::exception& error) { std::cerr << error.what() << '\n'; return 1; } }

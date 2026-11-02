@@ -82,6 +82,27 @@ class TraceAnalysisTests(unittest.TestCase):
         self.assertTrue(any("body scale: 1 recenter(s) not measured (t=0.6 crouched)" in w for w in report["warnings"]))
         self.assertIn("eye heights 1.45; final factor 1.134", module.text(report, events, False))
 
+    def test_room_walking_summary(self):
+        def walking(t, steps, error, blocked=False, held=0.0, rebases=1, rebased=0.4):
+            s = sample(t)
+            s["camera"].update({"anchored": True, "room_steps": steps, "room_error_metres": error, "room_blocked": blocked,
+                                "room_held_metres": held, "room_rebases": rebases, "room_rebased_metres": rebased, "room_consumed": [0, 0, 0]})
+            return s
+        records = [HEADER, walking(0, 10, 0.1), walking(1, 40, 0.3, blocked=True, held=0.25), walking(2, 40, 0.1, held=0.5, rebases=3, rebased=0.9)]
+        report, events = module.analyse(lines(records))
+        room = report["room_walking"]
+        self.assertEqual((room["steps"], room["rebases"]), (30, 2))
+        self.assertAlmostEqual(room["held_metres"], 0.5)
+        self.assertAlmostEqual(room["largest_rebase_metres"], 0.9)
+        self.assertAlmostEqual(room["blocked_share"], 1 / 3)
+        self.assertAlmostEqual(room["head_from_body_metres"]["max"], 0.3)
+        self.assertIn("play space walking: 30 steps", module.text(report, events, False))
+
+    def test_room_walking_absent_from_old_traces(self):
+        report, events = module.analyse(lines([HEADER, sample(0), sample(1)]))
+        self.assertIsNone(report["room_walking"])
+        self.assertNotIn("play space walking", module.text(report, events, False))
+
     def test_weapon_that_floats_after_a_switch_is_named(self):
         def with_weapons(t, pistol_distance, pistol_moved):
             s = sample(t)

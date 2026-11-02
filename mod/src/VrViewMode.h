@@ -18,11 +18,11 @@ enum class VrViewMode { first_person, diorama, shoulder, chase };
 struct VrViewSettings {
     VrViewMode mode{VrViewMode::first_person};
     float diorama_scale{10}, diorama_distance{0.5f}, diorama_height{0.6f}, diorama_pitch{0}, diorama_follow{0}, diorama_recenter{1.5f};
-    float shoulder_distance{2}, shoulder_height{0.25f}, shoulder_side{0.4f};
+    float shoulder_distance{2}, shoulder_height{0.25f}, shoulder_side{0.4f}, shoulder_scale{1};
     float chase_scale{1};
     struct Parameter { const char* name; float VrViewSettings::*field; float initial,minimum,maximum; const char* unit; };
     inline static constexpr float DEFAULT_DIORAMA_SCALE=10;
-    inline static constexpr std::array<Parameter,10> PARAMETERS{{
+    inline static constexpr std::array<Parameter,11> PARAMETERS{{
         {"diorama_scale",&VrViewSettings::diorama_scale,DEFAULT_DIORAMA_SCALE,2,40,"world scale multiplier"},
         {"diorama_distance",&VrViewSettings::diorama_distance,0.5f,0.25f,3,"physical metres"},
         {"diorama_height",&VrViewSettings::diorama_height,0.6f,0,2,"physical metres above native head camera"},
@@ -31,9 +31,11 @@ struct VrViewSettings {
         {"diorama_follow",&VrViewSettings::diorama_follow,0,0,5,"physical metres the Marine walks before the table slides back under you (0 off)"},
         // At the default scale: a fixed walk in the game world, so it stays the same part of the map at any scale.
         {"diorama_recenter",&VrViewSettings::diorama_recenter,1.5f,0,5,"physical metres at the default diorama_scale the Marine walks before a recenter (0 off)"},
-        {"shoulder_distance",&VrViewSettings::shoulder_distance,2,0.25f,5,"life-size metres behind native head camera"},
-        {"shoulder_height",&VrViewSettings::shoulder_height,0.25f,-0.5f,2,"life-size metres"},
-        {"shoulder_side",&VrViewSettings::shoulder_side,0.4f,-1.5f,1.5f,"life-size metres right"},
+        {"shoulder_distance",&VrViewSettings::shoulder_distance,2,0.25f,5,"metres at shoulder_scale 1 behind native head camera"},
+        {"shoulder_height",&VrViewSettings::shoulder_height,0.25f,-0.5f,2,"metres at shoulder_scale 1"},
+        {"shoulder_side",&VrViewSettings::shoulder_side,0.4f,-1.5f,1.5f,"metres right at shoulder_scale 1"},
+        // Stops well short of the diorama's 40: the camera follows the Marine and doesn't stop at walls (Joe, 2 Nov).
+        {"shoulder_scale",&VrViewSettings::shoulder_scale,1,0.5f,4,"world scale multiplier"},
         {"chase_scale",&VrViewSettings::chase_scale,1,0.5f,20,"world scale multiplier"}}};
     // Gamepad Back + D-pad (third person): one press changes the world scale by this factor.
     inline static constexpr float SCALE_STEP=1.41421356f;
@@ -52,12 +54,12 @@ struct VrViewSettings {
     static VrViewMode next(VrViewMode mode) {
         return mode==VrViewMode::first_person?VrViewMode::diorama:mode==VrViewMode::diorama?VrViewMode::shoulder:VrViewMode::first_person;
     }
-    float scale(float life_size) const { return life_size*(mode==VrViewMode::diorama?diorama_scale:mode==VrViewMode::chase?chase_scale:1); }
+    float scale(float life_size) const { return life_size*(mode==VrViewMode::diorama?diorama_scale:mode==VrViewMode::shoulder?shoulder_scale:mode==VrViewMode::chase?chase_scale:1); }
     // steps>0 makes the world bigger (a smaller multiplier), steps<0 smaller, within the mode's
-    // range and rounded to 0.01 so the saved file stays readable. Diorama and chase only: the
-    // shoulder view stays life-size. False when nothing changed.
+    // range and rounded to 0.01 so the saved file stays readable. Third person only. False when
+    // nothing changed.
     bool resize_world(int steps) {
-        float VrViewSettings::* field=mode==VrViewMode::diorama?&VrViewSettings::diorama_scale:mode==VrViewMode::chase?&VrViewSettings::chase_scale:nullptr;
+        float VrViewSettings::* field=mode==VrViewMode::diorama?&VrViewSettings::diorama_scale:mode==VrViewMode::shoulder?&VrViewSettings::shoulder_scale:mode==VrViewMode::chase?&VrViewSettings::chase_scale:nullptr;
         if(!field || !steps) return false;
         const auto& p=*std::ranges::find(PARAMETERS,field,&Parameter::field);
         const float value=std::clamp(std::round(this->*field*std::pow(SCALE_STEP,float(-steps))*100)/100,p.minimum,p.maximum);
@@ -85,7 +87,8 @@ struct VrViewSettings {
             if(i==PARAMETERS.size() || seen[i] || !(value>>result.*PARAMETERS[i].field) || !(value>>std::ws).eof()) return {};
             seen[i]=true;
         }
-        for(bool found:seen) if(!found) return {};
+        // shoulder_scale came after the first release: a player's saved file without it keeps its other knobs.
+        for(size_t i=0;i<seen.size();++i) if(!seen[i] && PARAMETERS[i].field!=&VrViewSettings::shoulder_scale) return {};
         return input.eof() && mode_seen && result.valid()?std::optional{result}:std::nullopt;
     }
     static std::optional<VrViewSettings> load(const std::filesystem::path& path) { std::ifstream input{path};return read(input); }
@@ -149,7 +152,7 @@ public:
             m_state.anchored=false;return game;
         }
         for(float p:focus->position) if(!std::isfinite(p) || std::abs(p)>1000000) {m_state.anchored=false;return game;}
-        const auto life_size=eye_scale/(settings.mode==VrViewMode::diorama?settings.diorama_scale:1);
+        const auto life_size=eye_scale/(settings.mode==VrViewMode::diorama?settings.diorama_scale:settings.shoulder_scale);
         const bool discontinuity=m_state.anchored && std::hypot(focus->position[0]-m_position[0],focus->position[1]-m_position[1],focus->position[2]-m_position[2])>10*life_size;
         const bool changed=!m_state.anchored || reference!=m_reference || focus->actor!=m_actor || settings!=m_settings || discontinuity;
         m_position=focus->position;

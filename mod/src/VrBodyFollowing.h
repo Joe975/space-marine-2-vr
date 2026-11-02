@@ -11,8 +11,9 @@
 #include <iomanip>
 
 // Simulation-independent bookkeeping. Physical movement is submitted as velocity; only
-// observed accepted body displacement is removed from the camera anchor. Native locomotion
-// pauses room catch-up until its horizontal velocity is neutral (mixed movement is pending).
+// observed accepted body displacement is removed from the camera anchor (Snapshot::consumed).
+// Stick locomotion mixes with it; animations pause it. Every return to first person from a view
+// that isn't the Marine's places the body under the head at once (docs/BODY_FOLLOWING.md).
 class VrBodyFollowing {
 public:
     using Clock = std::chrono::steady_clock;
@@ -26,10 +27,21 @@ public:
     // the air. Never a takeover hold, a cutscene or an external camera.
     static bool gaze_steers(CameraMode mode,bool anchored){return (mode==CameraMode::body && anchored) || mode==CameraMode::ride;}
     struct Settings {
+        // Walking in the play space (docs/BODY_FOLLOWING.md, Joe 2 Nov). Lengths are the Marine's
+        // metres, 1.6 of the player's at the first-person scale, as everywhere in this class.
         float gain{12}; // [1,30] per second, room-position catch-up response.
-        float max_speed{1.5f}; // [0.1,3] physical metres/second.
-        float deadzone{0.02f}; // [0,0.15] physical metres of lean before body catch-up.
-        bool room_enabled{false}; // Enable after native velocity/collision comparison.
+        // [0.1,3] metres/second. 2.5 is 1.55 physical m/s: Joe's head passed 1.0 for 0.1% of the
+        // 2 Nov run and peaked at 1.49.
+        float max_speed{2.5f};
+        // [0,0.4] metres the head may stray from the body before it follows, and it then follows
+        // until within ROOM_SETTLED. 0.2 is 12.5 cm of the player's: 19 of 20 two-second stretches
+        // of standing play on 2 Nov stayed inside that, head bob and looking around included.
+        float deadzone{.2f};
+        float room_enabled{1}; // 0 off; on from 0.5, so the overlay's slider reads as a switch.
+        // [0.2,1.5] metres. Against a wall the head may lean this far past the body, then the view
+        // stops there, so the eye doesn't go through the wall.
+        float room_wall_metres{.5f};
+        bool room_on() const {return room_enabled>=.5f;}
         float camera_radius_metres{1}; // [0.4,2] first-person horizontal envelope.
         float camera_height_metres{4}; // [2,6] absolute camera-to-body height envelope.
         // Animation takeovers (docs/ANIMATION_CAMERA.md). Instead of riding the game's
@@ -106,7 +118,7 @@ public:
         struct Parameter {const char* name;float Settings::* field;float minimum,maximum;};
         // The camera guard file and overlay. Only the two limits are required in the file; the
         // rest keep their defaults when absent, so older files still load.
-        inline static constexpr std::array<Parameter,12> CAMERA_PARAMETERS{{
+        inline static constexpr std::array<Parameter,17> CAMERA_PARAMETERS{{
             {"camera_radius_metres",&Settings::camera_radius_metres,.4f,2},
             {"camera_height_metres",&Settings::camera_height_metres,2,6},
             {"turn_threshold_degrees",&Settings::turn_threshold_degrees,0,90},
@@ -118,10 +130,17 @@ public:
             {"combo_camera_radius_metres",&Settings::combo_camera_radius_metres,0,4},
             {"combo_strikes",&Settings::combo_strikes,2,8},
             {"combo_gap_seconds",&Settings::combo_gap_seconds,.5f,3},
-            {"combo_camera_seconds",&Settings::combo_camera_seconds,1,10}}};
+            {"combo_camera_seconds",&Settings::combo_camera_seconds,1,10},
+            {"room_enabled",&Settings::room_enabled,0,1},
+            {"room_gain",&Settings::gain,1,30},
+            {"room_max_speed",&Settings::max_speed,.1f,3},
+            {"room_deadzone",&Settings::deadzone,0,.4f},
+            {"room_wall_metres",&Settings::room_wall_metres,.2f,1.5f}}};
         bool valid() const { return std::isfinite(gain) && gain >= 1 && gain <= 30 &&
             std::isfinite(max_speed) && max_speed >= 0.1f && max_speed <= 3 &&
-            std::isfinite(deadzone) && deadzone >= 0 && deadzone <= 0.15f &&
+            std::isfinite(deadzone) && deadzone >= 0 && deadzone <= 0.4f &&
+            std::isfinite(room_enabled) && room_enabled>=0 && room_enabled<=1 &&
+            std::isfinite(room_wall_metres) && room_wall_metres>=.2f && room_wall_metres<=1.5f && room_wall_metres>=deadzone &&
             std::isfinite(camera_radius_metres) && camera_radius_metres>=0.4f && camera_radius_metres<=2 &&
             std::isfinite(camera_height_metres) && camera_height_metres>=2 && camera_height_metres<=6 &&
             std::isfinite(head_clear_metres) && head_clear_metres>=.2f && head_clear_metres<=1.5f &&
@@ -183,7 +202,12 @@ public:
         uint64_t still_releases{};
         // Combos that kept first person past the envelope so far, and whether one does now
         // (Settings::combo_camera_radius_metres).
-        uint64_t combos{}; bool combo_camera{}; };
+        uint64_t combos{}; bool combo_camera{};
+        // Walking in the play space. consumed: the head's movement the body has taken over (world
+        // units). room_blocked: something stops the body taking it (a wall). room_held: metres of
+        // head movement the view has not followed against walls so far. room_rebases: returns to
+        // first person that put the body under the head; room_rebased: what the last one dropped (metres).
+        bool room_blocked{}; float room_held{}; uint64_t room_rebases{}; float room_rebased{}; };
     bool set_settings(const Settings& settings) { if (!settings.valid()) { return false; } m_settings = settings; return true; }
     Settings settings() const { return m_settings; }
     void camera_authority(std::optional<bool> scripted) {
@@ -263,7 +287,7 @@ public:
     }
     // Called with the camera root's current exact actor identity; a changed owner clears all
     // prior motion/pose state. The adapter never keeps dereferenceable actor pointers here.
-    void identify(uintptr_t actor) { if (m_state.actor != actor) { m_dodge_pressed=false;m_dodge_until={};m_melee_pressed=false;m_melee_until={};m_native_yaw_received={};clear_combo();m_keep_placement=false;m_resume=m_resume || m_state.anchored || m_state.camera_mode==CameraMode::external || m_state.camera_mode==CameraMode::takeover || m_state.camera_mode==CameraMode::ride;const auto turns=m_state.turns,steps=m_state.room_steps,transitions=m_state.camera_transitions,takeovers=m_state.takeovers,melee_holds=m_state.melee_holds,rides=m_state.rides,releases=m_state.releases,still_releases=m_state.still_releases,combos=m_state.combos; m_state={}; m_state.actor=actor; m_state.turns=turns;m_state.combos=combos;m_state.melee_holds=melee_holds;m_state.rides=rides;m_state.releases=releases;m_state.still_releases=still_releases;m_release.reset();m_blend_pending=false;m_blend_at={};m_last_eye_at={}; m_state.room_steps=steps;m_state.camera_transitions=transitions;m_state.takeovers=takeovers; m_pending.reset();m_takeover.reset(); m_reference=0; m_body_received={};m_head_received={};m_head_bone_received={};m_eye_received={}; } }
+    void identify(uintptr_t actor) { if (m_state.actor != actor) { m_dodge_pressed=false;m_dodge_until={};m_melee_pressed=false;m_melee_until={};m_native_yaw_received={};clear_combo();m_keep_placement=false;m_resume=m_resume || m_state.anchored || m_state.camera_mode==CameraMode::external || m_state.camera_mode==CameraMode::takeover || m_state.camera_mode==CameraMode::ride;const auto turns=m_state.turns,steps=m_state.room_steps,transitions=m_state.camera_transitions,takeovers=m_state.takeovers,melee_holds=m_state.melee_holds,rides=m_state.rides,releases=m_state.releases,still_releases=m_state.still_releases,combos=m_state.combos,room_rebases=m_state.room_rebases;const auto consumed=m_state.consumed;const float room_held=m_state.room_held; m_state={}; m_state.actor=actor; m_state.consumed=consumed;m_state.room_held=room_held;m_state.room_rebases=room_rebases; m_state.turns=turns;m_state.combos=combos;m_state.melee_holds=melee_holds;m_state.rides=rides;m_state.releases=releases;m_state.still_releases=still_releases;m_release.reset();m_blend_pending=false;m_blend_at={};m_last_eye_at={}; m_state.room_steps=steps;m_state.camera_transitions=transitions;m_state.takeovers=takeovers; m_pending.reset();m_takeover.reset(); m_reference=0; m_body_received={};m_head_received={};m_head_bone_received={};m_eye_received={}; } }
     void body(uintptr_t actor,uintptr_t object,uintptr_t context,const Vector& position,Clock::time_point now) {
         if (!actor || actor != m_state.actor || !finite(position)) { return; }
         if (m_state.body && object != m_state.body) { suspend(CameraMode::unavailable); }
@@ -279,7 +303,8 @@ public:
             m_vertical_speed=elapsed<=0.5f?std::optional{(position[1]-m_speed_position[1])/elapsed}:std::nullopt;
             m_speed_from=now;m_speed_position=position;
         }
-        m_state.body=object; m_state.context=context; m_position=position; m_body_received=now;
+        m_state.body=object; m_state.context=context; m_position=position; m_body_received=now;++m_body_updates;
+        settle_room(); // Here, or the eye drawn before the next game step would be a step ahead.
     }
     // Horizontal speed of the followed native body in world units/second, measured
     // from its own positions; nullopt until measured or when the body is not fresh.
@@ -338,18 +363,20 @@ public:
 private:
     vr_camera::Matrix view(const vr_camera::Matrix& game,const vr_camera::Matrix& head,
         uint64_t reference,float scale,Clock::time_point now,std::optional<bool> scripted) {
+        // A new reference starts the room again where the head is.
+        if(reference!=m_room_reference) {m_room_reference=reference;m_state.consumed={};}
         if(!scripted || *scripted) {
             if(scripted && m_settings.cutscene_hold && std::isfinite(scale) && scale>=.01f && scale<=100 && vr_camera::rigid(head)) {
                 if(!m_cutscene)begin_cutscene(now);
                 if(m_cutscene) {camera_authority(scripted);m_state.cutscene_hold=true;m_state.show_head=true;
                     auto anchor=m_cutscene->basis;for(int j=0;j<3;++j)anchor[12+j]=m_cutscene->eye[j];return anchor;}
             }
-            m_cutscene.reset();m_state.cutscene_hold=false;camera_authority(scripted);return game;
+            m_cutscene.reset();m_state.cutscene_hold=false;camera_authority(scripted);return native(game);
         }
         // Gameplay again: first person re-anchors on the character as after any native camera.
         m_cutscene.reset();m_state.cutscene_hold=false;
         if (!m_state.actor || !m_state.body || !fresh(m_body_received,now) || !vr_camera::rigid(game,false) ||
-            !vr_camera::rigid(head) || !std::isfinite(scale) || scale < 0.01f || scale > 100) { suspend(CameraMode::unavailable);return game; }
+            !vr_camera::rigid(head) || !std::isfinite(scale) || scale < 0.01f || scale > 100) { suspend(CameraMode::unavailable);return native(game); }
         m_state.camera_radius=std::hypot(game[12]-m_position[0],game[14]-m_position[2])/scale;
         m_state.camera_height=(game[13]-m_position[1])/scale;
         // A known local dodge briefly leaves the normal 1m envelope (observed
@@ -365,7 +392,7 @@ private:
             // A recenter or scale change calibrates anew through the ordinary path below.
             if(m_reference!=reference || m_scale!=scale || !m_settings.takeover_enabled) m_takeover.reset();
             // Riding, the eye is on the Marine whatever the game's camera does (it trails a fast flight).
-            else if(remote && !m_takeover->riding) {suspend(CameraMode::external);return game;}
+            else if(remote && !m_takeover->riding) {suspend(CameraMode::external);return native(game);}
             // A takeover that rode (the jump pack) hands back to first person without a cut.
             else if(!takeover_continues(outside,now)) {m_blend_pending=m_takeover->rode;m_takeover.reset();}
             // The game gave control back (the Marine walks where the stick says): first person now,
@@ -385,8 +412,8 @@ private:
         }
         m_state.released=m_release.has_value();
         if(outside && !m_release) {
-            if(m_settings.takeover_enabled && !remote && begin_takeover(game,reference,scale,now)) return takeover_anchor(game,head,now);
-            suspend(CameraMode::external);return game;
+            if(m_settings.takeover_enabled && !remote && begin_takeover(game,head,reference,scale,now)) return takeover_anchor(game,head,now);
+            suspend(CameraMode::external);return native(game);
         }
         // Geometric camera separation also happens during ordinary dodges.
         // Keep the established placement when that same actor/reference returns;
@@ -394,7 +421,7 @@ private:
         // eyes behind the body. Scripted/unknown ownership and recenter still
         // take the full native handover path below.
         if(!m_state.anchored && m_keep_placement && m_reference==reference && m_scale==scale){
-            m_state.anchored=true;m_resume=false;m_keep_placement=false;
+            m_state.anchored=true;m_resume=false;m_keep_placement=false;m_room_rebase=true;
         }
         if (!m_state.anchored || m_reference != reference) {
             if (!vr_camera::level_anchor(game,m_basis,false)) { return game; }
@@ -411,7 +438,7 @@ private:
                 m_basis=rebased;
             }
             m_resume=false;m_keep_placement=false;
-            m_reference=reference; m_scale=scale; m_state.consumed={}; m_pending.reset();
+            m_reference=reference; m_scale=scale; m_room_rebase=true;
             Vector world_offset{};
             for (int j=0;j<3;++j) { world_offset[j]=game[12+j]-m_position[j]; }
             // Store horizontal head placement in the initial heading basis, not world axes.
@@ -420,6 +447,7 @@ private:
                 world_offset[0]*offset_basis[8]+world_offset[2]*offset_basis[10]};
             m_state.anchored=true;m_body_yaw.reset();
         }
+        if(m_room_rebase) room_rebase(head,scale);
         mode(CameraMode::body);m_state.show_head=false;
         auto anchor=m_basis;
         vr_camera::Matrix target{},view{};
@@ -464,8 +492,7 @@ private:
         // Where first person stands: a takeover starting next frame holds this spot.
         m_eye={anchor[12],anchor[13],anchor[14]};m_eye_root=m_position;m_eye_received=now;m_spot=Spot{m_eye,m_basis,now};
         m_last_eye=m_eye;m_last_eye_at=now;
-        for (int j=0;j<3;++j) { m_physical[j]=scale*(head[12]*m_basis[j]+head[13]*m_basis[4+j]-head[14]*m_basis[8+j]); }
-        m_physical[1]=0; m_head_received=now;
+        m_physical=room_head(head,scale);m_head_received=now;
         m_state.room_error=std::hypot(m_physical[0]-m_state.consumed[0],m_physical[2]-m_state.consumed[2])/scale;
         return anchor;
     }
@@ -475,34 +502,60 @@ public:
         if (!m_allowed || now<m_dodge_until || m_state.melee_facing || !m_state.anchored || actor != m_state.actor || !fresh(m_head_received,now) || !fresh(m_body_received,now)) { return std::nullopt; }
         ++m_state.turns; return m_state.yaw;
     }
+    // What last step's room velocity left in the physics body's velocity, which the game's
+    // character update is about to read (its input +0xa0). That update accelerates from there, so
+    // left in, a room step carries on as momentum and reads as the game moving the Marine (it stops
+    // at about 9 world units/s^2 in the 2 Nov trace). The adapter takes this off the input, so the
+    // update sees only its own movement. A wall's share has gone from the body already, so only
+    // what survived the collision comes off.
+    Vector room_feedback(uintptr_t context,const Vector& input) const {
+        const float asked=std::hypot(m_room_last[0],m_room_last[2]);
+        if(!context || context!=m_state.context || !(asked>0) || !finite(input)) return {};
+        const Vector extra{input[0]-m_native_last[0],0,input[2]-m_native_last[2]};
+        const float size=std::hypot(extra[0],extra[2]);
+        if(!(size>0) || extra[0]*m_room_last[0]+extra[2]*m_room_last[2]<=0) return {};
+        const float part=std::min(1.f,asked/size);
+        return {extra[0]*part,0,extra[2]*part};
+    }
+    // One game step. native: the velocity the game's own update chose. Returns the velocity to add.
     Vector velocity(uintptr_t context,const Vector& native,float dt,Clock::time_point now) {
-        if (!m_allowed || !m_state.anchored || !context || context != m_state.context || !fresh(m_head_received,now) ||
-            !fresh(m_body_received,now) || !finite(native) || !std::isfinite(dt) || dt <= 0 || dt > 0.1f) { m_pending.reset(); return {}; }
-        if (m_pending) {
-            Vector accepted{};
-            const auto delta_x=m_position[0]-m_pending->start[0],delta_z=m_position[2]-m_pending->start[2];
-            // A teleport/correction/load must not masquerade as accepted playspace movement.
-            if (std::hypot(delta_x,delta_z) <= 0.5f*m_scale) {
-                for (int j:{0,2}) {
-                    const auto delta=m_position[j]-m_pending->start[j], request=m_pending->step[j];
-                    accepted[j]=std::clamp(delta,std::min(0.0f,request),std::max(0.0f,request));
-                    m_state.consumed[j]+=accepted[j];
-                }
-            }
-            m_pending.reset();
-        }
-        m_state.requested={};
-        if (!m_settings.room_enabled || std::hypot(native[0],native[2]) > 0.05f) { return {}; }
+        if (!m_allowed || !m_state.anchored || m_room_rebase || !context || context != m_state.context || !fresh(m_head_received,now) ||
+            !fresh(m_body_received,now) || !finite(native) || !std::isfinite(dt) || dt <= 0 || dt > 0.1f) { m_pending.reset();m_room_last={}; return {}; }
+        room_window(now);
+        if(m_pending) for(int j:{0,2}) m_pending->native[j]+=native[j]*dt;
+        m_room_last={};m_state.requested={};
+        if (!m_settings.room_on() || room_paused(native,now)) { return {}; }
         Vector desired{m_physical[0]-m_state.consumed[0],0,m_physical[2]-m_state.consumed[2]};
-        const auto distance=std::hypot(desired[0],desired[2]);
+        auto distance=std::hypot(desired[0],desired[2]);
         m_state.room_error=distance/m_scale;
-        if (distance <= m_settings.deadzone*m_scale) { return {}; }
+        // Blocked with the head past room_wall_metres: the view stops there and the room slides
+        // along, so a step back moves the body at once instead of walking back through the wall.
+        const float wall=m_settings.room_wall_metres*m_scale;
+        if(m_state.room_blocked && distance>wall) {
+            // Only the way the wall refuses (what the body left open), so along it the view stays the head's.
+            const auto open=m_pending?m_pending->step:desired;
+            const float size=std::hypot(open[0],open[2]);
+            if(size>0) {
+                const float slide=std::min((distance-wall)*m_settings.gain,m_settings.max_speed*m_scale)*dt;
+                for(int j:{0,2}) {m_state.consumed[j]+=open[j]/size*slide;desired[j]-=open[j]/size*slide;}
+                distance=std::hypot(desired[0],desired[2]);m_state.room_held+=slide/m_scale;
+            }
+        }
+        if(!m_room_walking && distance<=m_settings.deadzone*m_scale) return {};
+        m_room_walking=true;
+        if(distance<=std::min(ROOM_SETTLED,m_settings.deadzone)*m_scale) {m_room_walking=false;return {};}
         const auto speed=std::min({distance*m_settings.gain,m_settings.max_speed*m_scale,distance/dt});
         for (int j:{0,2}) { desired[j]*=speed/distance; }
         m_state.requested=desired; ++m_state.room_steps;
-        Vector step{desired[0]*dt,0,desired[2]*dt};
-        m_pending=Pending{m_position,step}; return desired;
+        if(!m_pending) {m_pending=Pending{.start=m_position,.body_updates=m_body_updates};for(int j:{0,2}) m_pending->native[j]=native[j]*dt;}
+        for(int j:{0,2}) m_pending->step[j]+=desired[j]*dt;
+        m_pending->last=speed*dt;m_pending->idle=0;m_room_asked+=speed*dt;
+        m_room_last=desired;m_native_last=native;
+        return desired;
     }
+    // Camera mode (the viewer) drew this frame: nothing in here saw the head. The player may have
+    // walked round the Marine, so the next first-person frame puts the body under the head.
+    void viewer_frame() {m_room_rebase=true;m_pending.reset();}
     Snapshot snapshot() const { return m_state; }
     uint64_t cutscene_holds() const { return m_cutscene_holds; }
     // The followed body's world position while fresh (viewer mode stands on its ground).
@@ -543,6 +596,83 @@ public:
         return out;
     }
 private:
+    // Walking in the play space. ROOM_SETTLED: the catch-up ends this close (metres). ROOM_STICK: the
+    // stick counts as pushed; with it neutral a body moving faster than ROOM_NATIVE_QUIET (world
+    // units/s) is being moved by an animation, which keeps it. ROOM_BLOCKED: over a ROOM_WINDOW, a
+    // body taking less than this share of what it was asked is against something. ROOM_CARRY: game
+    // steps a request stays open for the position that shows it. ROOM_TELEPORT: metres no step moves.
+    // ROOM_CONTACT: metres between positions that, while blocked, are the wall's contact and not a move.
+    static constexpr float ROOM_SETTLED=.05f,ROOM_STICK=.1f,ROOM_NATIVE_QUIET=.05f,ROOM_BLOCKED=.5f,ROOM_TELEPORT=.5f,ROOM_CONTACT=.02f;
+    static constexpr int ROOM_CARRY=3;
+    static constexpr auto ROOM_WINDOW=std::chrono::milliseconds(150);
+    // The head's displacement from the reference in the world (units, level).
+    Vector room_head(const vr_camera::Matrix& head,float scale) const {
+        Vector out{};for(int j:{0,2}) out[j]=scale*(head[12]*m_basis[j]+head[13]*m_basis[4+j]-head[14]*m_basis[8+j]);
+        return out;
+    }
+    // First person again after a view that wasn't the Marine's: whatever the head did meanwhile
+    // is dropped, so the eye is on the body now and the body has nothing to catch up with.
+    void room_rebase(const vr_camera::Matrix& head,float scale) {
+        const auto walked=m_settings.room_on()?room_head(head,scale):Vector{};
+        const float dropped=std::hypot(walked[0]-m_state.consumed[0],walked[2]-m_state.consumed[2])/scale;
+        m_state.consumed=walked;m_room_rebase=m_room_walking=m_state.room_blocked=false;m_pending.reset();
+        m_room_asked=m_room_moved=0;m_room_window_from={};
+        if(dropped>0) {++m_state.room_rebases;m_state.room_rebased=dropped;}
+    }
+    // A native camera view keeps the consumed walk off the eye too, or the eye would sit that far
+    // from the game's camera. The head maps through the game camera's heading here: same components.
+    vr_camera::Matrix native(const vr_camera::Matrix& game) const {
+        const auto& c=m_state.consumed;
+        vr_camera::Matrix level{};
+        if((c[0]==0 && c[2]==0) || !vr_camera::level_anchor(game,level,false)) return game;
+        const float right=c[0]*m_basis[0]+c[2]*m_basis[2],forward=c[0]*m_basis[8]+c[2]*m_basis[10];
+        auto out=game;
+        for(int j:{0,2}) out[12+j]-=right*level[j]+forward*level[8+j];
+        return out;
+    }
+    // Something other than the head has the Marine: dodges and melee (the game's root motion and
+    // facing), a return still settling, or an animation moving it with the stick neutral. The
+    // head's movement waits and the body catches up after. The stick mixes with it.
+    bool room_paused(const Vector& native,Clock::time_point now) const {
+        if(m_state.camera_mode!=CameraMode::body || m_release || m_state.combo_camera || now<m_dodge_until || now<m_melee_until) return true;
+        const bool stick=fresh(m_stick_at,now) && std::hypot(m_stick[0],m_stick[1])>=ROOM_STICK;
+        return !stick && std::hypot(native[0],native[2])>ROOM_NATIVE_QUIET;
+    }
+    // Takes the requests since the body last reported a position against that position. What moved
+    // the body beyond the game's own velocity is the room's, up to what was requested and still
+    // open, so a wall or a late position consumes only what the body really did. Along a wall the
+    // body's own direction is the one consumed, so the eye doesn't move.
+    void settle_room() {
+        if(!m_pending || m_pending->body_updates==m_body_updates) return;
+        auto& p=*m_pending;
+        const Vector moved{m_position[0]-p.start[0]-p.native[0],0,m_position[2]-p.start[2]-p.native[2]};
+        const float size=std::hypot(moved[0],moved[2]),open=std::hypot(p.step[0],p.step[2]);
+        // A teleport/correction/load must not masquerade as accepted playspace movement.
+        if(size>ROOM_TELEPORT*m_scale) {m_pending.reset();return;}
+        const bool forward=moved[0]*p.step[0]+moved[2]*p.step[2]>0;
+        // Pressed against a wall the contact rocks the body 2-3 mm each way (2 Nov, in the hangar).
+        // Crediting only the forward half walked the view off the wall at 1 cm a second, so both
+        // count: the eye holds still and nothing builds up.
+        if(m_state.room_blocked && size<=ROOM_CONTACT*m_scale) {
+            for(int j:{0,2}) m_state.consumed[j]+=moved[j];
+            if(forward) m_room_moved+=size;
+        }
+        else if(size>0 && forward) {
+            const float taken=std::min(1.f,open/size);
+            for(int j:{0,2}) {m_state.consumed[j]+=moved[j]*taken;p.step[j]-=moved[j]*taken;}
+            m_room_moved+=size*taken;
+        }
+        p.start=m_position;p.native={};p.body_updates=m_body_updates;
+        if(++p.idle>ROOM_CARRY) {m_pending.reset();return;}
+        const float limit=ROOM_CARRY*p.last,left=std::hypot(p.step[0],p.step[2]);
+        if(left>limit) for(int j:{0,2}) p.step[j]*=limit/left;
+    }
+    void room_window(Clock::time_point now) {
+        if(m_room_window_from==Clock::time_point{} || now<m_room_window_from) {m_room_window_from=now;return;}
+        if(now-m_room_window_from<ROOM_WINDOW) return;
+        m_state.room_blocked=m_room_asked>0 && m_room_moved<ROOM_BLOCKED*m_room_asked;
+        m_room_asked=m_room_moved=0;m_room_window_from=now;
+    }
     static constexpr float TURN_CATCH_UP=240,TURN_SETTLED=2; // degrees/second, degrees
     static constexpr float TURN_WALKING=.3f; // physical metres/second of ground speed
     static constexpr float TURN_SNAP=12; // degrees in one frame: a snap turn, which the body takes at once
@@ -597,7 +727,7 @@ private:
         if(!m_spot || now<m_spot->at || now-m_spot->at>CUTSCENE_SPOT_AGE) return;
         m_cutscene=Cutscene{m_spot->eye,m_spot->basis};if(m_cutscene_holds!=UINT64_MAX)++m_cutscene_holds;
     }
-    bool begin_takeover(const vr_camera::Matrix& game,uint64_t reference,float scale,Clock::time_point now) {
+    bool begin_takeover(const vr_camera::Matrix& game,const vr_camera::Matrix& head,uint64_t reference,float scale,Clock::time_point now) {
         // From first person the stable basis is the player's heading. Without one (an animation
         // straight after a cutscene or load, or after a recenter) start from the native camera's
         // level heading, which is what the view already shows; the return then rebases as usual.
@@ -610,8 +740,10 @@ private:
         // Its height is the standing eye height over the root at entry, so the game camera's
         // rise in the moment before it leaves the envelope is not kept either.
         Takeover t;
-        const bool from_body=m_state.anchored && fresh(m_eye_received,now);
-        t.eye={from_body?m_eye[0]:m_position[0],m_position[1]+standing_units(scale),from_body?m_eye[2]:m_position[2]};
+        const bool from_body=m_state.anchored && fresh(m_eye_received,now) && !m_room_rebase;
+        // On the character's own spot the eye is on the root, however far the head has walked.
+        const auto walked=from_body || !m_settings.room_on()?Vector{}:room_head(head,scale);
+        t.eye={from_body?m_eye[0]:m_position[0]-walked[0],m_position[1]+standing_units(scale),from_body?m_eye[2]:m_position[2]-walked[2]};
         // Where the eye sat over the root in that frame (the root has moved on since).
         if(from_body) t.offset={m_eye[0]-m_eye_root[0],0,m_eye[2]-m_eye_root[2]};t.can_ride=from_body;
         suspend(CameraMode::takeover);
@@ -803,12 +935,16 @@ private:
         const bool held=value==CameraMode::external || value==CameraMode::takeover;
         m_keep_placement=held && (m_state.anchored || m_keep_placement);
         m_resume=m_resume || m_state.anchored || held || value==CameraMode::scripted;
-        m_state.anchored=false;m_state.consumed={};m_state.requested={};m_state.room_error=0;
+        // consumed stays: the head is still that far from where it started (native(), room_rebase()).
+        m_state.anchored=false;m_state.requested={};m_state.room_error=0;m_state.room_blocked=false;m_room_walking=false;
         m_pending.reset();m_head_received={};m_body_yaw.reset();mode(value);
     }
     static bool finite(const Vector& p) { return std::all_of(p.begin(),p.end(),[](float v){return std::isfinite(v)&&std::abs(v)<1000000;}); }
     static bool fresh(Clock::time_point received,Clock::time_point now) { return received != Clock::time_point{} && now>=received && now-received<=std::chrono::milliseconds(100); }
-    struct Pending { Vector start{},step{}; };
+    // Room steps not yet seen in the body's position: since start, the game's own displacement
+    // (native) and the room's still open (step); last: the latest step's length; idle: positions
+    // since a request.
+    struct Pending { Vector start{},step{},native{};uint64_t body_updates{};float last{};int idle{}; };
     Settings m_settings;
     Snapshot m_state;
     bool m_allowed{},m_resume{},m_keep_placement{};
@@ -826,6 +962,11 @@ private:
     float m_native_yaw{};Clock::time_point m_native_yaw_received{};
     Vector m_eye{},m_eye_root{},m_head_bone{};Clock::time_point m_eye_received{},m_head_bone_received{};
     std::optional<Pending> m_pending;
+    // Walking in the play space: the last step's velocities (room_feedback), the reference the
+    // room started on, the blocked window's distances, and whether the catch-up is running. m_room_last
+    // outlives everything but the next game step: that step still has to take it off its input.
+    Vector m_room_last{},m_native_last{};uint64_t m_room_reference{},m_body_updates{};bool m_room_walking{},m_room_rebase{};
+    float m_room_asked{},m_room_moved{};Clock::time_point m_room_window_from{};
     std::optional<Takeover> m_takeover;
     std::optional<Release> m_release;vr_viewer::Motion m_motion;std::array<float,2> m_stick{};Clock::time_point m_stick_at{};
     std::optional<float> m_body_yaw;float m_head_yaw{};bool m_turning{},m_returning{};Clock::time_point m_body_yaw_at{};

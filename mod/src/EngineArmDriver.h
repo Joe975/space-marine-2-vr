@@ -2,6 +2,7 @@
 #include "EngineArmProbe.h"
 #include "VrArmPose.h"
 #include "VrFingerPose.h"
+#include "VrHeadAim.h"
 #include "VrHeadVisibility.h"
 #include "VrWeaponAim.h"
 #include "VrTrace.h"
@@ -28,7 +29,8 @@ public:
     };
     // firearm_trigger: the pad's RT or LT is pressed (a shot or aim); the upright twist stands down (vr_upright::FireHold).
     // units_per_metre: the Marine's (VrEye::marine_units_per_metre), for grips and body placement; wrists are already world poses.
-    struct Targets { uintptr_t actor{}; uint64_t reference{},epoch{}; Clock::time_point captured{}; std::array<std::optional<Matrix>,2> wrists; std::array<std::optional<vr_finger::Curl>,2> fingers; float units_per_metre{1}; bool firearm_trigger{}; };
+    // gaze: the player's gaze in the world, on the way into camera mode only: the head turns to it (VrHeadAim.h).
+    struct Targets { uintptr_t actor{}; uint64_t reference{},epoch{}; Clock::time_point captured{}; std::array<std::optional<Matrix>,2> wrists; std::array<std::optional<vr_finger::Curl>,2> fingers; float units_per_metre{1}; bool firearm_trigger{}; std::optional<vr_arm::Vector> gaze; };
     struct Api {
         std::function<bool(const EngineArmProbe::Pose&,Clock::time_point)> current;
         std::function<void(uintptr_t)> enter,leave;
@@ -49,7 +51,8 @@ public:
         vr_arm_cache::Receipt invalidation;
         bool resolve_pose_enabled{},pose_recovery_failed{};uint64_t recovery_calls{},recovery_failures{};
         std::array<uint64_t,static_cast<size_t>(vr_body_placement::Refusal::Count)> body_placement_refusals{};
-        std::optional<vr_weapon::Grip> weapon_grip; uint64_t weapon_grip_switches{},weapon_left_refused{},weapon_primary_draws{}; bool weapon_seated{true}; }; // The committed grip; settled grip changes; left readings refused for a primary (frames); primaries landed by a draw from the pistol; the fit came from the grip's socket.
+        std::optional<vr_weapon::Grip> weapon_grip; uint64_t weapon_grip_switches{},weapon_left_refused{},weapon_primary_draws{}; bool weapon_seated{true}; // The committed grip; settled grip changes; left readings refused for a primary (frames); primaries landed by a draw from the pistol; the fit came from the grip's socket.
+        uint64_t head_aims{},head_aim_refused{},head_aim_limited{};float head_aim_degrees{}; }; // Publications whose head turned to the gaze, refused, stopped at the limits; the last turn from the animation.
     static EngineArmDriver& get();
     void configure(Api);
     void configure_native(bool diagnostic=false);

@@ -350,6 +350,22 @@ def body_scale(events):
     return {"readings": readings, "factor": readings[-1]["factor"] if readings else None}
 
 
+def room_walking(samples):
+    """Walking in the play space (docs/BODY_FOLLOWING.md): the counters at the end of the trace, how far
+    the head was from the body in first person, and what returns to first person dropped."""
+    cameras = [s["camera"] for s in samples if isinstance(s.get("camera"), dict) and "room_steps" in s["camera"]]
+    if not cameras:
+        return None
+    first_person = [c for c in cameras if c.get("mode") == "body" and c.get("anchored")]
+    errors = [c["room_error_metres"] for c in first_person if isinstance(c.get("room_error_metres"), (int, float))]
+    last = cameras[-1]
+    return {"steps": last["room_steps"] - cameras[0]["room_steps"], "rebases": last["room_rebases"] - cameras[0]["room_rebases"],
+            "largest_rebase_metres": max((c["room_rebased_metres"] for c in cameras), default=0),
+            "held_metres": last["room_held_metres"] - cameras[0]["room_held_metres"],
+            "blocked_share": sum(1 for c in first_person if c.get("room_blocked")) / len(first_person) if first_person else 0,
+            "head_from_body_metres": describe(errors)}
+
+
 def warnings(report):
     out = []
     rejected = [r for r in report["body_scale"]["readings"] if r["reading"] != "accepted"]
@@ -410,6 +426,7 @@ def analyse(lines):
     report["lean"] = lean_by_speed(samples)
     report["sprint"] = sprint_clearance(samples)
     report["body_scale"] = body_scale(events)
+    report["room_walking"] = room_walking(samples)
     report["warnings"] = warnings(report)
     return report, events
 
@@ -460,6 +477,12 @@ def text(report, events, show_events):
         lines.append(f"body scale: {len(report['body_scale']['readings'])} recenter readings, eye heights "
                      + (", ".join(f"{r['eye_height_metres']:.2f}" for r in accepted) or "none accepted")
                      + f"; final factor {report['body_scale']['factor']:.3f}")
+    room = report["room_walking"]
+    if room:
+        away = room["head_from_body_metres"]
+        lines.append(f"play space walking: {room['steps']} steps, head from body median {fmt(away and away['median'])}, p95 {fmt(away and away['p95'])}, "
+                     f"max {fmt(away and away['max'])} (Marine metres); blocked {room['blocked_share']:.0%} of first person, held back {room['held_metres']:.2f} m at walls; "
+                     f"{room['rebases']} returns to first person, largest dropped {room['largest_rebase_metres']:.2f} m")
     for side, data in report["hands"].items():
         t, r = data["target_to_animated_hand"], data["ik_residual"]
         if t or r:

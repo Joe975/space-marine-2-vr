@@ -84,6 +84,7 @@ Hold left B for one second to enter camera mode and pause the game.
 | Drag the world | Hold one grip and move that hand. |
 | Scale and turn the world | Hold both grips and move your hands. Hands apart makes the world bigger. |
 | Jump to a preset scale | Right trigger: life size, 1:12 action figure, then the world four times bigger. |
+| Save a picture | Click the right stick, once per picture. It goes to `Pictures\Space Marine 2 VR`. Nothing shows in the headset, so check the folder afterwards. |
 | Return to the game | Tap left B. |
 
 <!-- media: camera mode flying around a frozen battle, then scaling it to tabletop size -->
@@ -141,7 +142,7 @@ normal gamepad plays the game, as on a flat screen.
 | Swap view | F8: first person, diorama, shoulder view, back to first person. |
 | Play | Gamepad, every normal game control. |
 | Recenter | Gamepad Back/View, or F9. In diorama this recenters to where your character is currently standing, and it happens by itself once they walk off the table. |
-| World scale (diorama) | Hold Back and press D-pad up/down. |
+| World scale | Hold Back and press D-pad up/down. |
 
 <!-- media: diorama mode, then F8 to swap to the shoulder view -->
 

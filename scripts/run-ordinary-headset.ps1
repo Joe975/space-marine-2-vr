@@ -79,7 +79,8 @@ if ($InjectRecordsMoveSeconds -lt 0 -or ($InjectRecordsMoveSeconds -gt 0 -and $I
 # start, whatever the saved settings say (docs/EYE_SIZE.md). run-modded.ps1 validates the size.
 if ($OutputSizeMode -and -not $OutputSize) { throw '-OutputSizeMode needs -OutputSize.' }
 # Diagnostic only: on 21 Oct the eyes were the left half of a 4K frame (2x horizontal zoom, unplayable).
-if ($OutputSize -and -not $ExperimentalOutputSize) { throw '-OutputSize is a diagnostic that currently crops and zooms the eyes (docs/EYE_SIZE.md); add -ExperimentalOutputSize to run it, and never for play.' }
+if ($OutputSize -and -not $ExperimentalOutputSize) { throw '-OutputSize has not been confirmed in the headset yet (docs/EYE_SIZE.md); add -ExperimentalOutputSize to run it.' }
+if ($OutputSize -and $DesktopWindow) { throw '-DesktopWindow with -OutputSize halves the render targets: the engine sizes them from the window (docs/EYE_SIZE.md).' }
 if ($ExperimentalOutputSize -and -not $OutputSize) { throw '-ExperimentalOutputSize needs -OutputSize.' }
 if ($OutputSizeMode -and $OutputSizeMode -cnotin @('device','config')) { throw "-OutputSizeMode must be device or config (got '$OutputSizeMode')." }
 if ($DesktopWindow) {

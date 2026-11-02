@@ -33,9 +33,11 @@ bool steamvr_openxr_running() {
 bool environment_flag(const char* name) {
     char value[32]{}; return GetEnvironmentVariableA(name,value,sizeof(value)) && std::atoi(value)==1;
 }
-std::string environment_text(const char* name) {
-    char value[32768]{}; const auto length=GetEnvironmentVariableA(name,value,sizeof(value));
-    return length && length<sizeof(value)?std::string{value,length}:std::string{};
+// Wide: the narrow read turns a character outside the code page into '?', and the file isn't found.
+std::filesystem::path environment_path(const wchar_t* name) {
+    std::wstring value(32768,L'\0'); const auto length=GetEnvironmentVariableW(name,value.data(),32768);
+    if(!length || length>=32768) return {};
+    value.resize(length); return value;
 }
 D3D12_RESOURCE_BARRIER barrier(ID3D12Resource* resource,D3D12_RESOURCE_STATES from,D3D12_RESOURCE_STATES to) {
     D3D12_RESOURCE_BARRIER b{}; b.Type=D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -530,14 +532,14 @@ bool OpenXrBackend::start() {
     m_input_status=s.controls?"waiting for OpenXR controller bindings":"controller input disabled";
     if(s.controls) {
         // Raw-origin conversion: the render-model candidate unless a calibration file is named.
-        if(const auto path=environment_text("SM2VR_OPENXR_GRIP_CALIBRATION"); !path.empty()) {
-            std::ifstream input{std::filesystem::path{path}};
-            const auto offset=std::filesystem::path{path}.is_absolute()?openxr_hands::GripOffset::read(input):std::nullopt;
+        if(const auto path=environment_path(L"SM2VR_OPENXR_GRIP_CALIBRATION"); !path.empty()) {
+            std::ifstream input{path};
+            const auto offset=path.is_absolute()?openxr_hands::GripOffset::read(input):std::nullopt;
             if(offset) s.grip_offset=*offset;
             else { s.controls=false; m_input_status="invalid SM2VR_OPENXR_GRIP_CALIBRATION; controls disabled"; }
         }
-        if(const auto log=environment_text("SM2VR_OPENXR_GRIP_LOG"); !log.empty() && std::filesystem::path{log}.is_absolute() &&
-           (s.grip_log=_fsopen(log.c_str(),"w",_SH_DENYWR))) { // Readable while the game runs.
+        if(const auto log=environment_path(L"SM2VR_OPENXR_GRIP_LOG"); !log.empty() && log.is_absolute() &&
+           (s.grip_log=_wfsopen(log.c_str(),L"w",_SH_DENYWR))) { // Readable while the game runs.
             std::fprintf(s.grip_log,"qpc,hand");for(int n=0;n<16;++n) std::fprintf(s.grip_log,",m%d",n);std::fputc('\n',s.grip_log);
         }
         s.hand_extension=s.controls && optional(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
@@ -731,10 +733,9 @@ std::optional<VrControllerSample> OpenXrBackend::controllers() {
     // Sync before locating: action spaces follow the action state of the last xrSyncActions.
     const auto values=s.read_actions();
     if(!values) { m_input_status="OpenXR action sync failed; controls neutral"; return {}; }
-    const auto time=s.now(); if(!time) return {};
-    for(size_t hand=0;hand<2;++hand) if(!s.controller(hand,*time)) {
-        m_input_status="both controllers must be tracked; controls neutral"; return {};
-    }
+    // No pose gate: a hand that loses tracking keeps the other hand's stick and every button, and
+    // gestures check their own pose. A controller that sleeps or dies still goes neutral: its stick
+    // action turns inactive below.
     const auto sample=openxr_input::sample(*values,s.touch_layout);
     if(!sample) { m_input_status="stick action data inactive ("+s.profile.str()+")"; return {}; }
     m_input_status=s.profile.str()+(sample->complete?" locomotion and combat actions active":" locomotion active; some combat bindings unavailable");

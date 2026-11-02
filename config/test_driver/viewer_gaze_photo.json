@@ -1,0 +1,32 @@
+{
+ "description": "UNATTENDED ONLY (-ScriptedHead). Camera mode gaze and photos (docs/VIEWER_MODE.md '2 Nov'): raise the head 1.4 m (the headset lies on a desk, and scripted hands hang from the head: left low, they and the gun go through the floor), look 25 degrees left and 10 down, hold Left B into camera mode, look at the frozen Marine from the side and take a held click (one picture), fly past it, look back at its face and click once, then three rapid clicks (one or more refused busy), let the game run with Right A and click during the play. It ends in first person. The trace's root_z_axis at the freeze should match body_yaw.",
+ "mode": "scripted_head",
+ "duration_ms": 24000,
+ "frames": [
+  {"ms": 0, "head": [0, 1.4, 0, 0, 0, 0]},
+  {"ms": 1000, "head": [0, 1.4, 0, 25, -10, 0]},
+  {"ms": 3000, "head": [0, 1.4, 0, 25, -10, 0], "buttons": ["menu"]},
+  {"ms": 4400, "head": [0, 1.4, 0, 25, -10, 0]},
+  {"ms": 5000, "head": [0, 1.4, 0, 25, -10, 0]},
+  {"ms": 5800, "head": [0, 1.4, 0, 88, 10, 0]},
+  {"ms": 6500, "head": [0, 1.4, 0, 88, 10, 0], "buttons": ["finisher"]},
+  {"ms": 7500, "head": [0, 1.4, 0, 88, 10, 0]},
+  {"ms": 8500, "head": [0, 1.4, 0, 25, 0, 0]},
+  {"ms": 9000, "head": [0, 1.4, 0, 25, 0, 0], "move": [0, 1]},
+  {"ms": 9900, "head": [0, 1.4, 0, 25, 0, 0]},
+  {"ms": 11000, "head": [0, 1.4, 0, 175, 5, 0]},
+  {"ms": 11800, "head": [0, 1.4, 0, 175, 5, 0], "buttons": ["finisher"]},
+  {"ms": 11900, "head": [0, 1.4, 0, 175, 5, 0]},
+  {"ms": 13000, "head": [0, 1.4, 0, 175, 5, 0], "buttons": ["finisher"]},
+  {"ms": 13050, "head": [0, 1.4, 0, 175, 5, 0]},
+  {"ms": 13100, "head": [0, 1.4, 0, 175, 5, 0], "buttons": ["finisher"]},
+  {"ms": 13150, "head": [0, 1.4, 0, 175, 5, 0]},
+  {"ms": 13200, "head": [0, 1.4, 0, 175, 5, 0], "buttons": ["finisher"]},
+  {"ms": 13250, "head": [0, 1.4, 0, 175, 5, 0]},
+  {"ms": 16000, "head": [0, 1.4, 0, 175, 5, 0], "buttons": ["dodge"]},
+  {"ms": 16100, "head": [0, 1.4, 0, 175, 5, 0]},
+  {"ms": 17500, "head": [0, 1.4, 0, 175, 5, 0], "buttons": ["finisher"]},
+  {"ms": 17600, "head": [0, 1.4, 0, 175, 5, 0]},
+  {"ms": 24000, "head": [0, 1.4, 0, 175, 5, 0]}
+ ]
+}

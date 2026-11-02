@@ -1,5 +1,6 @@
 #include "synthetic_code.h"
 #include "NativeMemory.h"
+#include "ForeignViewHold.h"
 #include "NativeRenderProbe.h"
 #include "game_build_ported.h"
 #include "NativeCameraTransfer.h"
@@ -8,6 +9,7 @@
 #include <iostream>
 #include <limits>
 #include <stdexcept>
+#include <vector>
 
 namespace {
 void require(bool ok,const char* message) {if(!ok) throw std::runtime_error(message);}
@@ -43,8 +45,28 @@ __declspec(noinline) void fake_dispatch(void* renderer,uint32_t flags) {
 }
 __declspec(noinline) void invoke(void(*volatile fn)(void*,uint32_t),void* renderer,uint32_t flags) {fn(renderer,flags);++seen_flags;}
 }
+// The real write, on a list laid out as the game's: entries from +0x168, 0xa60 each, flags first, HDR index at +0x188.
+void pip_hdr_remap() {
+    std::vector<uint8_t> memory(0x2a000);const auto list=reinterpret_cast<uintptr_t>(memory.data());
+    const auto put=[&](size_t offset,auto value){std::memcpy(memory.data()+offset,&value,sizeof(value));};
+    const auto hdr=[&](int32_t slot){int32_t value{};std::memcpy(&value,memory.data()+0x168+size_t(slot)*0xa60+0x188,sizeof(value));return value;};
+    const auto view=[&](int32_t slot,uint64_t flags,int32_t index){put(0x168+size_t(slot)*0xa60,flags);put(0x168+size_t(slot)*0xa60+0x188,index);};
+    put(0x29968,int32_t{4});view(0,0x7f7c013,0);view(1,0x7f7c013,0);view(2,0x10043,2);view(3,0x410001400,3);
+    const auto before=ForeignViewHold::get().stats().remapped;
+    require(NativeRenderProbe::remap_pip_hdr(list) && hdr(2)==ForeignViewHold::PIP_HDR_INDEX,"a PIP behind the pair takes the index it has in mono");
+    require(hdr(0)==0 && hdr(1)==0 && hdr(3)==3,"nothing else in the list changes");
+    require(!NativeRenderProbe::remap_pip_hdr(list) && ForeignViewHold::get().stats().remapped==before+1,"once");
+    view(1,0x10043,1);view(2,0x410001400,2);
+    require(!NativeRenderProbe::remap_pip_hdr(list) && hdr(1)==1 && hdr(2)==2,"mono: untouched");
+    view(1,0x7f7c013,0);view(2,0x7f7c013,0);view(3,0x410001400,0);
+    require(!NativeRenderProbe::remap_pip_hdr(list),"no PIP: nothing");
+    put(0x29968,int32_t{2});view(2,0x10043,2);
+    require(!NativeRenderProbe::remap_pip_hdr(list) && hdr(2)==2,"past the list's count: not a view");
+    require(!NativeRenderProbe::remap_pip_hdr(0),"no list");
+}
 int main() {
     try {
+        pip_hdr_remap();
         using E=NativeCameraEntries;E entries;entries.enable();
         auto stationary=vr_camera::IDENTITY;stationary[10]=-1;
         const uintptr_t render_list=0x1000,add_list=render_list+0x160;

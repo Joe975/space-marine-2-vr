@@ -10,7 +10,7 @@ from installer_support import FIXTURES, TEMP, run_ps_json
 GOOD = {
     'GameFound': True, 'GameRoot': 'F:\\Steam\\steamapps\\common\\Space Marine 2',
     'ExeTimestamp': '0x6ad10fcb', 'SupportedTimestamp': '0x6ad10fcb', 'SupportedBuildDate': '2026-10-21',
-    'GameRunning': False, 'Steam': 'running', 'SteamVr': 'not_running', 'InstallerElevated': False,
+    'GameRunning': False, 'Steam': 'running', 'SteamVr': 'running', 'InstallerElevated': False,
     'OpenXrRuntime': 'H:\\Program Files (x86)\\Steam\\steamapps\\common\\SteamVR\\steamxr_win64.json',
     'ProxyFiles': [], 'ModMarkers': [], 'OwnedLeftovers': [],
     'BinWritable': True, 'ModsWritable': True, 'ModsMissing': False, 'LockPresent': False,
@@ -33,6 +33,12 @@ class PreflightTests(unittest.TestCase):
             passed, failed = self.run_checks({}, for_)
             self.assertTrue(passed, failed)
             self.assertEqual(failed, {})
+
+    def test_steamvr_off_is_only_mentioned_at_play(self):
+        passed, failed = self.run_checks({'SteamVr': 'not_running'}, 'play')
+        self.assertTrue(passed)
+        self.assertEqual(list(failed), ['steamvr_off'])
+        self.assertEqual(self.run_checks({'SteamVr': 'not_running'}, 'install'), (True, {}))
 
     def test_each_blocker(self):
         cases = {

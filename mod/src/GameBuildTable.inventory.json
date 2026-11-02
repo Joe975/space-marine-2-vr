@@ -83,7 +83,7 @@
       },
       {
        "file": "NativeRenderProbe.cpp",
-       "line": 29,
+       "line": 30,
        "symbol": ""
       },
       {
@@ -3850,7 +3850,7 @@
       },
       {
        "file": "NativeHzbCulling.h",
-       "line": 81,
+       "line": 82,
        "symbol": "LWI_KEY_RVA"
       }
      ],
@@ -3921,7 +3921,7 @@
       },
       {
        "file": "NativeHzbCulling.h",
-       "line": 102,
+       "line": 105,
        "symbol": "LWI_PASS_RVA"
       }
      ],
@@ -4154,7 +4154,7 @@
      "sites": [
       {
        "file": "Sm2Probe.cpp",
-       "line": 190,
+       "line": 191,
        "symbol": ""
       }
      ],
@@ -4170,7 +4170,7 @@
      "sites": [
       {
        "file": "Sm2Probe.cpp",
-       "line": 190,
+       "line": 191,
        "symbol": ""
       }
      ],
@@ -4178,6 +4178,32 @@
      "kind": "code",
      "rva": 32026496,
      "verified": 95,
+     "xor": []
+    },
+    {
+     "reference": 32035264,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeGradingIndexGuard.h",
+       "line": 21,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeGradingIndexGuard.h",
+       "line": 22,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeGradingIndexGuard.h",
+       "line": 23,
+       "symbol": "code"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32036096,
+     "verified": 96,
      "xor": []
     },
     {
@@ -4359,7 +4385,7 @@
       },
       {
        "file": "NativeHzbCulling.h",
-       "line": 58,
+       "line": 59,
        "symbol": "VISIBILITY_RVA"
       }
      ],
@@ -7703,7 +7729,7 @@
       },
       {
        "file": "NativeHzbCulling.h",
-       "line": 18,
+       "line": 19,
        "symbol": "SWITCH_RVA"
       }
      ],
@@ -7846,17 +7872,17 @@
      "sites": [
       {
        "file": "Sm2Probe.cpp",
-       "line": 479,
+       "line": 480,
        "symbol": "rva"
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 525,
+       "line": 526,
        "symbol": "rva"
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 1270,
+       "line": 1272,
        "symbol": "rva"
       }
      ],
@@ -8347,7 +8373,7 @@
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 1053,
+       "line": 1055,
        "symbol": "rva"
       }
      ],
@@ -8393,7 +8419,7 @@
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 1052,
+       "line": 1054,
        "symbol": "rva"
       }
      ],
@@ -8419,7 +8445,7 @@
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 2391,
+       "line": 2393,
        "symbol": "rva"
       }
      ],

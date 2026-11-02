@@ -1,5 +1,7 @@
+#include "PathText.h"
 #include "ForeignViewHold.h"
 #include "OrdinaryDlssPresence.h"
+#include "NativeGradingIndexGuard.h"
 #include "Sm2Probe.h"
 #include "EngineOutputSize.h"
 #include "GameBuild.h"
@@ -154,15 +156,15 @@ std::optional<std::string> Sm2Probe::on_initialize()
     wchar_t stereo_hold[32768]{};
     const auto stereo_hold_length=GetEnvironmentVariableW(L"SM2VR_STEREO_HOLD_CONTROL",stereo_hold,32768);
     if(m_ordinary_headset && stereo_hold_length && stereo_hold_length<32768)
-        spdlog::info("StereoHold: control={} configured={}",std::filesystem::path{stereo_hold}.string(),m_stereo_hold.configure(stereo_hold));
+        spdlog::info("StereoHold: control={} configured={}",path_text(std::filesystem::path{stereo_hold}),m_stereo_hold.configure(stereo_hold));
     std::wstring light_hold(32768,L'\0');  // heap, not stack: on_initialize's frame is near the init thread's stack size; diagnostic: docs/RIGHT_EYE_FLICKER_2026-10-28.md
     const auto light_hold_length=GetEnvironmentVariableW(L"SM2VR_DIAG_LIGHT_HOLD_CONTROL",light_hold.data(),32768);
     if(m_ordinary_headset && light_hold_length && light_hold_length<32768){NativeOrdinaryLightVisibility::get().configure_hold(light_hold.c_str());
-        spdlog::warn("OrdinaryLightHold: control={} configured={} (diagnostic: holds a light's last visible occlusion result)",std::filesystem::path{light_hold.c_str()}.string(),NativeOrdinaryLightVisibility::get().hold_configured());}
+        spdlog::warn("OrdinaryLightHold: control={} configured={} (diagnostic: holds a light's last visible occlusion result)",path_text(std::filesystem::path{light_hold.c_str()}),NativeOrdinaryLightVisibility::get().hold_configured());}
     std::wstring list_copy(32768,L'\0');  // heap, not stack: on_initialize's frame is near the init thread's stack size; prototype: docs/RIGHT_EYE_FLICKER_2026-10-28.md
     const auto list_copy_length=GetEnvironmentVariableW(L"SM2VR_DIAG_LIGHT_LIST_COPY_CONTROL",list_copy.data(),32768);
     if(m_ordinary_headset && list_copy_length && list_copy_length<32768){NativeOrdinaryLightVisibility::get().configure_copy(list_copy.c_str());
-        spdlog::warn("LightListCopy: control={} configured={} (prototype: view 1 uses view 0's light list)",std::filesystem::path{list_copy.c_str()}.string(),NativeOrdinaryLightVisibility::get().copy_configured());}
+        spdlog::warn("LightListCopy: control={} configured={} (prototype: view 1 uses view 0's light list)",path_text(std::filesystem::path{list_copy.c_str()}),NativeOrdinaryLightVisibility::get().copy_configured());}
     {   // Decide once for lights (docs/DECIDE_ONCE_STEREO.md): SM2VR_STEREO_LIGHTS capsort (default) | shared | copy | native,
         // and a live control file for A/Bs (stereo_lights.txt beside shading.txt, or SM2VR_STEREO_LIGHTS_CONTROL).
         if(const auto control=control_path(L"SM2VR_STEREO_LIGHTS_CONTROL",L"stereo_lights.txt");m_ordinary_headset && !control.empty()){m_stereo_lights_path=control;
@@ -171,16 +173,16 @@ std::optional<std::string> Sm2Probe::on_initialize()
         auto mode=stereo_light_list::Mode::capsort;
         if(text_length && text_length<sizeof text)if(const auto parsed=stereo_light_list::parse(text))mode=*parsed;
         NativeOrdinaryLightVisibility::get().set_stereo_mode(mode);
-        if(m_ordinary_headset)spdlog::info("StereoLights: mode={} control={}",stereo_light_list::name(mode),m_stereo_lights_path.string());
+        if(m_ordinary_headset)spdlog::info("StereoLights: mode={} control={}",stereo_light_list::name(mode),path_text(m_stereo_lights_path));
     }
     std::wstring cap_sort(32768,L'\0');  // heap, not stack: on_initialize's frame is near the init thread's stack size; candidate fix: docs/RIGHT_EYE_FLICKER_2026-10-28.md
     const auto cap_sort_length=GetEnvironmentVariableW(L"SM2VR_DIAG_LIGHT_CAP_SORT_CONTROL",cap_sort.data(),32768);
     if(m_ordinary_headset && cap_sort_length && cap_sort_length<32768)
-        spdlog::warn("LightCapSort: control={} configured={} (candidate fix: over 240 lights keep the nearest)",std::filesystem::path{cap_sort.c_str()}.string(),m_cap_sort.configure(cap_sort.c_str()));
+        spdlog::warn("LightCapSort: control={} configured={} (candidate fix: over 240 lights keep the nearest)",path_text(std::filesystem::path{cap_sort.c_str()}),m_cap_sort.configure(cap_sort.c_str()));
     std::wstring light_clamp(32768,L'\0');  // heap, not stack: on_initialize's frame is near the init thread's stack size; candidate fix: docs/RIGHT_EYE_FLICKER_2026-10-28.md
     const auto light_clamp_length=GetEnvironmentVariableW(L"SM2VR_DIAG_LIGHT_CLAMP_CONTROL",light_clamp.data(),32768);
     if(m_ordinary_headset && light_clamp_length && light_clamp_length<32768){NativeOrdinaryLightVisibility::get().configure_clamp(light_clamp.c_str());
-        spdlog::warn("LightClamp: control={} configured={} (candidate fix: passing occlusion results read as 4)",std::filesystem::path{light_clamp.c_str()}.string(),NativeOrdinaryLightVisibility::get().clamp_configured());}
+        spdlog::warn("LightClamp: control={} configured={} (candidate fix: passing occlusion results read as 4)",path_text(std::filesystem::path{light_clamp.c_str()}),NativeOrdinaryLightVisibility::get().clamp_configured());}
     wchar_t list_log[8]{};  // diagnostic: docs/RIGHT_EYE_FLICKER_2026-10-28.md (LightListProbe.h)
     if(m_ordinary_headset && GetEnvironmentVariableW(L"SM2VR_DIAG_LIGHT_LIST_LOG",list_log,8)==1 && list_log[0]==L'1'){
         const auto base=reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr));
@@ -196,11 +198,11 @@ std::optional<std::string> Sm2Probe::on_initialize()
     std::wstring far_light(32768,L'\0');  // heap, not stack: on_initialize's frame is near the init thread's stack size; diagnostic: docs/RIGHT_EYE_FLICKER_2026-10-28.md
     const auto far_light_length=GetEnvironmentVariableW(L"SM2VR_DIAG_FAR_LIGHT_CACHE_CONTROL",far_light.data(),32768);
     if(m_ordinary_headset && far_light_length && far_light_length<32768)
-        spdlog::warn("FarLightCache: control={} configured={} (diagnostic: disables the far-light shadow cache)",std::filesystem::path{far_light.c_str()}.string(),m_far_light.configure(far_light.c_str()));
+        spdlog::warn("FarLightCache: control={} configured={} (diagnostic: disables the far-light shadow cache)",path_text(std::filesystem::path{far_light.c_str()}),m_far_light.configure(far_light.c_str()));
     std::wstring async_lighting(32768,L'\0');  // heap, not stack: on_initialize's frame is near the init thread's stack size; diagnostic: docs/RIGHT_EYE_FLICKER_2026-10-28.md
     const auto async_lighting_length=GetEnvironmentVariableW(L"SM2VR_DIAG_ASYNC_LIGHTING_CONTROL",async_lighting.data(),32768);
     if(m_ordinary_headset && async_lighting_length && async_lighting_length<32768)
-        spdlog::warn("AsyncLighting: control={} configured={} (diagnostic: moves clustered-lighting passes off async compute)",std::filesystem::path{async_lighting.c_str()}.string(),m_async_lighting.configure(async_lighting.c_str()));
+        spdlog::warn("AsyncLighting: control={} configured={} (diagnostic: moves clustered-lighting passes off async compute)",path_text(std::filesystem::path{async_lighting.c_str()}),m_async_lighting.configure(async_lighting.c_str()));
     wchar_t dump_path[32768]{};
     const auto dump_length=GetEnvironmentVariableW(L"SM2VR_EYE_DUMP_DIR",dump_path,32768);
     if(dump_length && dump_length<32768 && std::filesystem::path{dump_path}.is_absolute()) {
@@ -292,12 +294,20 @@ std::optional<std::string> Sm2Probe::on_initialize()
                 const bool sweep_installed=EngineMeleeSweep::get().install_in_game(GetModuleHandleW(nullptr));
                 if(sweep_installed) EngineArmDriver::get().set_sword_observer([](const auto& s){EngineMeleeSweep::get().observe({s.instance,s.sword,s.root,s.final,s.native,s.time});});
                 m_melee_sweep_control_path=control_path(L"SM2VR_MELEE_SWEEP_CONTROL",L"melee_sweep.txt");
-                spdlog::info("MeleeSweep: installed={} mode={} control={}",sweep_installed,vr_melee_sweep::name(EngineMeleeSweep::get().mode()),m_melee_sweep_control_path.string());
+                spdlog::info("MeleeSweep: installed={} mode={} control={}",sweep_installed,vr_melee_sweep::name(EngineMeleeSweep::get().mode()),path_text(m_melee_sweep_control_path));
             }
             // Photo mode keeps the player's arm and finger pose unless the profile asks for the game's own.
             char native_pose[8]{};
             m_viewer_keep_pose=!(GetEnvironmentVariableA("SM2VR_PHOTO_NATIVE_POSE",native_pose,sizeof native_pose) && std::atoi(native_pose)==1);
             spdlog::info("VrViewer: photo_pose={}",m_viewer_keep_pose?"player":"native");
+            // Where a right stick click in camera mode saves. An absolute path in SM2VR_PHOTO_DIRECTORY replaces the default.
+            {wchar_t folder[1024]{};const DWORD length=GetEnvironmentVariableW(L"SM2VR_PHOTO_DIRECTORY",folder,static_cast<DWORD>(std::size(folder)));
+             std::filesystem::path chosen{length && length<std::size(folder)?folder:L""};
+             if(!chosen.empty() && !chosen.is_absolute()) {spdlog::warn("VrPhoto: SM2VR_PHOTO_DIRECTORY must be an absolute path; using the default");chosen.clear();}
+             m_eye_photo.folder(chosen);
+             spdlog::info("VrPhoto: folder='{}'",path_text(chosen.empty()?EyePhoto::default_folder():chosen));
+             char every[16]{};if(GetEnvironmentVariableA("SM2VR_DIAG_PHOTO_SECONDS",every,sizeof every)<sizeof every) m_photo_diag=std::chrono::seconds{std::max(0,std::atoi(every))};
+             if(m_photo_diag.count()) spdlog::info("VrPhoto: diagnostic picture every {} s from any stereo eye",m_photo_diag.count());}
             // Thumbs-up: play (default), photo (only up to the photo freeze) or off (docs/THUMBS_UP_2026-10-26.md).
             char thumbs_up[16]{};
             const auto thumbs_length=GetEnvironmentVariableA("SM2VR_THUMBS_UP",thumbs_up,sizeof thumbs_up);
@@ -325,7 +335,7 @@ std::optional<std::string> Sm2Probe::on_initialize()
             wchar_t takeover_path[32768]{};
             const auto takeover_length=GetEnvironmentVariableW(L"SM2VR_DIAG_TAKEOVER_CONTROL",takeover_path,32768);
             if(takeover_length && takeover_length<32768 && std::filesystem::path{takeover_path}.is_absolute()) {
-                m_takeover_control_path=takeover_path;spdlog::warn("TakeoverControl: diagnostic control file {}",m_takeover_control_path.string());
+                m_takeover_control_path=takeover_path;spdlog::warn("TakeoverControl: diagnostic control file {}",path_text(m_takeover_control_path));
             }
             const auto follow_installed=EngineBodyFollowing::get().install_in_game(GetModuleHandleW(nullptr));
             EngineBodyFollowing::get().enable(follow_installed);
@@ -372,6 +382,8 @@ std::optional<std::string> Sm2Probe::on_initialize()
                         // Head hiding follows the fresh tracked camera, even when controllers sleep.
                         targets.actor=actor;targets.reference=eye.reference_epoch;targets.epoch=eye.tracking_epoch;targets.captured=now;
                         const auto pad=m_controller_input.snapshot().pad.Gamepad;targets.firearm_trigger=pad.bRightTrigger>XINPUT_GAMEPAD_TRIGGER_THRESHOLD || pad.bLeftTrigger>XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                        // On the way into camera mode the head turns to the gaze; the freeze keeps it.
+                        if(vr_viewer::pose_edits(true,m_vr_session->viewer_status().state,m_viewer_keep_pose).aim_head) targets.gaze=vr_head_aim::gaze_world(anchor,eye.relative_head);
                     }
                     if (targets.actor && poses && poses->reference_epoch==eye.reference_epoch && poses->tracking_epoch==eye.tracking_epoch) {
                         targets.captured=poses->captured;
@@ -394,7 +406,7 @@ std::optional<std::string> Sm2Probe::on_initialize()
                 }
                 return anchor;
             }; }
-            spdlog::info("BodyFollowing: installed={} facing_enabled={} room_enabled=false",follow_installed,follow_installed);
+            spdlog::info("BodyFollowing: installed={} facing_enabled={} room_enabled={}",follow_installed,follow_installed,EngineBodyFollowing::get().settings().room_on());
         }
     }
     if (hands) {
@@ -504,7 +516,7 @@ std::optional<std::string> Sm2Probe::on_initialize()
             char scene_fault[8]{};GetEnvironmentVariableA("SM2VR_SCENE_FAULT_POD",scene_fault,sizeof(scene_fault));
             // Every headset run: one thread-stack dump if no frame is presented for 10 s (24 Oct barge freeze).
             if(m_ordinary_headset){const bool armed=HangWatchdog::get().start(m_ordinary_dump_directory/L"hang.dmp",HangWatchdog::THRESHOLD,std::chrono::seconds(1),
-                    [](const std::filesystem::path& path,bool ok,std::chrono::milliseconds stalled){spdlog::error("HangWatchdog: no frame presented for {} ms; thread dump written={} path={}",stalled.count(),ok,path.string());});
+                    [](const std::filesystem::path& path,bool ok,std::chrono::milliseconds stalled){spdlog::error("HangWatchdog: no frame presented for {} ms; thread dump written={} path={}",stalled.count(),ok,path_text(path));});
                 spdlog::info("HangWatchdog: armed={} threshold_s=10",armed);}
             if(m_ordinary_headset && std::string_view(scene_fault)!="0"){auto& scene_pod=NativeSceneFaultEvidence::get();const bool armed=scene_pod.arm(module,m_ordinary_dump_directory/L"scene_fault_pod.bin");
                 spdlog::info("SceneFaultPod: armed={} timestamp={:#x} first_chance=true suppress_exception=false",armed,scene_pod.timestamp());}
@@ -598,6 +610,7 @@ std::optional<std::string> Sm2Probe::on_initialize_d3d_thread()
         }
         char native_bloom[16]{};GetEnvironmentVariableA("SM2VR_ORDINARY_NATIVE_BLOOM",native_bloom,sizeof(native_bloom));
         if(std::string_view(native_bloom)=="1"){
+            spdlog::info("GradingIndexGuard: installed={}",NativeGradingIndexGuard::get().install_in_game(reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr))));
             const bool completion=NativeRenderProbe::get().attach_completion([this](const auto& snapshot){
                 const auto evaluations=NativeCallCensus::get().pending(NativeCallCensus::Hook::sdk_evaluate);NativeCallCensus::get().complete(snapshot.scene_calls);
                 if(m_ordinary_headset && snapshot.scene_calls){const auto mode=scene_of(EngineCinematicState::get().snapshot()).mode;const auto taa=NativeOrdinaryTaa::get().take_calls();GpuCompositorOutput::clear_native(taa!=0);OrdinaryDlssPresence::get().complete(evaluations,mode==scene_mode::Mode::gameplay || mode==scene_mode::Mode::hub,taa);}
@@ -1200,7 +1213,7 @@ void Sm2Probe::on_present()
             wchar_t eye_source_path[32768]{};const auto eye_source_length=GetEnvironmentVariableW(L"SM2VR_EYE_SOURCE_CONTROL",eye_source_path,32768);
             if(eye_source_length && eye_source_length<32768 && std::filesystem::path{eye_source_path}.is_absolute()){
                 m_vr_session->set_eye_source_control(eye_source_path);
-                spdlog::warn("VrEyeSourceDiagnostic: control={} (stereo diagnostic; submitted eyes may be deliberately wrong)",std::filesystem::path{eye_source_path}.string());
+                spdlog::warn("VrEyeSourceDiagnostic: control={} (stereo diagnostic; submitted eyes may be deliberately wrong)",path_text(std::filesystem::path{eye_source_path}));
             }
             if (GetEnvironmentVariableA("SM2VR_UNITS_PER_METRE",scale,sizeof(scale))) {
                 const auto value = float(std::atof(scale));
@@ -1228,7 +1241,7 @@ void Sm2Probe::on_present()
                 if(const auto settings=VrNativeHudCorners::load(m_native_hud_corners_path))m_native_hud_corners=*settings;
                 m_viewer_play_path=m_calibration_path.parent_path()/"index_viewer_play.calibration";
                 if(const auto settings=vr_viewer::Play::load(m_viewer_play_path)) m_vr_session->set_viewer_play(*settings);
-                else spdlog::warn("VrViewerPlay: {} missing or invalid; using the defaults",m_viewer_play_path.string());
+                else spdlog::warn("VrViewerPlay: {} missing or invalid; using the defaults",path_text(m_viewer_play_path));
                 {const auto play=m_vr_session->viewer_play();spdlog::info("VrViewerPlay: mode={} still_speed_metres_per_second={} still_seconds={} clip_seconds={} limit_seconds={}",vr_viewer::Play::name(play.mode()),
                     play.values.values[vr_viewer::Play::STILL_SPEED],play.values.values[vr_viewer::Play::STILL_SECONDS],play.values.values[vr_viewer::Play::CLIP_SECONDS],play.values.values[vr_viewer::Play::LIMIT_SECONDS]);}
                 m_aim_dot_path=m_calibration_path.parent_path()/"index_aim_dot.calibration";
@@ -1357,7 +1370,7 @@ void Sm2Probe::on_present()
         const bool native_recenter=m_controller_input.take_native_recenter();
         const bool auto_recenter=m_view_camera.take_recenter(); // The Marine walked off the diorama table.
         if(view_keys.recenter || (foreground && native_recenter) || auto_recenter) {m_vr_session->recenter();spdlog::info("VrView: recenter requested mode={} automatic={}",VrViewSettings::name(m_view_settings.mode),auto_recenter);}
-        // Gamepad Back held + D-pad up/down: world bigger/smaller in diorama and chase.
+        // Gamepad Back held + D-pad up/down: world bigger/smaller in third person.
         if(const int steps=m_controller_input.take_native_scale_steps();steps && foreground) {
             auto value=m_view_settings;
             if(value.resize_world(steps) && apply_view_settings(value,true)) spdlog::info("VrView: world scale steps={} mode={} effective_units_per_metre={}",steps,VrViewSettings::name(value.mode),value.scale(m_vr_calibration.units_per_metre));
@@ -1410,7 +1423,14 @@ void Sm2Probe::on_present()
         // then may the held primary give way to the pistol in the left hand (vr_weapon::GripSwitch).
         if(m_controller_input.snapshot().pad.Gamepad.wButtons&XINPUT_GAMEPAD_DPAD_DOWN) EngineArmDriver::get().weapon_switch(std::chrono::steady_clock::now());
         log_viewer(native_state.published|native_state.requested);
-        EngineBodyFollowing::get().allow(first_person && m_controller_input.allows_body_motion(foreground_pid==GetCurrentProcessId()));
+        poll_photo(controls_now);
+        // After the poll, so the phase that just started counts: up to the freeze the arms and
+        // fingers keep the player's pose, the head is restored and turns to the gaze, and the
+        // Marine keeps facing the player's way (vr_viewer::pose_edits).
+        const auto viewer_state=m_vr_session->viewer_status().state;
+        const auto edits=vr_viewer::pose_edits(m_view_settings.mode==VrViewMode::first_person,viewer_state,m_viewer_keep_pose);
+        // Viewer input is disarmed from the first release frame, so the facing has its own say.
+        EngineBodyFollowing::get().allow((first_person && m_controller_input.allows_body_motion(foreground_pid==GetCurrentProcessId())) || (edits.hold_facing && foreground_pid==GetCurrentProcessId()));
         const auto facing_input=m_controller_input.snapshot();
         EngineChainswordRev::get().release_audio_unless(swing_actor,facing_input.chainsword_rev);
         EngineBodyFollowing::get().dodge(facing_input.armed && (facing_input.pad.Gamepad.wButtons&XINPUT_GAMEPAD_A),std::chrono::steady_clock::now());
@@ -1420,16 +1440,12 @@ void Sm2Probe::on_present()
         EngineBodyFollowing::get().combo(facing_input.armed?facing_input.pad.Gamepad.wButtons:0,std::chrono::steady_clock::now());
         // The stick the game is sent: a takeover returns early once the Marine walks along it.
         EngineBodyFollowing::get().stick(facing_input.armed?facing_input.pad.Gamepad.sThumbLX/32767.f:0.f,facing_input.armed?facing_input.pad.Gamepad.sThumbLY/32767.f:0.f,std::chrono::steady_clock::now());
-        // After the poll, so the phase that just started counts: up to the freeze the arms and
-        // fingers keep the player's pose and only the head is restored (vr_viewer::pose_edits).
-        const auto viewer_state=m_vr_session->viewer_status().state;
-        const auto edits=vr_viewer::pose_edits(m_view_settings.mode==VrViewMode::first_person,viewer_state,m_viewer_keep_pose);
         EngineArmDriver::get().allow(edits.arms && m_runtime_enabled && foreground_pid==GetCurrentProcessId() && EngineBodyFollowing::get().snapshot().follow.anchored,
             m_vr_session->epoch(),edits.hide_head);
         // Baseline only once head hiding is actually off in the driver.
         if(viewer_state==VrViewerSequencer::State::off) m_viewer_release_from.reset();
         else if(!edits.hide_head && !m_viewer_release_from) {
-            const auto driver=EngineArmDriver::get().snapshot();m_viewer_release_from=driver.updates;m_viewer_release_hands=driver.hands;
+            const auto driver=EngineArmDriver::get().snapshot();m_viewer_release_from=driver.updates;m_viewer_release_hands=driver.hands;m_viewer_release_turns=EngineBodyFollowing::get().snapshot().follow.turns;
         }
     }
     DWORD weapon_foreground{};GetWindowThreadProcessId(GetForegroundWindow(),&weapon_foreground);
@@ -1561,12 +1577,13 @@ void Sm2Probe::on_present()
                 follow.follow.rides,follow.follow.riding,follow.follow.travel_speed,settings.ride_enabled,settings.ride_speed_metres_per_second,follow.follow.vignette,settings.ride_vignette,
                 follow.follow.releases,follow.follow.released,settings.release_speed_metres_per_second,settings.release_seconds,follow.follow.still_releases,settings.execution_still_seconds,
                 follow.follow.combos,follow.follow.combo_camera,settings.combo_camera_radius_metres,settings.combo_strikes,settings.combo_gap_seconds,settings.combo_camera_seconds);
-            spdlog::info("BodyFollowing: enabled={} actor={:x} body={:x} context={:x} anchored={} turns={} yaw={} body_forward=[{},{},{}] facing_error_degrees={} melee_holds={} melee_facing={} context_calls={} matched_contexts={} native_velocity=[{},{},{}] room_enabled={} room_steps={} error_metres={} consumed=[{},{},{}] requested_velocity=[{},{},{}] gain={} max_speed={} deadzone={}",
+            spdlog::info("BodyFollowing: enabled={} actor={:x} body={:x} context={:x} anchored={} turns={} yaw={} body_forward=[{},{},{}] facing_error_degrees={} melee_holds={} melee_facing={} context_calls={} matched_contexts={} native_velocity=[{},{},{}] room_enabled={} room_steps={} error_metres={} consumed=[{},{},{}] requested_velocity=[{},{},{}] gain={} max_speed={} deadzone={} room_blocked={} room_held_metres={} room_rebases={} room_rebased_metres={}",
                 EngineBodyFollowing::get().enabled(),follow.follow.actor,follow.follow.body,follow.follow.context,follow.follow.anchored,follow.follow.turns,follow.follow.yaw,
                 follow.body_forward[0],follow.body_forward[1],follow.body_forward[2],follow.facing_error_degrees,follow.follow.melee_holds,follow.follow.melee_facing,
-                follow.context_calls,follow.matched_contexts,follow.native_velocity[0],follow.native_velocity[1],follow.native_velocity[2],settings.room_enabled,follow.follow.room_steps,
+                follow.context_calls,follow.matched_contexts,follow.native_velocity[0],follow.native_velocity[1],follow.native_velocity[2],settings.room_on(),follow.follow.room_steps,
                 follow.follow.room_error,follow.follow.consumed[0],follow.follow.consumed[1],follow.follow.consumed[2],
-                follow.follow.requested[0],follow.follow.requested[1],follow.follow.requested[2],settings.gain,settings.max_speed,settings.deadzone);
+                follow.follow.requested[0],follow.follow.requested[1],follow.follow.requested[2],settings.gain,settings.max_speed,settings.deadzone,
+                follow.follow.room_blocked,follow.follow.room_held,follow.follow.room_rebases,follow.follow.room_rebased);
         }
         if (EngineArmProbe::get().installed()) {
             const auto arms=EngineArmProbe::get().snapshot(now);
@@ -1933,7 +1950,7 @@ void Sm2Probe::capture_ordinary_observation()
             if(NativeTemporalProbe::get().observes_global_history()){std::ofstream global{m_ordinary_dump_directory/("global_history_"+std::to_string(m_ordinary_second_dumped.size())+".json")};NativeTemporalProbe::write_global_history(global,temporal);global<<'\n';}
             if(NativeOrdinaryTextureCreation::get().armed()){const auto creation_path=m_ordinary_dump_directory/("creation_"+std::to_string(m_ordinary_second_dumped.size())+".json");std::ofstream creation{creation_path};NativeOrdinaryTextureCreation::get().write(creation,dispatch->sequence);creation<<'\n';}
             if(NativeOrdinaryBloom::get().installed()){const auto bloom_path=m_ordinary_dump_directory/("bloom_"+std::to_string(m_ordinary_second_dumped.size())+".json");std::ofstream bloom{bloom_path};NativeOrdinaryBloom::get().write(bloom,dispatch->sequence);bloom<<'\n';}
-            spdlog::info("OrdinarySecondCamera: render_id={} appended={} right={} refusal={} scenes={} pair={} file={}",receipt.render_id,receipt.appended,receipt.right,receipt.refusal,dispatch->scene_calls,dispatch->ordinary_pair.has_value(),path.string());m_ordinary_second_dumped.push_back(receipt.render_id);
+            spdlog::info("OrdinarySecondCamera: render_id={} appended={} right={} refusal={} scenes={} pair={} file={}",receipt.render_id,receipt.appended,receipt.right,receipt.refusal,dispatch->scene_calls,dispatch->ordinary_pair.has_value(),path_text(path));m_ordinary_second_dumped.push_back(receipt.render_id);
         }return;
     }
     if(!m_ordinary_diagnostics || m_ordinary_dumped>=4) return;
@@ -1948,9 +1965,9 @@ void Sm2Probe::capture_ordinary_observation()
     const auto sample=NativeOrdinaryProbe::get().sample(dispatch->sequence);
     const auto path=m_ordinary_dump_directory/("ordinary_"+std::to_string(m_ordinary_dumped)+".json");
     std::ofstream out{path};out<<std::setprecision(9);NativeOrdinaryProbe::write_capture(out,*dispatch,sample,desc.Width,desc.Height);out.close();
-    if(!out){spdlog::error("OrdinaryCapture: write failed {}",path.string());m_ordinary_diagnostics=false;return;}
+    if(!out){spdlog::error("OrdinaryCapture: write failed {}",path_text(path));m_ordinary_diagnostics=false;return;}
     spdlog::info("OrdinaryCapture: index={} dispatch={} render_id={} scenes={} events={} refused={} errors={} file={} gpu_pair=false",
-        m_ordinary_dumped,dispatch->sequence,dispatch->primary->render_id,dispatch->scene_calls,sample.events.size(),sample.refused,sample.errors,path.string());
+        m_ordinary_dumped,dispatch->sequence,dispatch->primary->render_id,dispatch->scene_calls,sample.events.size(),sample.refused,sample.errors,path_text(path));
     ++m_ordinary_dumped;
 }
 
@@ -2176,8 +2193,17 @@ void Sm2Probe::capture_ordinary_pair(bool after_dispatch)
                     if(!target->steered && prepared.native_valid)if(const auto uv=VrHudReticle::canvas_point(target->point,VrHudCamera{prepared.native_world,t[0],t[1],t[2],t[3],1}))m_reticle_centre=uv;}
                 if(target)++m_aim_dot_pairs;else ++m_aim_dot_missing;
             }
+            // A camera mode picture: one extra copy in this pair's work, from a free camera's eye with no menu up.
+            std::optional<EyeTextureCapture::Tap> photo;
+            if(m_eye_photo.wanted() && packet && packet->tracked && (packet->tracked->prepared.eyes[0].tracking.viewer_anchor || m_photo_diag.count()) && !menu_active && pair.eyes[0].copy){
+                Microsoft::WRL::ComPtr<ID3D12Device> device;
+                const auto& view=packet->tracked->prepared.eyes[0].projection;
+                if(SUCCEEDED(queue->GetDevice(IID_PPV_ARGS(&device))))photo=m_eye_photo.frame(device.Get(),pair.eyes[0].copy->texture.Get(),vr_photo::view_aspect(view[0],view[5]),std::chrono::steady_clock::now());
+                if(photo)m_ordinary_runtime_images.tap(std::move(*photo));
+            }
             if(packet)GpuCompletionProbe::internal([&]{captured=m_ordinary_runtime_images.capture(pair,*packet,queue,hud.Get(),m_native_hud_crop,VrCompactHud::get().settings(),m_handoff.queued(),m_handoff.isolated() && !m_native_hud_requested,
                 menu_image.Get(),panel,m_native_prompt,guide,m_native_hud_corners,vignette,aim_dot,hud_camera_lock,m_hud_reticle.placed(m_view_settings.mode,m_reticle_centre),reticle_target,reticle_cut);});
+            if(photo)if(const auto tapped=m_ordinary_runtime_images.take_tapped())m_eye_photo.tapped(*tapped,std::chrono::steady_clock::now());
             m_ordinary_bridge_attempted=dispatch;
             if(captured && PerformanceTrace::get().probes())PerformanceTrace::get().record("ordinary_bridge_point",PerformanceTrace::now_ms(),0,after_dispatch?1:0);
             if(hud){
@@ -2209,7 +2235,7 @@ void Sm2Probe::capture_ordinary_pair(bool after_dispatch)
             const auto ready=NativeTrackedOrdinaryCamera::get().readiness();
             spdlog::info("OrdinaryOwnedReadiness: reason={} consecutive={} checks={} blocked={} ready_jobs={} owner_changes={} resumes={} job={} actor={} controller={} instance={}",OwnedStereoReadiness::name(ready.reason),ready.consecutive,ready.checks,ready.blocked,ready.ready_jobs,ready.owner_changes,ready.resumes,ready.last_job,ready.owner[0],ready.owner[2],ready.owner[6]);
             if(const auto foreign=ForeignViewHold::get().stats();foreign.sightings)
-                spdlog::info("ForeignViewHold: held={} sightings={} holds={} behind_pair={} slot={} held_jobs={}",ForeignViewHold::get().held(std::chrono::steady_clock::now()),foreign.sightings,foreign.holds,foreign.behind_pair,foreign.slot,NativeTrackedOrdinaryCamera::get().foreign_jobs());
+                spdlog::info("ForeignViewHold: held={} sightings={} holds={} behind_pair={} hdr_remapped={} grading={} grading_refused={} grading_index={} slot={} held_jobs={}",ForeignViewHold::get().held(std::chrono::steady_clock::now()),foreign.sightings,foreign.holds,foreign.behind_pair,foreign.remapped,foreign.grading,foreign.grading_refused,foreign.grading_index,foreign.slot,NativeTrackedOrdinaryCamera::get().foreign_jobs());
             // packet_refusal=999: no packet receipt for the latest native dispatch (a mono dispatch: stopped, suspended, skipped).
             const auto suspension=NativeTrackedOrdinaryCamera::get().suspension();
             spdlog::info("OrdinaryHeadsetProducer: job={} accepted={} refusal={} packet_refusal={} submitted={} volume_shared={} clock_skips={} provider_returned={} provider_ms={} tracking_age_ms={} expired_pre_add_retry={} producer_stopped={} producer_suspended={} suspensions={} suspended_jobs={} resumes={}",r.job.render_id,r.accepted,uint32_t(r.refusal),packet?packet->refusal:999,m_ordinary_submitted,NativeOrdinaryVolumeFrame::get().shared(),NativeTrackedOrdinaryCamera::get().clock_skips(),r.provider_returned,r.provider_ms,r.tracking_age_ms,r.expired_pre_add_retry,NativeTrackedOrdinaryCamera::get().stopped(),
@@ -2338,7 +2364,7 @@ void Sm2Probe::capture_ordinary_inline()
         const auto receipt=m_ordinary_inline_receipts.find(sample.tag);if(receipt!=m_ordinary_inline_receipts.end())out<<receipt->second;else out<<"null";
         if(redirect){out<<",\"redirect\":";GpuCompositorOutput::write_receipt(out,*redirect);out<<",\"shader_override\":false,\"desktop_mirror_verified\":"<<(mirrored?"true":"false")<<",\"retirement\":\"process_lifetime\"";}
         if(m_ordinary_mirror_requested){out<<",\"mirror\":";if(mirror)GpuPresentMirror::write_sample(out,*mirror);else out<<"null";}out<<"}\n";out.close();
-        spdlog::info("OrdinaryInlineResult: index={} dispatch={} appended={} completed={} refusal={} readback={} pixels_saved={} cpu_receipt={} file={}",index,sample.tag,sample.appended,sample.completed,uint32_t(sample.refusal),readback,pixels_saved,receipt!=m_ordinary_inline_receipts.end(),(m_ordinary_dump_directory/(stem+".json")).string());
+        spdlog::info("OrdinaryInlineResult: index={} dispatch={} appended={} completed={} refusal={} readback={} pixels_saved={} cpu_receipt={} file={}",index,sample.tag,sample.appended,sample.completed,uint32_t(sample.refusal),readback,pixels_saved,receipt!=m_ordinary_inline_receipts.end(),path_text(m_ordinary_dump_directory/(stem+".json")));
         m_ordinary_inline_dumped.push_back(sample.tag);
     }
 }
@@ -2702,7 +2728,7 @@ void Sm2Probe::capture_pip_experiment()
             evidence<<"]}}\n";saved=bool(evidence);
         }
         spdlog::info("PipPixelCapture: hr={:#x} saved={} present_id={} camera_job={} pip_job={} native_state={:#x} tracker={} size={}x{} format={} path={}",
-            uint32_t(hr),saved,presenting->render_id,main->game_frame->render_id,pip->game_frame->render_id,binding.state,binding.tracker_index,desc.Width,desc.Height,static_cast<int>(desc.Format),directory.string());
+            uint32_t(hr),saved,presenting->render_id,main->game_frame->render_id,pip->game_frame->render_id,binding.state,binding.tracker_index,desc.Width,desc.Height,static_cast<int>(desc.Format),path_text(directory));
     });
     if(!visited && diagnose) spdlog::info("PipCaptureGate: resource rejected context={:x} texture={:x}",context,state.texture);
 }
@@ -2775,7 +2801,7 @@ void Sm2Probe::capture_eye_image()
                 }
                 evidence<<"]}\n";
             }
-            spdlog::info("EyeDump: id={} hr={:#x} paused={} scripted={} path={}",m_eye_dump_request.id(),uint32_t(hr),state.paused,state.scripted,m_eye_dump_directory.string());
+            spdlog::info("EyeDump: id={} hr={:#x} paused={} scripted={} path={}",m_eye_dump_request.id(),uint32_t(hr),state.paused,state.scripted,path_text(m_eye_dump_directory));
         }
     }
 }
@@ -2783,6 +2809,30 @@ void Sm2Probe::capture_eye_image()
 bool Sm2Probe::first_person_features() const
 {
     return m_view_settings.mode==VrViewMode::first_person && !(m_vr_session && m_vr_session->viewer_engaged());
+}
+
+void Sm2Probe::poll_photo(std::chrono::steady_clock::time_point now)
+{
+    bool click=m_vr_session->take_photo_request();
+    if(m_photo_diag.count() && now>=m_photo_diag_next) {m_photo_diag_next=now+m_photo_diag;click=true;}
+    if(click) {
+        SYSTEMTIME local{};GetLocalTime(&local);
+        const vr_photo::Stamp stamp{local.wYear,local.wMonth,local.wDay,local.wHour,local.wMinute,local.wSecond};
+        if(m_eye_photo.request(stamp,now)) spdlog::info("VrPhoto: click");
+        else {++m_photos_refused;spdlog::info("VrPhoto: refused reason={} (the last picture is still saving)",vr_photo::name(vr_photo::Outcome::busy));}
+    }
+    const auto result=m_eye_photo.poll(now);
+    if(!result) return;
+    if(result->outcome==vr_photo::Outcome::saved) {
+        ++m_photos_saved;
+        const bool pulsed=m_vr_session->photo_pulse();
+        spdlog::info("VrPhoto: saved file='{}' size={}x{} eye={}x{} bytes={} wait_ms={:.1f} copy_ms={:.1f} encode_ms={:.1f} haptic={} saved={} refused={}",path_text(result->path),result->width,result->height,result->eye_width,result->eye_height,result->bytes,
+            result->wait_ms,result->copy_ms,result->encode_ms,pulsed,m_photos_saved,m_photos_refused);
+    }
+    else {
+        ++m_photos_refused;
+        spdlog::warn("VrPhoto: refused reason={} hr={:#x} path='{}' wait_ms={:.1f} saved={} refused={}",vr_photo::name(result->outcome),uint32_t(result->hr),path_text(result->path),result->wait_ms,m_photos_saved,m_photos_refused);
+    }
 }
 
 void Sm2Probe::log_viewer(uint32_t native_flags)
@@ -2797,8 +2847,12 @@ void Sm2Probe::log_viewer(uint32_t native_flags)
     // Hands the arm driver posed since the head release: two per publication while the player's
     // pose is kept, so the publication the freeze holds was posed when this grows up to active.
     const auto posed_hands=m_viewer_release_from?int64_t(driver.hands-m_viewer_release_hands):-1;
-    spdlog::info("VrViewer: state={} engaged={} native_flags={:#x} requests={} refusals={} failures={} unreleased={} publications_since_release={} keep_pose={} posed_hands_since_release={} units_per_metre={} anchor=[{},{},{}] grabs={} snaps={} preset={} grounded={} life_units_per_metre={} preset_changes={} plays={} refreezes={} play_end={} play_seconds={:.2f} play_moved={} play_speed={:.2f}",
-        VrViewerSequencer::name(status.state),rig.engaged,native_flags,status.requests,status.refusals,status.failures,status.unreleased,publications,m_viewer_keep_pose,posed_hands,rig.units_per_metre,
+    // Yaw writes since the release, and the head's total aimed publications: both should grow up to
+    // active, so the frozen Marine faces the player's way and looks where the player looked.
+    const auto facing_turns=m_viewer_release_from?int64_t(EngineBodyFollowing::get().snapshot().follow.turns-m_viewer_release_turns):-1;
+    spdlog::info("VrViewer: state={} engaged={} native_flags={:#x} requests={} refusals={} failures={} unreleased={} publications_since_release={} keep_pose={} posed_hands_since_release={} facing_turns_since_release={} head_aims={} head_aim_refused={} head_aim_limited={} head_aim_degrees={:.1f} units_per_metre={} anchor=[{},{},{}] grabs={} snaps={} preset={} grounded={} life_units_per_metre={} preset_changes={} plays={} refreezes={} play_end={} play_seconds={:.2f} play_moved={} play_speed={:.2f}",
+        VrViewerSequencer::name(status.state),rig.engaged,native_flags,status.requests,status.refusals,status.failures,status.unreleased,publications,m_viewer_keep_pose,posed_hands,
+        facing_turns,driver.head_aims,driver.head_aim_refused,driver.head_aim_limited,driver.head_aim_degrees,rig.units_per_metre,
         rig.anchor[12],rig.anchor[13],rig.anchor[14],rig.grabs,rig.snaps,rig.preset,rig.grounded,rig.life_units_per_metre,rig.presets,
         status.plays,status.refreezes,vr_viewer::name(status.play_end),status.play_seconds,status.play_moved,status.play_speed);
     m_viewer_logged=status;
@@ -2812,7 +2866,7 @@ void Sm2Probe::log_viewer(uint32_t native_flags)
 
 vr_camera::Matrix Sm2Probe::camera_anchor(const vr_camera::Matrix& game,const EngineCameraProbe::VrEye& eye)
 {
-    if(eye.viewer_anchor) {trace_camera(game,*eye.viewer_anchor,eye);return *eye.viewer_anchor;}
+    if(eye.viewer_anchor) {EngineBodyFollowing::get().viewer_frame();trace_camera(game,*eye.viewer_anchor,eye);return *eye.viewer_anchor;}
     if(eye.view_settings.mode==VrViewMode::first_person) return m_first_person_anchor?m_first_person_anchor(game,eye):game;
     const auto now=std::chrono::steady_clock::now();
     const auto actor=EngineBodyProbe::get().active_actor(now);
@@ -2838,9 +2892,9 @@ bool Sm2Probe::apply_view_settings(const VrViewSettings& value,bool persist)
         EngineArmDriver::get().allow(false,m_vr_session?m_vr_session->epoch():0);
         EngineWeaponProbe::get().aim_driver().allow(false,0);
     }
-    spdlog::info("VrView: mode={} diorama_scale={} distance={} height={} pitch={} follow={} recenter={} shoulder_distance={} height={} side={} chase_scale={}",
+    spdlog::info("VrView: mode={} diorama_scale={} distance={} height={} pitch={} follow={} recenter={} shoulder_distance={} height={} side={} shoulder_scale={} chase_scale={}",
         VrViewSettings::name(value.mode),value.diorama_scale,value.diorama_distance,value.diorama_height,value.diorama_pitch,value.diorama_follow,value.diorama_recenter,
-        value.shoulder_distance,value.shoulder_height,value.shoulder_side,value.chase_scale);
+        value.shoulder_distance,value.shoulder_height,value.shoulder_side,value.shoulder_scale,value.chase_scale);
     if(persist && !m_view_settings_path.empty() && !m_view_file.to_save(value).save(m_view_settings_path)) spdlog::warn("VrView: could not save camera settings");
     return true;
 }
@@ -2893,14 +2947,14 @@ void Sm2Probe::poll_arm_settings() {
     if (m_arm_settings_path.empty() || now<m_next_arm_settings_poll) { return; }
     m_next_arm_settings_poll=now+std::chrono::seconds(1);if(!m_arm_settings_stamp.changed(m_arm_settings_path)) return;
     const auto settings=EngineArmDriver::Settings::load(m_arm_settings_path);
-    if (settings && *settings!=EngineArmDriver::get().settings()) { EngineArmDriver::get().set_settings(*settings); spdlog::info("ArmSettings: reloaded {}",m_arm_settings_path.string()); }
+    if (settings && *settings!=EngineArmDriver::get().settings()) { EngineArmDriver::get().set_settings(*settings); spdlog::info("ArmSettings: reloaded {}",path_text(m_arm_settings_path)); }
 }
 void Sm2Probe::poll_swing_settings() {
     const auto now=std::chrono::steady_clock::now();
     if(!m_vr_session || m_swing_settings_path.empty() || now<m_next_swing_settings_poll) return;
     m_next_swing_settings_poll=now+std::chrono::seconds(1);if(!m_swing_settings_stamp.changed(m_swing_settings_path)) return;
     const auto settings=VrSwingMelee::Settings::load(m_swing_settings_path);
-    if(settings && *settings!=m_vr_session->swing_settings()) { m_vr_session->set_swing_settings(*settings);spdlog::info("VrSwing: reloaded {}",m_swing_settings_path.string()); }
+    if(settings && *settings!=m_vr_session->swing_settings()) { m_vr_session->set_swing_settings(*settings);spdlog::info("VrSwing: reloaded {}",path_text(m_swing_settings_path)); }
 }
 void Sm2Probe::poll_camera_guard() {
     const auto now=std::chrono::steady_clock::now();
@@ -2911,9 +2965,9 @@ void Sm2Probe::poll_camera_guard() {
     auto settings=EngineBodyFollowing::get().settings();bool changed=false;
     for(const auto& p:VrBodyFollowing::Settings::CAMERA_PARAMETERS) if(settings.*p.field!=(*loaded).*p.field) {settings.*p.field=(*loaded).*p.field;changed=true;}
     if(!changed) return;
-    if(EngineBodyFollowing::get().set_settings(settings)) spdlog::info("CameraGuard: reloaded {} limits=[{},{}] turn_threshold_degrees={} ride_speed_metres_per_second={} ride_vignette={} release_speed_metres_per_second={} release_seconds={}",m_camera_guard_path.string(),
+    if(EngineBodyFollowing::get().set_settings(settings)) spdlog::info("CameraGuard: reloaded {} limits=[{},{}] turn_threshold_degrees={} ride_speed_metres_per_second={} ride_vignette={} release_speed_metres_per_second={} release_seconds={} room_enabled={} room_gain={} room_max_speed={} room_deadzone={} room_wall_metres={}",path_text(m_camera_guard_path),
         settings.camera_radius_metres,settings.camera_height_metres,settings.turn_threshold_degrees,settings.ride_speed_metres_per_second,settings.ride_vignette,
-        settings.release_speed_metres_per_second,settings.release_seconds);
+        settings.release_speed_metres_per_second,settings.release_seconds,settings.room_on(),settings.gain,settings.max_speed,settings.deadzone,settings.room_wall_metres);
 }
 // Diagnostic (-TakeoverControl): 'takeover' feeds a pulled-back, bobbing animation camera into
 // body following, 'off' the real one (docs/ANIMATION_CAMERA.md). Polled once a second.
@@ -2946,7 +3000,7 @@ void Sm2Probe::poll_weapon_settings() {
     const auto settings=vr_weapon::Settings::load(m_weapon_settings_path);
     if(settings && *settings!=EngineArmDriver::get().weapon_settings()) {
         EngineArmDriver::get().set_weapon_settings(*settings);
-        spdlog::info("WeaponGrip: reloaded {} values=[{},{},{},{},{},{}]",m_weapon_settings_path.string(),settings->values[0],settings->values[1],settings->values[2],settings->values[3],settings->values[4],settings->values[5]);
+        spdlog::info("WeaponGrip: reloaded {} values=[{},{},{},{},{},{}]",path_text(m_weapon_settings_path),settings->values[0],settings->values[1],settings->values[2],settings->values[3],settings->values[4],settings->values[5]);
     }
 }
 void Sm2Probe::on_draw_ui()

@@ -146,6 +146,13 @@ HRESULT EyeTextureCapture::capture(ID3D12Device* device,ID3D12CommandQueue* queu
     }
     else if(panel) m_menu_renderer.draw(device,slot.commands.Get(),slot.menu_bindings,source,slot.texture.Get(),*panel);
     else slot.commands->CopyResource(slot.texture.Get(),source);
+    // A photo (Tap): the plain source, already in COPY_SOURCE here, before any panel. Never a menu frame.
+    const bool tapping=m_tap && !panel && m_tap->buffer && m_tap->footprint.Footprint.Width==desc.Width && m_tap->footprint.Footprint.Height==desc.Height && m_tap->footprint.Footprint.Format==desc.Format;
+    if(tapping){
+        D3D12_TEXTURE_COPY_LOCATION from{};from.pResource=source;from.Type=D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+        D3D12_TEXTURE_COPY_LOCATION to{};to.pResource=m_tap->buffer.Get();to.Type=D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;to.PlacedFootprint=m_tap->footprint;
+        slot.commands->CopyTextureRegion(&to,0,0,0,&from,nullptr);
+    }
     if(guide || vignette){ // Over the scene, under the HUD.
         if(target_state!=D3D12_RESOURCE_STATE_RENDER_TARGET){const auto to_target=transition(slot.texture.Get(),target_state,D3D12_RESOURCE_STATE_RENDER_TARGET);slot.commands->ResourceBarrier(1,&to_target);}
         for(const auto& corners:guide_corners) if(corners) m_guide_renderer.draw(device,slot.commands.Get(),slot.guide_bindings,slot.texture.Get(),*corners,metadata.guard_guide->colour);
@@ -181,12 +188,14 @@ HRESULT EyeTextureCapture::capture(ID3D12Device* device,ID3D12CommandQueue* queu
     slot.source = source; // Keep source alive until its copy fence completes.
     slot.hud_source=native_hud;
     slot.menu_source=menu_image;
+    slot.tap_target=tapping?m_tap->buffer:ComPtr<ID3D12Resource>{}; // Alive until the copy's fence, whatever the photo does.
     ID3D12CommandList* commands[]{slot.commands.Get()};
     if(detail){slot.probe_enqueue=PerformanceTrace::now_ms();slot.probe_eye=metadata.eye;slot.probe_render=metadata.render_id;slot.probe_pending=true;}
     m_queue->ExecuteCommandLists(1,commands);
     slot.pending = ++m_fence_value;
     result = m_queue->Signal(m_fence.Get(),slot.pending);
     if (FAILED(result)) { m_poisoned = true; return result; }
+    if(tapping){m_tapped=Tapped{m_fence,slot.pending,metadata.render_id};m_tap.reset();}
     m_latest[metadata.eye] = Image{metadata,m_generation,slot.pending,m_fence,*available};
     if(!guide) m_latest[metadata.eye]->metadata.guard_guide.reset(); // Metadata says what the image shows.
     if(!vignette) m_latest[metadata.eye]->metadata.comfort_vignette=0;
@@ -216,7 +225,7 @@ void EyeTextureCapture::poll() {
             }else PerformanceTrace::get().record("bridge_gpu_probe_read_failed",observed,0,double(slot->probe_render));
             slot->probe_pending=false;
         }
-        slot->source.Reset();slot->hud_source.Reset();slot->menu_source.Reset();
+        slot->source.Reset();slot->hud_source.Reset();slot->menu_source.Reset();slot->tap_target.Reset();
     } }
 }
 HRESULT EyeTextureCapture::dump_pair(const std::filesystem::path& directory,bool require_tracked) {
@@ -320,7 +329,7 @@ bool EyeTextureCapture::reset(bool wait) {
         CloseHandle(event);
         if (!done) { return false; }
     }
-    for (auto& eye : m_slots) for (auto& slot : eye) { if (slot) { slot->source.Reset();slot->hud_source.Reset();slot->menu_source.Reset(); } }
+    for (auto& eye : m_slots) for (auto& slot : eye) { if (slot) { slot->source.Reset();slot->hud_source.Reset();slot->menu_source.Reset();slot->tap_target.Reset(); } }
     m_candidate_pair.reset(); m_latest = {}; m_slots = {}; m_menu_renderer.reset();m_hud_renderer.reset();m_guide_renderer.reset();m_guide_failed=false;m_vignette_renderer.reset();m_vignette_failed=false;m_fence.Reset(); m_device.Reset(); m_queue.Reset();
     m_fence_value = m_last_render_id = 0; m_poisoned = false; ++m_generation;
     return true;

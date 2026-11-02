@@ -7,7 +7,7 @@ import tempfile
 import unittest
 import zipfile
 
-from installer_support import FIXTURES, TEMP, run_ps, run_ps_json
+from installer_support import FIXTURES, REPO, TEMP, run_ps, run_ps_json
 
 ITEMS = ('SM2VR.cmd', 'version.json', 'app/sm2-game.ps1', 'mod/dxgi.dll', 'builders/b.py', 'python/python.exe')
 
@@ -57,6 +57,15 @@ class UpdatePlanTests(unittest.TestCase):
         self.assertIn('update the game in Steam', plan['message'])
 
 
+class PublishedManifestTests(unittest.TestCase):
+    def test_the_default_channel_has_a_release(self):
+        manifest = json.loads((REPO / 'installer/manifest.json').read_text(encoding='utf-8'))
+        self.assertIn('stable', manifest['channels'])
+
+    def test_publishing_tags_the_version(self):
+        self.assertIn('$tag = "v$Version"', (REPO / 'scripts/publish-release.ps1').read_text(encoding='utf-8'))
+
+
 class ApplyUpdateTests(unittest.TestCase):
     def setUp(self):
         TEMP.mkdir(parents=True, exist_ok=True)
@@ -84,7 +93,8 @@ class ApplyUpdateTests(unittest.TestCase):
 
     def test_update_replaces_the_package_in_place(self):
         self.assertEqual(self.apply(), '0.2.0')
-        self.assertEqual(self.contents(), sorted(ITEMS))
+        self.assertEqual(self.contents(), sorted(ITEMS + ('notes.txt',)))
+        self.assertEqual((self.root / 'notes.txt').read_text(), 'notes.txt 0.1.0')
         self.assertEqual((self.root / 'mod/dxgi.dll').read_text(), 'mod/dxgi.dll 0.2.0')
 
     def test_bad_hash_changes_nothing(self):
@@ -94,8 +104,8 @@ class ApplyUpdateTests(unittest.TestCase):
 
     def test_failed_swap_rolls_back(self):
         before = {p: (self.root / p).read_text() for p in self.contents()}
-        # An open handle stops Windows moving notes.txt, after app/ builders/ mod/ already moved.
-        with open(self.root / 'notes.txt'):
+        # An open handle stops Windows moving python/, after app/ builders/ mod/ already moved.
+        with open(self.root / 'python/python.exe'):
             message = self.apply(ok=False)
         self.assertIn('rolled back', message)
         self.assertEqual({p: (self.root / p).read_text() for p in self.contents()}, before)

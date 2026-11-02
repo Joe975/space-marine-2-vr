@@ -18,6 +18,7 @@
 #include "FileStamp.h"
 #include "OrdinaryRuntimeImages.h"
 #include "OrdinaryEyeSnapshot.h"
+#include "EyePhoto.h"
 #include "PresentHandoff.h"
 #include "StereoHoldControl.h"
 #include "NativeAsyncLightingControl.h"
@@ -170,9 +171,16 @@ private:
     vr_camera::Matrix camera_anchor(const vr_camera::Matrix&,const EngineCameraProbe::VrEye&);
     bool first_person_features() const; // first person and no viewer-mode phase
     void log_viewer(uint32_t native_flags);
+    void poll_photo(std::chrono::steady_clock::time_point now); // Camera mode pictures: a click starts one, a finished one logs and pulses.
+    EyePhoto m_eye_photo;
+    uint64_t m_photos_saved{},m_photos_refused{};
+    // SM2VR_DIAG_PHOTO_SECONDS: a picture on a timer from any stereo eye, for places camera mode can't
+    // reach in an unattended run (TAA only runs in the hangar, where the viewer refuses to start).
+    std::chrono::seconds m_photo_diag{};std::chrono::steady_clock::time_point m_photo_diag_next{};
     VrSession::ViewerStatus m_viewer_logged;
     std::optional<uint64_t> m_viewer_release_from; // arm-driver publication count when the viewer released the head
     uint64_t m_viewer_release_hands{}; // arm-driver posed hands at that point (the log shows the pose kept for the freeze)
+    uint64_t m_viewer_release_turns{}; // body-following yaw writes at that point (the log shows the facing held to the freeze)
     bool m_viewer_keep_pose{true}; // photo mode freezes the player's arm and finger pose (SM2VR_PHOTO_NATIVE_POSE=1: the game's own)
     std::mutex m_thumbs_up_mutex;
     vr_thumbs_up::Shaper m_thumbs_up; // finger targets: thumbs-up shape and the photo-entry left thumb (SM2VR_THUMBS_UP)

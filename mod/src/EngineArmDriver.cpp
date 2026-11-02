@@ -1,3 +1,4 @@
+#include "PathText.h"
 #include "EngineArmDriver.h"
 #include "NativePlayerPartVisibility.h"
 #include <cstring>
@@ -135,7 +136,7 @@ void EngineArmDriver::configure_native(bool diagnostic) {
         if(control_length) {
             const bool valid=control_length<std::size(control) && set_body_placement_control(std::filesystem::path{control});
             spdlog::info("BodyPlacementControl: configured={} path='{}' (absolute per-run path; invalid/missing reads retain last valid setting)",valid,
-                control_length<std::size(control)?std::filesystem::path{control}.string():"<too long>");
+                control_length<std::size(control)?path_text(std::filesystem::path{control}):"<too long>");
         }
     }
     char invalidate[8]{};const auto invalidate_length=GetEnvironmentVariableA("SM2VR_INVALIDATE_ARM_POSE",invalidate,sizeof(invalidate));
@@ -211,7 +212,7 @@ void EngineArmDriver::poll_body_placement_control(Clock::time_point now) {
     } else ++m_state.body_control_rejected;
     if(previous!=read.status || before!=m_body_placement.back_metres)
         spdlog::info("BodyPlacementControl: path='{}' status={} configured_back_metres={} retained_last_valid={} revision={} polls={} rejected={}",
-            path.string(),vr_body_placement::CONTROL_STATUS[static_cast<size_t>(read.status)],m_body_placement.back_metres,!read.settings,
+            path_text(path),vr_body_placement::CONTROL_STATUS[static_cast<size_t>(read.status)],m_body_placement.back_metres,!read.settings,
             m_state.body_control_revision,m_state.body_control_polls,m_state.body_control_rejected);
 }
 void EngineArmDriver::follow_weapon(bool value) {std::scoped_lock lock{m_mutex};m_weapon_enabled=value;m_weapon_hand.reset();m_weapon_relative.reset();m_weapon_grip.reset();m_weapon_seated=true;m_weapon_switch.reset();if(m_weapon_observer) m_weapon_observer({});}
@@ -374,6 +375,14 @@ void EngineArmDriver::apply_publication(const EngineArmProbe::Pose& pose,Clock::
         if(attachment && mapping[attachment->index]>=0 && (attachment->hand==1 || solved_hands==2)) locals[attachment->index]=attachment->local;else attachment.reset();
     }
     if(body_placed && m_weapon_enabled && !attachment) { refuse_body(vr_body_placement::Refusal::Attachment);return; }
+    // On the way into camera mode: the frozen head looks where the player looked. A refusal keeps
+    // the animated head and everything else in this publication.
+    std::optional<vr_head_aim::Result> head_aim;
+    stage="head_aim";
+    if(m_targets->gaze && m_state.enabled && !shrink_head) {
+        head_aim=vr_head_aim::aim(locals,pose.layout->parents,pose.layout->names,mapping,pose.world,*m_targets->gaze);
+        if(head_aim) locals=head_aim->locals; else ++m_state.head_aim_refused;
+    }
     stage="final_hierarchy";
     if(trace && (solved_hands || attachment || upright_applied || body_placed)) {
         // As published after arm IK and the weapon retarget: shows which weapon bones
@@ -522,6 +531,7 @@ void EngineArmDriver::apply_publication(const EngineArmProbe::Pose& pose,Clock::
     if(trace) trace->driven=solved_hands>0;
     m_state.bone_writes+=written; m_state.hands+=solved_hands;m_state.finger_hands+=finger_hands;if(head_applied) ++m_state.head_updates;if(upright_applied) ++m_state.upright_updates;
     if(body_placed) {++m_state.body_placement_updates;m_state.body_applied_back_metres=m_body_placement.back_metres;}
+    if(head_aim) {++m_state.head_aims;m_state.head_aim_degrees=head_aim->turned_degrees;if(head_aim->limited) ++m_state.head_aim_limited;}
     if(attachment) {
         m_weapon_hand=attachment->hand;
         m_weapon_relative=attachment->relative;

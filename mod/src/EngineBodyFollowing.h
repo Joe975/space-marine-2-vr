@@ -23,6 +23,7 @@ public:
     void melee(bool pressed,VrBodyFollowing::Clock::time_point now); // VrBodyFollowing::melee
     void combo(uint16_t buttons,VrBodyFollowing::Clock::time_point now); // VrBodyFollowing::combo
     void stick(float x,float y,VrBodyFollowing::Clock::time_point now); // VrBodyFollowing::stick
+    void viewer_frame(); // VrBodyFollowing::viewer_frame
     void head_bone(uintptr_t actor,const VrBodyFollowing::Vector& position,VrBodyFollowing::Clock::time_point received);
     void character_motion(const vr_viewer::Motion::Sample&);
     float movement_heading_offset(VrBodyFollowing::Clock::time_point now) const;

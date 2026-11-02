@@ -1,0 +1,16 @@
+{
+ "description": "Camera mode photos (docs/VIEWER_MODE.md '2 Nov'): with the viewer active (viewer_hold_menu.json first), one held right stick click, then three rapid clicks. Expect one VrPhoto: saved for the held click; of the rapid clicks one or more saved, the rest refused reason=busy.",
+ "mode": "live_head",
+ "duration_ms": 5000,
+ "frames": [
+  {"ms": 0, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0]},
+  {"ms": 500, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0], "buttons": ["finisher"]},
+  {"ms": 1500, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0]},
+  {"ms": 3000, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0], "buttons": ["finisher"]},
+  {"ms": 3050, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0]},
+  {"ms": 3100, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0], "buttons": ["finisher"]},
+  {"ms": 3150, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0]},
+  {"ms": 3200, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0], "buttons": ["finisher"]},
+  {"ms": 3250, "left": [-0.15, -0.3, -0.45, 0, 0, 0], "right": [0.15, -0.3, -0.45, 0, 0, 0]}
+ ]
+}

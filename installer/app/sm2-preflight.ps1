@@ -103,6 +103,9 @@ function Test-Sm2Preflight {
     }
     if ($State.SteamVr -eq 'elevated') {
         $checks.Add((New-Sm2Check 'steamvr' $false 'SteamVR is running as administrator.' 'Quit SteamVR and start it normally.'))
+    } elseif ($For -eq 'play' -and $State.SteamVr -eq 'not_running') {
+        # The game opens flat without it, and the headset stays dark. Invoke-Play starts it.
+        $checks.Add((New-Sm2Check 'steamvr_off' $false 'SteamVR is not running.' 'Play starts it.' $false))
     }
     if (-not $State.OpenXrRuntime -or $State.OpenXrRuntime -notmatch 'steamxr') {
         $current = $(if ($State.OpenXrRuntime) { $State.OpenXrRuntime } else { 'none' })

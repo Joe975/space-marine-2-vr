@@ -63,7 +63,7 @@ public:
     };
 private:
     struct Slot {
-        Microsoft::WRL::ComPtr<ID3D12Resource> texture, source,hud_source,menu_source;
+        Microsoft::WRL::ComPtr<ID3D12Resource> texture, source,hud_source,menu_source,tap_target;
         Microsoft::WRL::ComPtr<ID3D12CommandAllocator> allocator;
         Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commands;
         uint64_t pending{};
@@ -88,6 +88,15 @@ public:
         }
     };
     struct Pair { Image left, right; };
+    // A camera mode photo (EyePhoto): the next capture of a plain eye also copies its source into this
+    // readback buffer, in the same command list and before any panel is drawn, so the picture has no
+    // HUD, guide or menu in it. Nothing waits: Tapped says when the copy will be done.
+    struct Tap { Microsoft::WRL::ComPtr<ID3D12Resource> buffer; D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint{}; };
+    struct Tapped { Microsoft::WRL::ComPtr<ID3D12Fence> fence; uint64_t value{}; uint64_t render_id{}; };
+    void tap(Tap value) { m_tap=std::move(value); }
+    // The tap's fence once a capture has submitted it. An unused tap ends here too: it never
+    // outlives the frame it was set for.
+    std::optional<Tapped> take_tapped() { m_tap.reset(); auto out=std::move(m_tapped); m_tapped.reset(); return out; }
     HRESULT capture(ID3D12Device*, ID3D12CommandQueue*, ID3D12Resource*, const Metadata&,
                     D3D12_RESOURCE_STATES input_state=D3D12_RESOURCE_STATE_PRESENT,ID3D12Resource* native_hud=nullptr,
                     ID3D12Resource* menu_image=nullptr); // Optional separate screen-menu image (PRESENT state), drawn as the panel.
@@ -124,6 +133,8 @@ private:
     std::array<std::array<std::shared_ptr<Slot>,MAX_SLOTS>,2> m_slots;size_t m_slot_count{2};
     std::array<std::optional<Image>,2> m_latest;
     std::optional<Pair> m_candidate_pair;
+    std::optional<Tap> m_tap;
+    std::optional<Tapped> m_tapped;
     uint64_t m_generation{}, m_fence_value{}, m_last_render_id{};
     bool m_poisoned{};
 };

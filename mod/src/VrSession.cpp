@@ -538,6 +538,11 @@ void VrSession::poll_viewer(VrControllerInput& input,bool foreground,std::chrono
         if(end!=vr_viewer::PlayEnd::none && (vr_viewer::freezes(end)?m_viewer_sequence.refreeze(now):m_viewer_sequence.request(native_flags,now))) {m_play_end=end;m_play_seconds=std::chrono::duration<float>(elapsed).count();}
     }
     const auto step=m_viewer_sequence.update(native_flags,foreground,now,m_character_native);
+    // Right stick click: one picture a click, however long it's held. The game gets a neutral pad
+    // below, so it is never a finisher here.
+    const bool photo_held=raw && raw->finisher;
+    if(photo_held && !m_photo_button && vr_viewer::takes_photos(m_viewer_sequence.state())) m_photo_requested=true;
+    m_photo_button=photo_held;
     if(step.outcome==VrViewerSequencer::Outcome::playing) {m_viewer_motion.reset(now);m_play_end=vr_viewer::PlayEnd::none;m_play_seconds=0;}
     if(step.outcome==VrViewerSequencer::Outcome::entered && m_viewer_start) {
         // Stage space: the reference head's height is the player's eye height above the floor.
@@ -585,6 +590,11 @@ void VrSession::note_character_motion(const vr_viewer::Motion::Sample& sample) {
     std::lock_guard lock{m_mutex};
     if(m_viewer_sequence.state()!=VrViewerSequencer::State::playing) return;
     m_viewer_motion.add(sample,m_view_settings.scale(m_calibration.units_per_metre),m_viewer_play.still_speed());
+}
+bool VrSession::take_photo_request() { std::lock_guard lock{m_mutex};const bool out=m_photo_requested;m_photo_requested=false;return out; }
+bool VrSession::photo_pulse() {
+    std::lock_guard lock{m_mutex};
+    return m_enabled && m_started && !m_failed && m_backend->rumble(vr_photo::pulse(m_rumble_settings.frequency));
 }
 std::string VrSession::input_status() const { std::lock_guard lock{m_mutex}; return m_backend->input_status(); }
 std::string VrSession::finger_status() const { std::lock_guard lock{m_mutex}; return m_backend->finger_status(); }

@@ -67,9 +67,12 @@ function Install-Sm2Update {
         $movedOut = New-Object System.Collections.Generic.List[string]
         $movedIn = New-Object System.Collections.Generic.List[string]
         try {
-            foreach ($item in @(Get-ChildItem -LiteralPath $PackageRoot | Where-Object { $_.Name -notlike '.update-*' -and $_.Name -notlike '.previous-*' })) {
-                Move-Item -LiteralPath $item.FullName -Destination (Join-Path $retired $item.Name)
-                $movedOut.Add($item.Name)
+            # Only what a release holds: a player's own files beside SM2VR.cmd stay.
+            foreach ($name in @($Sm2PackageItems + @(Get-ChildItem -LiteralPath $source | ForEach-Object { $_.Name })) | Select-Object -Unique) {
+                $path = Join-Path $PackageRoot $name
+                if (-not (Test-Path -LiteralPath $path)) { continue }
+                Move-Item -LiteralPath $path -Destination (Join-Path $retired $name)
+                $movedOut.Add($name)
             }
             foreach ($item in @(Get-ChildItem -LiteralPath $source)) {
                 Move-Item -LiteralPath $item.FullName -Destination (Join-Path $PackageRoot $item.Name)

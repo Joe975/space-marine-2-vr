@@ -77,6 +77,10 @@ public:
         if(m_probe_started)PerformanceTrace::get().record("ordinary_bridge_pending_cpu",m_probe_started,PerformanceTrace::now_ms()-m_probe_started,double(*m_pending));
         m_pending.reset();m_pending_queue.Reset();m_probe_started=0;return result;
     }
+    // A camera mode photo (EyePhoto): the left eye of the next pair. Left is the game's own eye, the
+    // one the right eye's parity work is compared against.
+    void tap(EyeTextureCapture::Tap value){m_copies[0].tap(std::move(value));}
+    std::optional<EyeTextureCapture::Tapped> take_tapped(){return m_copies[0].take_tapped();}
     bool pending()const{return m_pending.has_value();}
     const std::array<uint64_t,size_t(Refusal::count)>& refusals()const{return m_refusals;}
     // "slot_busy:12 stale:3", only the non-zero reasons ("none" when there are none).

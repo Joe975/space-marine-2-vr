@@ -423,7 +423,7 @@ void controller_input(Host& gpu,const EyeTextureCapture::Pair& pair) {
             "unbound optional actions release only themselves");
         v["move"]={false,0};require(!backend.controllers(),"inactive stick is neutral");v["move"]={true,0,0};
         fixture.grip_tracked[1]=false;
-        require(!backend.controllers() && backend.input_status().starts_with("both controllers"),"an untracked controller makes controls neutral");
+        require(backend.controllers().has_value(),"an untracked controller keeps the sticks and buttons");
         require(!backend.tracking()->controllers[1],"an untracked grip drops that hand");
         fixture.grip_tracked[1]=true;
         // Focus loss (dashboard) is neutral and stops the test driver.

@@ -89,7 +89,7 @@ $channelBox.SelectedIndex = $(if ($settings.channel -eq 'beta') { 1 } else { 0 }
 $colors = @{ ok = 'SeaGreen'; ready = 'SeaGreen'; running = 'SteelBlue'; warn = 'DarkOrange'; fail = 'Firebrick'; todo = 'Gray' }
 $words = @{ ok = 'OK'; ready = 'READY'; running = 'RUNNING'; warn = 'ONE STEP'; fail = 'PROBLEM'; todo = 'WAITING' }
 $buttonText = @{ change = 'Change folder...'; recheck = 'Check again'; updates = 'Check for updates'; fix_permissions = 'Fix permissions'
-    install = 'Install'; reinstall = 'Reinstall'; bindings_done = 'Done'; play = 'Play: motion controls'; play_chase = 'Play: chase camera' }
+    install = 'Install'; reinstall = 'Reinstall'; play = 'Play: motion controls'; play_chase = 'Play: chase camera' }
 
 function Write-Log([string]$Message) {
     $log.AppendText(('[{0}] {1}' -f (Get-Date -Format 'HH:mm:ss'), $Message) + [Environment]::NewLine)
@@ -108,8 +108,7 @@ function Update-View {
     $installChecks = Test-Sm2Preflight -State $system -For install
     $playChecks = Test-Sm2Preflight -State $system -For play
     $problems = @(); if ($ui.Game) { $problems = @(Get-Sm2InstallProblems -InstallState $install -Package $package -Game $ui.Game) }
-    $bindings = Get-Sm2BindingsCurrent -InstallState $install -Package $package
-    $steps = Get-Sm2StepView -InstallChecks $installChecks -PlayChecks $playChecks -InstallProblems $problems -BindingsCurrent $bindings -Playing $ui.Playing
+    $steps = Get-Sm2StepView -InstallChecks $installChecks -PlayChecks $playChecks -InstallProblems $problems -Playing $ui.Playing
     for ($i = 0; $i -lt 5; $i++) {
         $s = $steps[$i]; $r = $rows[$i]
         $r.Status.Text = $words[$s.Status]; $r.Status.BackColor = [Drawing.Color]::FromName($colors[$s.Status])
@@ -172,6 +171,7 @@ function Invoke-Install {
 }
 
 function Invoke-Play([ValidateSet('motion', 'chase')][string]$View = 'motion') {
+    if ((Get-Sm2ProcessState 'vrserver') -eq 'not_running') { Write-Log 'Starting SteamVR.'; Start-Process 'steam://run/250820' }
     $ui.Playing = $true
     $title = $(if ($View -eq 'chase') { 'Starting Space Marine 2 in VR (chase camera, gamepad)' } else { 'Starting Space Marine 2 in VR (motion controls)' })
     Start-Job2 $title {
@@ -252,7 +252,6 @@ foreach ($stepButton in @($rows | ForEach-Object { $_.Button; $_.Button2 })) {
             'fix_permissions' { if (Grant-Sm2GameFolderAccess -Game $ui.Game) { Write-Log 'Permissions fixed.' } else { Write-Log 'Permissions were not changed.' } }
             'install' { Invoke-Install }
             'reinstall' { Invoke-Install }
-            'bindings_done' { Confirm-Sm2Bindings -Package $package -StateRoot $stateRoot; Write-Log 'SteamVR binding confirmed.' }
             'play' { Invoke-Play 'motion' }
             'play_chase' { Invoke-Play 'chase' }
         }
@@ -274,7 +273,9 @@ $form.Add_FormClosing({
 
 # --- start ------------------------------------------------------------------------------------
 $steps = Update-View
-if ($ui.Game -and -not ($ui.Game.Bin -and (Get-Sm2BinProcesses $ui.Game.Bin).Count)) {
+# Not in a self-test, which only looks: a repair moments before a launch's game process appears would
+# take its files out of the game folder.
+if (-not $SelfTest -and $ui.Game -and -not ($ui.Game.Bin -and (Get-Sm2BinProcesses $ui.Game.Bin).Count)) {
     try {
         $repair = Repair-Sm2AfterCrash -Game $ui.Game -StateRoot $stateRoot
         if ($repair) {

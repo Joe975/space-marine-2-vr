@@ -408,8 +408,12 @@ namespace vr_viewer {
 // with a full-size head. With keep_pose off it falls back to the game's own pose (the
 // behaviour before 26 Oct). Once photo mode shows nothing is driven: there are no
 // publications, and viewer frames carry no controller targets.
+// Up to the freeze the Marine also keeps where the player was looking (Joe, 2 Nov). aim_head turns
+// the head to the gaze (VrHeadAim.h). hold_facing keeps body following on: in the 31 Oct 16:04
+// run the game turned the Marine 32 degrees off the player's facing in the 100 ms between the
+// release and the pause (root yaw -101 to -134, still turning when it froze).
 struct PoseEdits {
-    bool arms{},hide_head{};
+    bool arms{},hide_head{},aim_head{},hold_facing{};
     bool operator==(const PoseEdits&) const=default;
 };
 inline bool before_freeze(VrViewerSequencer::State state) {
@@ -419,7 +423,13 @@ inline bool before_freeze(VrViewerSequencer::State state) {
 inline PoseEdits pose_edits(bool first_person,VrViewerSequencer::State state,bool keep_pose) {
     if(!first_person) return {};
     if(state==VrViewerSequencer::State::off) return {true,true};
-    return {keep_pose && before_freeze(state),false};
+    const bool kept=keep_pose && before_freeze(state);
+    return {kept,false,kept,kept};
+}
+// A right stick click saves a picture in camera mode (Joe, 1 Nov): frozen or while the game runs
+// under the free camera. Not in the menu presses around them: those frames show the pause menu.
+inline bool takes_photos(VrViewerSequencer::State state) {
+    return state==VrViewerSequencer::State::active || state==VrViewerSequencer::State::playing;
 }
 
 // Watch it play out (Joe, 30 Oct: "a button that the player can let the game play while they're

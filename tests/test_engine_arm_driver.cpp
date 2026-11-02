@@ -341,6 +341,45 @@ void head_release_keeps_arms() {
         require(driver.snapshot().head_updates==2 && !vr_camera::rigid(buffer[8]),"head hiding resumes after the viewer");
     }
 }
+// 2 Nov: on the way into camera mode the head turns to the gaze in the publication the freeze
+// keeps, through the real writer; first person (head hiding on) and a plain publication never do.
+void gaze_reaches_the_publication() {
+    using vr_head_aim::FACE;
+    const auto now=EngineArmDriver::Clock::now();
+    // The Marine's axes: x up, y forward, z left (VrHeadAim.h), facing world +z.
+    const vr_arm::Matrix upright{0,1,0,0, 0,0,1,0, 1,0,0,0, 0,0,0,1};
+    const auto placed=[&](vr_arm::Vector p){auto m=upright;vr_arm::position(m,p);return m;};
+    auto layout=std::make_shared<EngineArmProbe::RigLayout>();layout->names={"ROOT","BACKup","ARM1L","ARM2L","HANDL","NECK","HEAD","helmet","eye_L","eye_R"};layout->parents={-1,0,1,2,3,1,5,6,6,6};
+    layout->bind_locals={matrix({0,0,0}),placed({0,1.9f,0}),matrix({.2f,.2f,0}),matrix({.42f,0,0}),matrix({.42f,0,0}),matrix({.3f,0,0}),matrix({.13f,0,0}),matrix({0,0,0}),matrix({.09f,.1f,.04f}),matrix({.09f,.1f,-.04f})};
+    std::array<vr_arm::Matrix,10> buffer{};
+    EngineArmProbe::Pose pose;pose.owner.actor=123;pose.owner.instance=456;pose.layout=layout;pose.world=vr_camera::IDENTITY;pose.world_valid=true;pose.received=now;pose.buffer=reinterpret_cast<uintptr_t>(buffer.data());
+    for(size_t i=0;i<buffer.size();++i){buffer[i]=layout->bind_locals[i];pose.bones.push_back({static_cast<uint32_t>(i),static_cast<int16_t>(i),layout->bind_locals[i]});}
+    const auto native=buffer;
+    EngineArmDriver driver;bool locked{};
+    driver.configure({[](const auto&,auto){return true;},[&](uintptr_t){locked=true;},[&](uintptr_t){locked=false;},
+        [&](uintptr_t p,const auto& value){require(locked,"head aim writes under the native lock");std::memcpy(reinterpret_cast<void*>(p),value.data(),sizeof(value));return true;}});
+    driver.enable(true);driver.hide_head(true);
+    const vr_arm::Vector gaze{.5f,0,.8660254f}; // 30 degrees to the Marine's left, world +x when it faces +z.
+    EngineArmDriver::Targets targets;targets.actor=123;targets.reference=2;targets.epoch=5;targets.captured=now;targets.wrists={matrix({.4f,1.8f,.5f}),std::nullopt};targets.gaze=gaze;
+    // First person: the head is shrunk, not aimed.
+    driver.allow(true,5);driver.targets(targets);driver.apply(pose,now);
+    require(driver.snapshot().head_updates==1 && driver.snapshot().head_aims==0 && !vr_camera::rigid(buffer[6]),"first person shrinks the head and never aims it");
+    // The viewer's release: the head full size, and on the gaze.
+    buffer=native;driver.allow(true,5,false);driver.targets(targets);driver.apply(pose,now);
+    {const auto state=driver.snapshot();
+     require(state.head_aims==1 && state.hands==2 && state.head_updates==1 && state.head_aim_refused==0,"the release aims the head and keeps the arms");
+     std::vector<vr_arm::Matrix> locals(buffer.begin(),buffer.end()),world;require(vr_arm::hierarchy(locals,layout->parents,pose.world,world),"the published head stays rigid");
+     require(vr_upright::angle_degrees(vr_arm::rotate(FACE,world[6]),gaze)<.2f,"the published eyes look along the gaze");
+     require(buffer[5]!=native[5] && buffer[6]!=native[6] && buffer[7]==native[7],"NECK and HEAD are written; the helmet rides on HEAD");
+     require(state.head_aim_degrees>10,"the turn from the animation is reported");}
+    // No gaze (photo mode's next publications, a play): nothing turns.
+    buffer=native;targets.gaze.reset();driver.targets(targets);driver.apply(pose,now);
+    require(driver.snapshot().head_aims==1 && buffer[5]==native[5] && buffer[6]==native[6],"no gaze leaves the head to the animation");
+    // A refusal costs the head, never the arms.
+    auto no_eyes=std::make_shared<EngineArmProbe::RigLayout>(*layout);no_eyes->names[8]="eye_lost";auto refused=pose;refused.layout=no_eyes;
+    buffer=native;targets.gaze=gaze;driver.targets(targets);driver.apply(refused,now);
+    {const auto state=driver.snapshot();require(state.head_aim_refused==1 && state.head_aims==1 && state.hands==4 && buffer[6]==native[6],"a rig the aim can't trust keeps its head and still gets its arms");}
+}
 // Bulwark (26 Oct): the storm shield's mount turns with the tracked left wrist's roll, written
 // into the publication with the arm. A rig whose animation does not publish the mount still
 // gets its left arm (the twist is dropped rather than the whole hand refused).
@@ -370,7 +409,7 @@ void shield_publication() {
 }
 int main(int argc,char** argv) {
     try {
-        head_release_keeps_arms();post_write_resolution();post_write_invalidation();weapon_publication();weapon_grip_survives_a_rebuilt_layout();upright_publication();recorded_embodiment_publication();shield_publication();body_placement_tests::run();
+        head_release_keeps_arms();gaze_reaches_the_publication();post_write_resolution();post_write_invalidation();weapon_publication();weapon_grip_survives_a_rebuilt_layout();upright_publication();recorded_embodiment_publication();shield_publication();body_placement_tests::run();
         EngineArmDriver driver;
         const auto now=EngineArmDriver::Clock::now();
         auto layout=std::make_shared<EngineArmProbe::RigLayout>();

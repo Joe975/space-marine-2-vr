@@ -202,7 +202,6 @@ function Install-Sm2 {
         grenade_layout_verified = $grenade
         last_save_backup = $backup
         preserved_config = @($kept)
-        bindings_confirmed_sha256 = $(if ($previous) { $previous.bindings_confirmed_sha256 } else { $null })
         game_files = $gameFiles
         installed_utc = (Get-Date).ToUniversalTime().ToString('o')
     }
@@ -216,7 +215,7 @@ function Install-Sm2 {
 # same mod version, so the version check alone doesn't catch it.
 function Test-Sm2PackLayout {
     param([Parameter(Mandatory)][string]$Pak)
-    $expected = 2
+    $expected = 3
     $report = [IO.Path]::ChangeExtension($Pak, '.json')
     if (-not (Test-Path -LiteralPath $report)) { return $false }
     try { return ([IO.File]::ReadAllText($report) | ConvertFrom-Json).input_layout -eq $expected } catch { return $false }

@@ -441,6 +441,7 @@ void viewer_mode_session() {
     while(!session.viewer_engaged())require(!(step(0,true,false)&XINPUT_GAMEPAD_START) && ++held<60,"a one-second hold starts the viewer");
     require(held>=45 && session.viewer_status().state==Seq::State::releasing,"after a full second the viewer first releases the character");
     for(int i=0;i<5;++i)require(!(step(0,true,false)&XINPUT_GAMEPAD_START),"no pause until the game has republished its own pose");
+    s.finisher=true;step(0,true,false);s.finisher=false;step(0,true,false);require(!session.take_photo_request(),"a click on the way in takes no picture");
     require(step(0,true,true)&XINPUT_GAMEPAD_START,"the released character is paused with Start");
     require(!session.viewer_owns_camera() && session.viewer_status().unreleased==0,"Start comes before the free camera, after a confirmed release");
     s.menu=false;require(step(0,false)&XINPUT_GAMEPAD_START,"the Start pulse continues while the game pauses");
@@ -455,6 +456,19 @@ void viewer_mode_session() {
     require(expected && last->eyes[0].viewer_anchor && *last->eyes[0].viewer_anchor==*expected && last->eyes[1].viewer_anchor==last->eyes[0].viewer_anchor &&
         last->eyes[0].units_per_metre==noted.units_per_metre,"viewer eyes start from the noted first-person view");
     require(!last->controllers && !last->input && !session.controller_poses(base+milliseconds(frame*20)),"viewer frames carry no hands or game input");
+    // Right stick click saves a picture (2 Nov): one per click however long it's held, and the game never sees it.
+    require(!session.take_photo_request(),"no click, no picture");
+    s.finisher=true;
+    for(int i=0;i<60;++i)require(!(step(0x108,true)&(XINPUT_GAMEPAD_RIGHT_THUMB|XINPUT_GAMEPAD_X)),"the click reaches no native button, however long it's held");
+    require(session.take_photo_request() && !session.take_photo_request(),"a held click is one picture");
+    step(0x108,true);require(!session.take_photo_request(),"still held: still one");
+    s.finisher=false;step(0x108,true);require(!session.take_photo_request(),"letting go takes nothing");
+    s.finisher=true;step(0x108,true);s.finisher=false;step(0x108,true);
+    s.finisher=true;step(0x108,true);s.finisher=false;step(0x108,true);
+    require(session.take_photo_request() && !session.take_photo_request(),"clicks between polls of the photo code don't queue");
+    fake->rumbles.clear();
+    require(session.photo_pulse() && fake->rumbles.size()==1 && fake->rumbles[0][1].op==vr_rumble::Command::Op::apply && fake->rumbles[0][0].op==vr_rumble::Command::Op::none,"the shutter is a pulse on the right hand");
+    fake->rumble_ok=false;require(!session.photo_pulse(),"a refused pulse is reported");fake->rumble_ok=true;fake->rumbles.clear();
     s.move_y=1;for(int i=0;i<10;++i)require(!step(0x108,true),"the game sees a neutral pad while flying");
     s.move_y=0;step(0x108,true);
     const auto slid=*last->eyes[0].viewer_anchor;const auto forward=vr_viewer::direction(*expected,{0,0,-1});
@@ -562,7 +576,7 @@ void viewer_mode_session() {
         session.set_viewer_play(vr_viewer::Play{});
     }
     s.finisher=true;for(int i=0;i<40;++i)require(!(step(0x108,true)&XINPUT_GAMEPAD_X),"a held stick click in the viewer is never native X");
-    s.finisher=false;step(0x108,true);
+    s.finisher=false;step(0x108,true);require(session.take_photo_request(),"that held click was one picture");
     s.menu=true;step(0x108,true);s.menu=false;
     require(step(0x108,true)&XINPUT_GAMEPAD_B,"a Left B tap in the viewer presses B to leave photo mode");
     require(!session.viewer_owns_camera(),"leaving hands the camera back at once");
@@ -572,9 +586,15 @@ void viewer_mode_session() {
     require(session.viewer_status().state==Seq::State::off && !session.viewer_engaged(),"back in gameplay the viewer is off");
     step(0,true);require(!last->eyes[0].viewer_anchor && last->controllers,"first-person frames return with hands");
     {   // Left B while the game plays: out of the viewer at once, no Start (the game already runs).
-        enter_again();
+        // A click held from first person into the viewer takes no picture; the next one does.
+        s.finisher=true;step(0,true);enter_again();step(0x108,true);
+        require(!session.take_photo_request(),"a click held into camera mode takes no picture");
+        s.finisher=false;step(0x108,true);s.finisher=true;step(0x108,true);s.finisher=false;
+        require(session.take_photo_request(),"the next click does");step(0x108,true);
         s.confirm=true;step(0x108,true);s.confirm=false;
         waited=0;while(session.viewer_status().state!=Seq::State::playing) {step(0,true);require(++waited<30,"playing");}
+        s.finisher=true;require(!(step(0,true)&(XINPUT_GAMEPAD_RIGHT_THUMB|XINPUT_GAMEPAD_X)),"a click while the game runs is still no finisher");
+        s.finisher=false;require(session.take_photo_request(),"a click while the game runs under the free camera takes a picture");step(0,true);
         s.menu=true;require(!(step(0,true)&XINPUT_GAMEPAD_START),"Left B down");s.menu=false;
         require(!(step(0,true)&XINPUT_GAMEPAD_START),"a tap sends no Start");
         require(!session.viewer_engaged() && !session.viewer_owns_camera() && session.viewer_status().play_end==vr_viewer::PlayEnd::left,"the viewer ends; the game keeps running");

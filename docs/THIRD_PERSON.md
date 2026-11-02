@@ -24,8 +24,8 @@ In a motion-control launch, F8 cycles first person, diorama and shoulder views. 
 same stereo pipeline. Diorama fixes the observer above and behind the character; shoulder follows
 the native head camera with an offset. Both suspend motion controls and use a gamepad.
 
-F9 or gamepad Back/View recentres; in diorama, hold Back/View and press D-pad up or down to scale
-the world. The diorama table stays where it was placed while the Marine walks; a recenter moves
+F9 or gamepad Back/View recentres; in either view, hold Back/View and press D-pad up or down to scale
+the world, down to 1/4 over the shoulder and 1/40 in the diorama. The diorama table stays where it was placed while the Marine walks; a recenter moves
 it back under him, turned to his heading. It recenters by itself once he has walked 1.5 m across
 the default table; change or turn that off with `diorama_recenter` in the camera-mode settings
 (`0` is off). `diorama_follow=1.5` turns on an automatic slide after he walks that far. The

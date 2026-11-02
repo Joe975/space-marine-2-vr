@@ -193,6 +193,10 @@ struct Camera {
     std::optional<Vector> eye_forward; // Actual composed eye orientation, including external-camera fallback.
     float units_per_metre{1};
     uintptr_t actor{}; int camera_mode{}; bool anchored{}; float body_yaw{},facing_error_degrees{},room_error{};
+    // Walking in the play space (VrBodyFollowing::Snapshot): steps sent, a wall in the way, head movement
+    // the view held back at walls (metres), returns that put the body under the head and the last one's
+    // size (metres), and the head movement the body has taken over (world units).
+    uint64_t room_steps{},room_rebases{}; bool room_blocked{}; float room_held{},room_rebased{}; Vector room_consumed{};
     bool melee_facing{}; // The game owns the body's facing after a melee press (VrBodyFollowing::melee).
     // First person rides along with fast travel (VrBodyFollowing ride_along: the jump pack), the
     // followed body's speed (physical m/s) and the comfort vignette's strength [0,1].
@@ -515,6 +519,8 @@ inline std::string sample(double t,const std::optional<Input>& input,const std::
         j.key("gaze_native");
         if(aligned) j.open().key("yaw_degrees").number(aligned->yaw_degrees,1).key("pitch_degrees").number(aligned->pitch_degrees,1).close();else j.null();
         j.key("body_yaw").number(c.body_yaw,2).key("facing_error_degrees").number(c.facing_error_degrees,2).key("melee_facing").boolean(c.melee_facing).key("room_error_metres").number(c.room_error,3)
+            .key("room_steps").integer(c.room_steps).key("room_blocked").boolean(c.room_blocked).key("room_held_metres").number(c.room_held,3)
+            .key("room_rebases").integer(c.room_rebases).key("room_rebased_metres").number(c.room_rebased,3).key("room_consumed").vector(c.room_consumed,3)
             .key("ride").boolean(c.riding).key("travel_speed_metres_per_second").number(c.travel_speed,1).key("vignette").number(c.vignette,3).key("released").boolean(c.released).key("combo_camera").boolean(c.combo_camera);
         // World scale and the rendered stereo baseline (world units): their ratio is the IPD.
         j.key("units_per_metre").number(c.units_per_metre,4).key("eye_separation").maybe(eye_separation(c,now),4).close();

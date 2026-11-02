@@ -1,4 +1,5 @@
 #pragma once
+#include "PathText.h"
 #include "VrSession.h"
 #include "GpuTextureReadback.h"
 #include "OrdinaryJoinedCapture.h"
@@ -22,7 +23,7 @@ public:
                         const std::filesystem::path& directory,bool submitted,
                         const std::optional<OrdinaryJoinedCapture::Target>& joined={}){
         if(!directory.is_absolute() || std::filesystem::exists(directory))return E_INVALIDARG;
-        if(joined && (!submitted || !OrdinaryJoinedCapture::safe(joined->id) || directory.filename().string()!=joined->id ||
+        if(joined && (!submitted || !OrdinaryJoinedCapture::safe(joined->id) || path_text(directory.filename())!=joined->id ||
             !joined->matches(images.dispatch,images.images.left.metadata.render_id,images.images.right.metadata.render_id)))return E_INVALIDARG;
         std::vector<GpuTextureReadback::Pixels> pixels;const auto hr=capture(images,queue,pixels);
         if(FAILED(hr))return hr;

@@ -188,6 +188,17 @@ void foreign_view_hold(){
     const std::array<F::View,3> plain{{{0,0x7f7c013},{1,0x7f7c013},{2,0x410001400}}};
     require(!F::behind_pair(plain),"stereo with only shadow/UI views after the pair is normal play");
     require(!F::behind_pair(std::span<const F::View>{}),"no views: nothing");
+    const std::array<F::View,4> crash{{{0,0x7f7c013,0},{1,0x7f7c013,0},{2,0x10043,2},{3,0x410001400,3}}};
+    require(F::hdr_remap(crash)==2,"the armoury and 26 Oct frame: the PIP in slot 2 still holds index 2");
+    auto done=crash;done[2].hdr=1;require(!F::hdr_remap(done),"already rewritten: nothing to do");
+    auto eye=crash;eye[1].hdr=1;require(!F::hdr_remap(eye),"a pair not on index 0 is not what the crash read: left alone");
+    auto two=crash;two[3].flags=0x10043;require(!F::hdr_remap(two),"two PIPs can't share the one PIP index: left alone");
+    const std::array<F::View,3> mono_hdr{{{0,0x3f7c013,0},{1,0x10043,1},{2,0x410001400,2}}};
+    require(!F::hdr_remap(mono_hdr),"mono is never touched");
+    const auto before=f.stats().remapped;f.remapped();require(f.stats().remapped==before+1,"a rewrite is counted");
+    require(f.admit_grading(0) && f.admit_grading(1) && !f.stats().grading_refused,"main and the PIP run their grading");
+    require(!f.admit_grading(2) && f.stats().grading_refused==1 && f.stats().grading_index==2,"a slot-2 index never reaches the two-entry tables");
+    require(!f.admit_grading(-1) && f.stats().grading_refused==2 && f.stats().grading==4,"nor one before them");
 }
 }
 // docs/STEREO_PAUSES_2026-10-26.md: the time between pairs sent to the runtime, per log window.

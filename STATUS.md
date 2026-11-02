@@ -34,8 +34,8 @@ establish that every campaign mission works or that the latest changes feel righ
   still need more headset testing.
 - Controller vibration doesn't reach the VR controllers yet (three headset tests). A gamepad
   rumbles normally.
-- The Touch controller layout hasn't been played. Room-scale walking does not move the
-  character's body.
+- The Touch controller layout hasn't been played.
+- Walking around your room moves the Marine, but stairs and bumping allies are untested.
 - The diorama and shoulder cameras have no collision and can sit inside walls.
 
 See [installation and known issues](docs/INSTALL.md), [controls](docs/CONTROLS.md),

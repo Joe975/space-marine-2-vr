@@ -6,9 +6,11 @@ $Sm2PythonZipName = 'python-3.13.3-embed-amd64.zip'
 $Sm2PythonZipUrl = 'https://www.python.org/ftp/python/3.13.3/python-3.13.3-embed-amd64.zip'
 $Sm2PythonZipSha256 = '59ff76e16e6597de47474fb22be69e7191a89116910d728ab735079b078e52db'
 
-# Gesture tuning the F11 overlay saves, and the head placement: the player's, kept across updates.
+# Gesture tuning the F11 overlay saves, the head placement, world scale and the camera guard's
+# settings (play space walking among them): the player's, kept across updates.
 $Sm2PreservedConfig = @('index.calibration', 'index_swing.calibration', 'index_holster.calibration', 'index_guard.calibration',
-    'index_grenade.calibration', 'index_grenade_aim.calibration', 'index_support.calibration', 'index_guard_guide.calibration')
+    'index_grenade.calibration', 'index_grenade_aim.calibration', 'index_support.calibration', 'index_guard_guide.calibration',
+    'index_camera_guard.calibration', 'index_camera_modes.calibration')
 
 # Calibrations the player profile loads: named in installer\app\sm2-profile.ps1, or read by the DLL
 # beside index.calibration (Sm2Probe.cpp: camera guard, support, HUD, native HUD/prompt/corners, aim dot,

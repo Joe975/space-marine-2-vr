@@ -9,4 +9,5 @@ diorama_recenter=1.5
 shoulder_distance=2
 shoulder_height=0.25
 shoulder_side=0.4
+shoulder_scale=1
 chase_scale=1

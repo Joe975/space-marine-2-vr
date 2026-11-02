@@ -58,6 +58,20 @@ void cameras() {
     settings.shoulder_height=1;require(!close(camera.camera(moved,settings,3,.9f,player,false)[13],turned[13]),"shoulder height is live");
     settings.mode=VrViewMode::first_person;require(camera.camera(game,settings,4,.9f,player,false)==game,"default does not reposition existing first-person path");
 }
+void shoulder_zoom() {
+    auto game=vr_camera::IDENTITY;game[10]=-1;game[12]=10;game[13]=3;game[14]=20;
+    const VrViewCamera::Focus player{1,{10,0,20}};
+    VrViewSettings settings;settings.mode=VrViewMode::shoulder;
+    VrViewCamera camera;
+    const auto life=camera.camera(game,settings,1,settings.scale(.9f),player,false);
+    settings.shoulder_scale=2;
+    const auto out=camera.camera(game,settings,1,settings.scale(.9f),player,false);
+    require(close(out[12]-10,2*(life[12]-10)) && close(out[13]-3,2*(life[13]-3)) && close(out[14]-20,2*(life[14]-20)),"shoulder zoom moves the camera out with the world");
+    // 12 game units are a jump at any zoom: the limit stays in the game world, not in scaled metres.
+    const auto captures=camera.snapshot().captures;
+    camera.camera(game,settings,1,settings.scale(.9f),VrViewCamera::Focus{1,{22,0,20}},false);
+    require(camera.snapshot().captures==captures+1,"a zoomed shoulder view still re-anchors on a jump");
+}
 void chase() {
     // Stock chase camera (-ChaseCam pack): the native camera is the observer, leveled, every frame.
     auto game=vr_camera::IDENTITY;game[10]=-1;game[12]=10;game[13]=3;game[14]=20;
@@ -88,6 +102,12 @@ void chase() {
     std::istringstream diorama_file{"mode=diorama\n"+knobs};
     const auto stored=VrViewSettings::read(diorama_file);
     require(stored && stored->mode==VrViewMode::diorama,"complete file read");
+    require(stored->shoulder_scale==1 && stored->diorama_distance==1,"a file saved before shoulder_scale keeps its knobs");
+    std::istringstream cut_file{"mode=diorama\ndiorama_scale=10\n"};
+    require(!VrViewSettings::read(cut_file),"any other missing knob still fails the file");
+    auto zoomed=*stored;zoomed.shoulder_scale=2.83f;
+    std::stringstream zoomed_file;zoomed.write(zoomed_file);
+    require(VrViewSettings::read(zoomed_file)==zoomed,"shoulder zoom survives a save");
     const auto launched=stored->for_launch(true);
     require(launched.mode==VrViewMode::chase && close(launched.scale(.9f),2.7f),"chase launch takes chase_scale from the file");
     require(stored->for_launch(false)==*stored,"other launches use the file as it is");
@@ -119,7 +139,12 @@ void world_scale() {
     // Gamepad Back + D-pad: up makes the world bigger (smaller multiplier), down smaller.
     VrViewSettings settings;
     require(!settings.resize_world(1),"first person has no third-person scale");
-    settings.mode=VrViewMode::shoulder;require(!settings.resize_world(1) && settings==VrViewSettings{.mode=VrViewMode::shoulder},"shoulder stays life-size");
+    settings.mode=VrViewMode::shoulder;require(settings.scale(.9f)==.9f,"shoulder starts life-size");
+    require(settings.resize_world(-1) && close(settings.shoulder_scale,1.41f) && close(settings.scale(.9f),1.269f),"shoulder scale reaches the issued units");
+    require(settings.resize_world(-20) && settings.shoulder_scale==4 && !settings.resize_world(-1),"shoulder stops at 1/4, well short of the diorama");
+    require(settings.resize_world(20) && settings.shoulder_scale==.5f && !settings.resize_world(1),"shoulder comes in to 2x");
+    require(settings.diorama_scale==10 && settings.chase_scale==1 && settings.valid(),"shoulder steps leave the other modes' scales alone");
+    settings=VrViewSettings{};
     settings.mode=VrViewMode::diorama;
     require(settings.resize_world(1) && close(settings.diorama_scale,7.07f),"up: world bigger by one step");
     require(settings.resize_world(-2) && close(settings.diorama_scale,14.14f),"down twice: smaller, two steps");
@@ -291,4 +316,4 @@ void native_controls() {
     input.enable(false);input.native_passthrough(true);input.native_passthrough(false);require(!input.snapshot().enabled,"mode switch must not enable a deliberately disabled bridge");
 }
 }
-int main() {try {cameras();chase();world_scale();diorama_follow();diorama_recenter();settings_and_keys();native_controls();std::cout<<"third-person anchors, scale, presets, hotkeys and native controls passed\n";return 0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}
+int main() {try {cameras();shoulder_zoom();chase();world_scale();diorama_follow();diorama_recenter();settings_and_keys();native_controls();std::cout<<"third-person anchors, scale, presets, hotkeys and native controls passed\n";return 0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

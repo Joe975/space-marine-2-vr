@@ -23,7 +23,11 @@ MELTA_HINT = "ssl/ui/screens/hud/action_hint_panel/rules/ui_action_hint_melta_de
 MELTA_PROMPT = "Detonate (VR: hold right stick click)"
 HUB_SCREEN = "ssl/ui/fusion/hud/hud_layout/code/hub/ui_hub_screen.sso"
 SQUAD_PANEL = "ssl/ui/fusion/hud/squad_panel/code/ui_hub_squad_panel_widget.sso"
-SQUAD_PROMPT = "Edit Squad (VR: left trackpad up)"
+# The prompt is anchored on its right, so longer text grows left. Past about 21 characters it crosses
+# x 0.70, where the corners panel takes over: "Edit Squad (VR: left trackpad up)" left "(Y) Edit Sq" at
+# the lens edge and the rest on the panel (docs/BUTTON_HINTS.md). It says left: the right pad is a grenade.
+SQUAD_PROMPT = "Squad: left pad up"
+SQUAD_PROMPT_MAX = 20
 TIPS = "ssl/tutorial/tutorial_tips_library.sso"
 ICONS = "ssl/ui/fusion/assets/switchers/ui_control_icon_hint_switcher.sso"
 HUD_VIEW = "ssl/ui/fusion/hud/hud_layout/ui_hud_pve_view.sso"
@@ -61,8 +65,10 @@ PADS = ("gamepad_xenon", "gamepad_xbox_one")
 SHORTCUT = re.compile(r'keys\s*=\s*\[\s*(\d+)\s*\]\s*deviceType\s*=\s*"(\w+)"')
 # Which native buttons the DLL and this pack agree on. Raise it whenever a change needs both: a DLL
 # with a pack of another layout puts interact on the trackpad and grenades on Right B. The launchers
-# refuse the mismatch (installer/app/sm2-install.ps1, Test-Sm2PackLayout).
-INPUT_LAYOUT = 2
+# refuse the mismatch (installer/app/sm2-install.ps1, Test-Sm2PackLayout). Raise it too when a release at
+# the same mod version must replace the pack: the installer rebuilds it for nothing else. 3: the Edit
+# Squad prompt's new text.
+INPUT_LAYOUT = 3
 # Hints name the native key, so Right B has to be native B for a B prompt to mean the button with B
 # on it (docs/BUTTON_HINTS.md). Interact and reload move to B, equipment to X; hold times stay.
 NATIVE_B, NATIVE_X = 9, 10

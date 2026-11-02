@@ -7,7 +7,7 @@ static void dxgi_capture_route_log(const char* name,unsigned depth,uintptr_t cal
 #undef SM2VR_DXGI_PROXY_ROUTE
 
 #include <ShlObj.h>
-#include <spdlog/sinks/basic_file_sink.h>
+#include "ModLog.h"
 #include "GpuSignatureProbe.h"
 #include "EngineOutputSize.h"
 
@@ -34,7 +34,7 @@ namespace
         std::filesystem::create_directories(dir, ec);
 
         const auto name   = is_game ? std::string{ "sm2vr.log" } : fmt::format("sm2vr_other_{}.log", GetCurrentProcessId());
-        auto       logger = spdlog::basic_logger_mt("sm2vr", (dir / name).string(), true);
+        auto       logger = open_mod_log("sm2vr", dir / name);
         logger->set_pattern("[%H:%M:%S.%e] [%L] [tid:%t] %v");
         // Warnings and errors reach the file at once. Info lines are flushed by spdlog's own thread
         // once a second (init_thread): flushing each one made the 5 s status block (150-450 lines)
@@ -44,7 +44,7 @@ namespace
         return logger;
     }
 
-    DWORD WINAPI init_thread(LPVOID param)
+    DWORD start_mod(LPVOID param)
     {
         const auto module  = static_cast<HMODULE>(param);
         const auto exe     = executable_path();
@@ -52,7 +52,7 @@ namespace
         const auto logger  = make_file_logger(is_game);
         spdlog::set_default_logger(logger);
         spdlog::flush_every(std::chrono::seconds(1));
-        spdlog::info("sm2vr loaded as dxgi proxy: pid={} exe='{}' base={:x}", GetCurrentProcessId(), exe.string(), reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr)));
+        spdlog::info("sm2vr loaded as dxgi proxy: pid={} exe='{}' base={:x}", GetCurrentProcessId(), path_text(exe), reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr)));
         spdlog::info("command line: {}", GetCommandLineA());
 
         if (!is_game) {
@@ -77,6 +77,14 @@ namespace
         g_framework = std::make_unique<Framework>(module);
         spdlog::set_default_logger(logger);
         spdlog::info("framework constructed");
+        return 0;
+    }
+
+    // Nothing above this thread would catch: the game ends, with no log. Without the mod it plays flat.
+    DWORD WINAPI init_thread(LPVOID param)
+    {
+        try { return start_mod(param); }
+        catch (const std::exception& e) { OutputDebugStringA(e.what()); spdlog::error("sm2vr failed to start: {}", e.what()); }
         return 0;
     }
 } // namespace

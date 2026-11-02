@@ -1,6 +1,7 @@
 #include "EngineBodyFollowing.h"
 #include "GameBuild.h"
 #include <MinHook.h>
+#include <algorithm>
 #include <cstring>
 
 namespace {
@@ -48,6 +49,7 @@ void EngineBodyFollowing::dodge(bool pressed,VrBodyFollowing::Clock::time_point 
 void EngineBodyFollowing::melee(bool pressed,VrBodyFollowing::Clock::time_point now) { std::scoped_lock lock{m_mutex};m_follow.melee(pressed,now); }
 void EngineBodyFollowing::combo(uint16_t buttons,VrBodyFollowing::Clock::time_point now) { std::scoped_lock lock{m_mutex};m_follow.combo(buttons,now); }
 void EngineBodyFollowing::stick(float x,float y,VrBodyFollowing::Clock::time_point now) { std::scoped_lock lock{m_mutex};m_follow.stick(x,y,now); }
+void EngineBodyFollowing::viewer_frame() { std::scoped_lock lock{m_mutex};m_follow.viewer_frame(); }
 void EngineBodyFollowing::head_bone(uintptr_t actor,const VrBodyFollowing::Vector& position,VrBodyFollowing::Clock::time_point received) { std::scoped_lock lock{m_mutex};m_follow.head_bone(actor,position,received); }
 void EngineBodyFollowing::character_motion(const vr_viewer::Motion::Sample& sample) { std::scoped_lock lock{m_mutex};m_follow.character_motion(sample); }
 float EngineBodyFollowing::movement_heading_offset(VrBodyFollowing::Clock::time_point now) const { std::scoped_lock lock{m_mutex};return m_follow.movement_heading_offset(now); }
@@ -104,7 +106,21 @@ void EngineBodyFollowing::body(const EngineBodyProbe::Body& row) {
     }
 }
 void EngineBodyFollowing::context_hook(void* context,void* parameters,float* output) {
-    auto& self=get(); self.m_original(context,parameters,output);
+    auto& self=get();
+    // The game's update reads the physics velocity at +0xa0, last step's room velocity included;
+    // it runs on its own movement only, and the field goes back as it was (VrBodyFollowing::room_feedback).
+    auto* input=reinterpret_cast<float*>(static_cast<uint8_t*>(parameters)+0xa0);
+    std::array<float,3> kept{};bool corrected{};
+    if(self.m_enabled && output && !self.m_diag_no_room) try {
+        std::scoped_lock lock{self.m_mutex};
+        const auto current=self.m_follow.snapshot();
+        if(reinterpret_cast<uintptr_t>(context)==current.context && reinterpret_cast<uintptr_t>(parameters)==current.body+0x4f0) {
+            const auto room=self.m_follow.room_feedback(current.context,{input[0],input[1],input[2]});
+            if(room[0]!=0 || room[2]!=0) {std::copy_n(input,3,kept.begin());input[0]-=room[0];input[2]-=room[2];corrected=true;}
+        }
+    } catch (...) {}
+    self.m_original(context,parameters,output);
+    if(corrected) std::copy_n(kept.begin(),3,input);
     if (!self.m_enabled || !output) { return; }
     try {
         std::scoped_lock lock{self.m_mutex}; ++self.m_context_calls;
@@ -114,8 +130,9 @@ void EngineBodyFollowing::context_hook(void* context,void* parameters,float* out
         self.m_native_velocity={output[0],output[1],output[2]};
         float dt{};
         if (!read(reinterpret_cast<uintptr_t>(parameters)+0x88,dt)) { return; }
+        if(self.m_diag_no_room) return;
         const auto room=self.m_follow.velocity(current.context,self.m_native_velocity,dt,std::chrono::steady_clock::now());
-        if (!self.m_diag_no_room) for (int j:{0,2}) { output[j]+=room[j]; }
+        for (int j:{0,2}) { output[j]+=room[j]; }
     } catch (...) {}
 }
 

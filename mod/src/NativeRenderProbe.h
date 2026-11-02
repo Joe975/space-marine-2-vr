@@ -101,6 +101,9 @@ public:
     // Runs after the native camera/SDK transaction has completed, outside its lock.
     bool attach_completion(std::function<void(const Snapshot&)> callback){std::lock_guard lock{m_install};if(m_complete || !callback)return false;m_complete=std::move(callback);return true;}
     static std::optional<std::vector<View>> read_views(uintptr_t list);
+    // A PIP behind the owned pair gets the HDR index it has in mono, before the dispatch reads it
+    // (ForeignViewHold::hdr_remap, docs/LOAD_CRASH_2026-10-26.md). True when it wrote one.
+    static bool remap_pip_hdr(uintptr_t list);
     static Output read_output(uintptr_t wrapper,const OutputObserver&);
     static std::optional<Scene::PersistentBank> read_history_bank(uintptr_t renderer,uint32_t ordinary_slot);
 private:

@@ -10,7 +10,7 @@ problems. Developers building from source: [DEVELOPING.md](DEVELOPING.md).
   it doesn't know (its hooks are tied to one build), so after a game patch you wait for a mod
   update. There's no way to roll the game back. Supported now: **patch 15.2**, the Steam build of
   21 October 2026 (`CLIENT 15.2.PATCH.1454884` in the window title, `Retail.exe` timestamp
-  `0x6ad10fcb`). The 5 October build, patch 15.1, still works too.
+  `0x6ad10fcb`).
 - **A PC VR headset with SteamVR set as the OpenXR runtime.** It's been played on a Valve Index.
   OpenXR is the default and should reach other headsets through SteamVR, but none have been
   tried yet.
@@ -27,9 +27,14 @@ problems. Developers building from source: [DEVELOPING.md](DEVELOPING.md).
   NVIDIA cards can try TAA. That's new, and it has only been tested on the 4090, so nobody knows yet
   how it runs on those cards. FSR doesn't work: the headset shows the flat game until you pick DLSS
   or TAA, and then 3D returns without a restart.
-  The mod doesn't change your graphics settings, so set them before you play. Each eye renders
-  at the game's output resolution, so Native render resolution costs about a fifth of the frame
-  rate on the 4090 at 4K (56 fps against
+  The mod doesn't change your graphics settings, so set them before you play. Turn Frame Generation
+  off. Each eye renders at your monitor's resolution, so a 1080p monitor gives 1080 rows per eye
+  against the 2240 an Index shows at SteamVR's 100%: soft, whichever DLSS mode you pick. For a
+  sharper image on a smaller monitor, turn on DSR (NVIDIA) or VSR (AMD) in your graphics driver and
+  set your Windows desktop to 3840x2160 before you start. Go no higher: above 4096x2160 the headset
+  shows the flat game. Changing resolution during a session also flattens the headset until you
+  restart the game. Native
+  render resolution costs about a fifth of the frame rate on the 4090 at 4K (56 fps against
   69-70 with DLSS Performance). Which DLSS mode you pick hardly matters, the game is CPU-bound;
   Quality looks best for the same frame rate. Lower graphics presets buy very little either, so I
   recommend high settings: going from Low to DLSS Quality and the preset below the top took a
@@ -39,16 +44,17 @@ problems. Developers building from source: [DEVELOPING.md](DEVELOPING.md).
 
 1. Download `SM2VR-<version>.zip` from [Releases](https://github.com/Joe975/space-marine-2-vr/releases) and extract it anywhere outside
    the game folder.
-2. Double-click `SM2VR.cmd`. A window opens with five steps. Work down them; each one says what's
-   wrong and how to fix it.
+2. Double-click `SM2VR.cmd`. Windows may warn you first, because the mod isn't signed: press
+   **More info**, then **Run anyway**. `SM2VR.cmd` is a short text file you can read in Notepad. A
+   window opens with five steps. Work down them; each one says what's wrong and how to fix it.
    1. **Game found**: finds Space Marine 2 through Steam.
    2. **Steam and SteamVR ready**: Steam running, SteamVR the OpenXR runtime.
    3. **Game version supported**: your game build matches this release.
    4. **Install**: backs up your saves, then builds the VR data pack from your own game files.
-   5. **Play in VR**: the first time, it asks you to pick the mod's controller binding in SteamVR.
-      Then pick **Play: motion controls** (first person, Index controllers as your hands) or
+   5. **Play in VR**: starts SteamVR if it isn't running. Pick **Play: motion controls** (first person, Index controllers as your hands) or
       **Play: chase camera** (gamepad). You can switch views every time you play without
-      reinstalling.
+      reinstalling. On a motion controls launch, F8 in game switches between first person, diorama and
+      shoulder; the last two use a gamepad. It does nothing in the chase camera.
 3. The first start takes 3-4 minutes. Put the headset on when the window says it's waiting for
    the headset.
 
@@ -78,17 +84,21 @@ It's playable, not finished. What you'll most likely hit:
 - Occasional crashes while a level loads. The headset shows the flat game image for several
   seconds after a load before 3D comes back.
 - Now and then a launch stalls before the headset view starts. Close it and play again.
+- In the armoury the Marine can go black until you pick another item.
 - VR can drop out partway through a campaign mission.
 - Frame rate in big fights ([what you need](#what-you-need)), so expect reprojection.
 - Some props and decals are missing from the right eye.
 - Controller vibration doesn't reach the VR controllers yet (three headset tests). A gamepad
   rumbles normally.
 - Several default-on features (height scaling on recenter, the starting height after
-  loading, gaze camera, guard guide) have only been tested by scripts, not played much in the
-  headset yet.
+  loading, gaze camera, guard guide, room walking) have only been tested by scripts, not played
+  much in the headset yet.
 
-**Comfort.** The body turns with your head and you move with the stick, with snap turn. If you get
-motion sick easily, start with short sessions, or try the chase camera.
+**Comfort.** The body turns with your head and you move with the stick, with snap turn. Walking
+around your room moves the Marine too. Against a wall the Marine stops and your view stops soon
+after, while your head carries on: step back. If you get motion sick easily, start with short
+sessions, or try the chase camera. To turn room walking off, set `room_enabled=0` in
+`%LOCALAPPDATA%\sm2vr\player\config\index_camera_guard.calibration`; it applies within a second.
 
 Use at your own risk. No warranty of any kind.
 

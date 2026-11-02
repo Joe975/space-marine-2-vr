@@ -202,7 +202,8 @@ class InstallTests(unittest.TestCase):
         # A DLL replaced at the same mod version, over a pack with the old button layout.
         report = self.state / 'pack/SM2VR_FirstPerson_Test.json'
         original = report.read_text()
-        for stale in ('{"input_layout": 1}', '{}', 'not json'):
+        # Layout 2 is 1.0.0's first pack: same version, same buttons, the old Edit Squad prompt.
+        for stale in ('{"input_layout": 1}', '{"input_layout": 2}', '{}', 'not json'):
             report.write_text(stale)
             self.assertEqual(problems(), ['the data pack was built for an older version of the mod'], stale)
         report.unlink()

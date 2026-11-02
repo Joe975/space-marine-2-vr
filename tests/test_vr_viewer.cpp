@@ -240,8 +240,11 @@ void pose_kept_until_the_freeze(){
     require(vr_viewer::pose_edits(true,S::State::off,true)==E{true,true} && vr_viewer::pose_edits(true,S::State::off,false)==E{true,true},"first person: arms and head hiding");
     require(vr_viewer::pose_edits(false,S::State::off,true)==E{},"other views: no first-person edits");
     for(const auto state:{S::State::resuming,S::State::releasing,S::State::opening_pause,S::State::opening_photo}){
-        require(vr_viewer::pose_edits(true,state,true)==E{true,false},std::string{"player pose kept, head full size: "}+S::name(state));
+        // 2 Nov: the head turns to the gaze and the Marine keeps facing the player's way, or the
+        // game turns it in the 100 ms before the pause.
+        require(vr_viewer::pose_edits(true,state,true)==E{true,false,true,true},std::string{"player pose kept, head full size and on the gaze, facing held: "}+S::name(state));
         require(vr_viewer::pose_edits(true,state,false)==E{},std::string{"native pose chosen: nothing driven: "}+S::name(state));
+        require(!vr_viewer::takes_photos(state),std::string{"no photo while entering: "}+S::name(state));
     }
     for(const auto state:{S::State::active,S::State::closing_photo,S::State::closing_pause})
         require(vr_viewer::pose_edits(true,state,true)==E{},std::string{"frozen or leaving: nothing driven: "}+S::name(state));
@@ -249,10 +252,13 @@ void pose_kept_until_the_freeze(){
     // in the 26 Oct log) is still posed; photo mode is not.
     const auto t0=steady_clock::time_point{seconds(100)};S seq;
     require(seq.request(0,t0),"enter");
-    require(vr_viewer::pose_edits(true,seq.state(),true)==E{true,false},"releasing: arms posed, head restored");
-    seq.update(0,true,t0,true);require(seq.state()==S::State::opening_pause && vr_viewer::pose_edits(true,seq.state(),true).arms,"Start pressed: still posed");
+    require(vr_viewer::pose_edits(true,seq.state(),true)==E{true,false,true,true},"releasing: arms posed, head restored and aimed");
+    seq.update(0,true,t0,true);require(seq.state()==S::State::opening_pause && vr_viewer::pose_edits(true,seq.state(),true).arms && vr_viewer::pose_edits(true,seq.state(),true).hold_facing,"Start pressed: still posed, still facing");
     seq.update(0x908,true,t0+milliseconds(300));require(seq.state()==S::State::opening_photo && vr_viewer::pose_edits(true,seq.state(),true).arms,"pause menu: still posed");
-    seq.update(0x108,true,t0+milliseconds(400));require(seq.state()==S::State::active && !vr_viewer::pose_edits(true,seq.state(),true).arms,"photo mode: frozen, nothing driven");
+    seq.update(0x108,true,t0+milliseconds(400));require(seq.state()==S::State::active && vr_viewer::pose_edits(true,seq.state(),true)==E{},"photo mode: frozen, nothing driven");
+    require(vr_viewer::takes_photos(S::State::active) && vr_viewer::takes_photos(S::State::playing),"photos while frozen and while the game runs under the free camera");
+    for(const auto state:{S::State::off,S::State::closing_photo,S::State::closing_pause,S::State::play_closing_photo,S::State::play_closing_pause,S::State::play_opening_pause,S::State::play_opening_photo})
+        require(!vr_viewer::takes_photos(state),std::string{"no photo in the menu presses: "}+S::name(state));
 }
 
 void tap_hold(){

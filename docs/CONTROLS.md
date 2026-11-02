@@ -14,7 +14,7 @@ are correct; [Changing controls](DEVELOPING.md#changing-controls-and-gestures) e
 
 | Input | Does | Native pad |
 |---|---|---|
-| Stick | Walk, relative to where you look | Left stick |
+| Stick | Walk, relative to where you look. Walking around your room moves the Marine too (`room_enabled`) | Left stick |
 | Stick click | Sprint (toggle; forward only, within ±40°) | LS click |
 | A tap | Class ability. Aimed ones (Vanguard grapnel, Tactical auspex scan) go where you look. Assault: the jump pack's dash along the ground (a tap is too short for the leap) | Y |
 | A hold 1 s | Recenter the headset; stand straight, it measures your height. Not needed after loading: putting the headset on recenters by itself | none |
@@ -102,7 +102,7 @@ viewer mode from the pause menu.
 ## Viewer mode (Left B hold)
 
 The game pauses into its own photo mode and you fly a free camera
-([docs/VIEWER_MODE.md](VIEWER_MODE.md)):
+([docs/VIEWER_MODE.md](VIEWER_MODE.md)). The frozen Marine keeps your pose, faces your way and looks where you looked:
 
 | Input | Does |
 |---|---|
@@ -112,6 +112,7 @@ The game pauses into its own photo mode and you fly a free camera
 | Both grips | Scale the world (hands apart = bigger) and turn it |
 | Right trigger | Next preset scale: life size, 1:12 action figure, world four times bigger |
 | Right A | Let the game run while you watch from where you are, with sound: an execution plays to its end, then you are back in the game (3 s if nothing moves; 10 s at most). Press again to freeze at once ([details](VIEWER_MODE.md#30-oct-watch-it-play-out-right-a)) |
+| Right stick click | Save a picture of what your left eye sees, also while the game runs. One picture a click, and nothing shows in the headset, so check the folder afterwards. It goes in your Pictures folder, `Pictures\Space Marine 2 VR`, as `SM2VR_<date>_<time>.png`. No HUD or panels in it |
 | Left B tap or hold | Back to the game (also while it runs) |
 
 ## Keyboard
@@ -124,7 +125,7 @@ The game pauses into its own photo mode and you fly a free camera
 
 In diorama and shoulder views the controllers are off and a normal gamepad plays the game.
 Its B is interact and reload and its X is the grenade, as the prompts show (the chase camera keeps
-the stock layout). Its Back button recenters. In diorama, hold Back and press D-pad up/down to make the world
+the stock layout). Its Back button recenters. In diorama and shoulder, hold Back and press D-pad up/down to make the world
 bigger/smaller. The diorama also recenters by itself once your character walks off the table
 (`diorama_recenter`, [docs/THIRD_PERSON.md](THIRD_PERSON.md)).
 

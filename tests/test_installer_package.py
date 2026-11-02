@@ -90,7 +90,47 @@ class SourceScriptTests(unittest.TestCase):
                 self.assertTrue(script.read_bytes().isascii())
 
 
+class SourceBehaviourTests(unittest.TestCase):
+    def test_the_launcher_alone_says_to_extract(self):
+        # What double-clicking it inside the zip leaves: one file, no app folder.
+        TEMP.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=TEMP) as work:
+            cmd = Path(work) / 'SM2VR.cmd'
+            shutil.copy(REPO / 'installer/SM2VR.cmd', cmd)
+            result = subprocess.run(['cmd', '/c', str(cmd)], input='', capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('Extract the whole zip', result.stdout)
+
+    def test_settings_the_mod_saves_survive_an_update(self):
+        script = (REPO / 'scripts/installer-package.ps1').read_text(encoding='utf-8')
+        preserved = script[script.index('$Sm2PreservedConfig'):script.index(')', script.index('$Sm2PreservedConfig'))]
+        for name in ('index_camera_guard.calibration', 'index_camera_modes.calibration'):
+            self.assertIn(name, preserved)
+
+
 class WindowSelfTest(unittest.TestCase):
+    def test_self_test_repairs_nothing(self):
+        # 1 Nov: run beside a launch, the self-test tried the after-crash repair and only the game's
+        # process, seconds old, stopped it. A lock with no game running is what a repair acts on.
+        TEMP.mkdir(parents=True, exist_ok=True)
+        work = Path(tempfile.mkdtemp(dir=TEMP))
+        package = work / 'SM2VR-0.1.0'
+        make_fixture_package(package)
+        game = work / 'game'
+        fake_exe(game / 'client_pc/root/bin/pc' / EXE, 0x6ad10fcb)
+        (game / 'client_pc/root/mods').mkdir(parents=True)
+        state = work / 'state'
+        state.mkdir()
+        lock = state / 'running.lock'
+        lock.write_text('{}')
+        env = {**os.environ, 'SM2VR_GAME_ROOT': str(game), 'SM2VR_PLAYER_STATE': str(state)}
+        result = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File',
+                                 str(package / 'app/Sm2VrApp.ps1'), '-SelfTest'],
+                                capture_output=True, text=True, encoding='utf-8', errors='replace', env=env, timeout=120)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertTrue(lock.exists(), 'the lock stays for the real window to act on')
+        self.assertFalse((state / 'runs').exists(), 'no recovered run was made')
+
     def test_window_builds_and_fills_its_steps(self):
         TEMP.mkdir(parents=True, exist_ok=True)
         work = Path(tempfile.mkdtemp(dir=TEMP))

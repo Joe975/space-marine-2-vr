@@ -22,6 +22,7 @@
 #include "VrTouchXButton.h"
 #include "VrTapHold.h"
 #include "VrViewer.h"
+#include "VrPhoto.h"
 #include "VrRumble.h"
 #include <condition_variable>
 #include <functional>
@@ -170,6 +171,10 @@ public:
     // The player character's latest native pose publication (EngineArmDriver::native_motion); a
     // play in animation mode ends once it has moved and then stayed still.
     void note_character_motion(const vr_viewer::Motion::Sample&);
+    // True once per right stick click in camera mode (vr_viewer::takes_photos): save a picture.
+    bool take_photo_request();
+    // The shutter tick on the right hand. False when the runtime can't play it now.
+    bool photo_pulse();
     std::string input_status() const;
     std::string finger_status() const;
     void enable_swing_melee(bool);
@@ -382,6 +387,7 @@ private:
     vr_viewer::Play m_viewer_play;
     vr_viewer::Motion m_viewer_motion;
     bool m_play_button{}; // Right A at the last viewer poll (a press starts or cancels a play).
+    bool m_photo_button{},m_photo_requested{}; // Right stick click at the last viewer poll; a click waiting for take_photo_request.
     vr_viewer::PlayEnd m_play_end{vr_viewer::PlayEnd::none};
     float m_play_seconds{};
     bool m_character_native{true};

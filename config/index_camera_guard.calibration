@@ -21,3 +21,13 @@ combo_strikes=3
 combo_gap_seconds=1.6
 # ... for at most this long, then the usual hold.
 combo_camera_seconds=5
+# Walking in the play space: the body follows the head with the game's own movement and collision (0: off; docs/BODY_FOLLOWING.md).
+room_enabled=1
+# How fast it catches up, per second.
+room_gain=12
+# Fastest catch-up, Marine metres/second (2.5 is 1.55 m/s of the player's).
+room_max_speed=2.5
+# The head may stray this far from the body (Marine metres, 0.2 is 12.5 cm of the player's) before it follows: leans and head bob stay inside.
+room_deadzone=0.2
+# Against a wall the head may go this far past the body (Marine metres), then the view stops there.
+room_wall_metres=0.5
