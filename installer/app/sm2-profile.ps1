@@ -11,9 +11,12 @@ function Read-Sm2Profile([string]$Path) {
     if ($p.schema -ne 1) { throw "Unsupported launch profile schema: $($p.schema)" }
     if ($p.runtime -cnotin @('OpenXR', 'OpenVR')) { throw "launch.json runtime must be OpenXR or OpenVR (got '$($p.runtime)')." }
     if ($p.gestures -and -not $p.controls) { throw 'launch.json: gestures needs controls.' }
-    foreach ($name in 'upright_torso', 'compact_hud', 'keep_head_visible', 'photo_native_pose', 'guard_guide', 'haptics') {
+    foreach ($name in 'upright_torso', 'compact_hud', 'keep_head_visible', 'photo_native_pose', 'guard_guide', 'haptics', 'left_handed', 'two_hand_aim') {
         if ($p.$name -and -not $p.controls) { throw "launch.json: $name needs controls." }
     }
+    # left_handed: weapons, holsters and buttons change hands; OpenXR only (docs/LEFT_HANDED.md).
+    if ($p.left_handed -and $p.runtime -ne 'OpenXR') { throw 'launch.json: left_handed needs runtime OpenXR.' }
+    if ($p.left_handed_keep_sticks -and -not $p.left_handed) { throw 'launch.json: left_handed_keep_sticks needs left_handed.' }
     # thumbs_up: play (default when absent), photo or off (docs/THUMBS_UP_2026-10-26.md).
     if ($null -ne $p.thumbs_up -and $p.thumbs_up -cnotin @('play', 'photo', 'off')) { throw "launch.json thumbs_up must be play, photo or off (got '$($p.thumbs_up)')." }
     if ($null -ne $p.thumbs_up -and $p.thumbs_up -ne 'play' -and -not $p.controls) { throw 'launch.json: thumbs_up needs controls.' }
@@ -21,6 +24,18 @@ function Read-Sm2Profile([string]$Path) {
     if ($p.grenade_aim -and -not $p.gestures) { throw 'launch.json: grenade_aim needs gestures.' }
     if ([int]$p.snap_degrees -le 0 -or [int]$p.snap_degrees -gt 90) { throw 'launch.json: snap_degrees must be 1-90.' }
     return $p
+}
+
+# The player's main hand, from the app's Main hand box (settings.json). The app's settings stay
+# when an update replaces the package, launch.json with it. Nothing chosen leaves the profile as it is.
+$Sm2MainHands = [ordered]@{ right = 'Right'; left = 'Left'; left_sticks = 'Left, walk on left stick' }
+function Set-Sm2MainHand($Profile, [string]$Hand) {
+    if (-not $Hand) { return $Profile }
+    if ($Hand -cnotin $Sm2MainHands.Keys) { throw "settings.json main_hand must be right, left or left_sticks (got '$Hand')." }
+    if ($Hand -ne 'right' -and $Profile.runtime -ne 'OpenXR') { throw 'Left-handed play needs OpenXR (launch.json runtime).' }
+    $Profile | Add-Member -Force NoteProperty left_handed ($Hand -ne 'right')
+    $Profile | Add-Member -Force NoteProperty left_handed_keep_sticks ($Hand -eq 'left_sticks')
+    return $Profile
 }
 
 # Returns @{ Env = ordered name->value; Files = ordered path->content } for one launch.
@@ -53,6 +68,8 @@ function ConvertTo-Sm2Launch {
         $e['SM2VR_HANDS'] = '1'
         $e['SM2VR_HANDS_CALIBRATION'] = Join-Path $ConfigDirectory 'index_hands_accepted.calibration'
         if (-not $Profile.keep_head_visible) { $e['SM2VR_HIDE_HEAD'] = '1' }
+        if ($Profile.left_handed) { $e['SM2VR_LEFT_HANDED'] = '1' }
+        if ($Profile.left_handed_keep_sticks) { $e['SM2VR_LEFT_HANDED_KEEP_STICKS'] = '1' }
         # Photo mode freezes the player's arm and finger pose unless the game's own was chosen (docs/VIEWER_MODE.md).
         if ($Profile.photo_native_pose) { $e['SM2VR_PHOTO_NATIVE_POSE'] = '1' }
         # Thumbs-up: play unless the profile asks for photo-only or off.
@@ -65,6 +82,7 @@ function ConvertTo-Sm2Launch {
         }
         $e['SM2VR_BODY_FOLLOW'] = '1'
         $e['SM2VR_WEAPON_AIM'] = '1'
+        if ($Profile.two_hand_aim) { $e['SM2VR_TWO_HAND_AIM'] = '1' }
         $e['SM2VR_WEAPON_CONFIG'] = Join-Path $ConfigDirectory 'index_weapon.calibration'
         if ($Profile.chainsword_rev) { $e['SM2VR_CHAINSAW_REV'] = '1' }
         if ($Profile.compact_hud) { $e['SM2VR_NATIVE_HUD'] = '1' }

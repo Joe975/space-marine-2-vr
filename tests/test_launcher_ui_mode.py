@@ -103,6 +103,10 @@ $vars | ConvertTo-Json -Compress
             shutil.copyfile(source,launcher)
             (root/'build'/'vr_controls').mkdir(parents=True)
             (root/'build'/'vr_controls'/'SM2VR_FirstPerson_Test.pak').write_bytes(b'pk')
+            app=root/'installer'/'app';app.mkdir(parents=True)
+            shutil.copyfile(source.parents[1]/'installer/app/sm2-install.ps1',app/'sm2-install.ps1')
+            pack_report=root/'build/vr_controls/SM2VR_FirstPerson_Test.json'
+            pack_report.write_text(json.dumps({'input_layout':2}),encoding='utf-8')
             # The child records the SM2VR environment and the data pack it was given.
             (scripts/'run-modded.ps1').write_text('''
 param([int]$Seconds,[string]$Tag,[switch]$NoUiAutomation,[string]$DataPak,[string]$GameArgs,$LaunchFlags)
@@ -112,6 +116,10 @@ $vars=@{}; Get-ChildItem Env:SM2VR_* | ForEach-Object { $vars[$_.Name]=$_.Value 
             def run(*flags):
                 result=subprocess.run([pwsh(),'-NoProfile','-File',str(launcher),*flags],capture_output=True,text=True,timeout=10)
                 return result
+            stale=run('-Controls')
+            self.assertNotEqual(stale.returncode,0)
+            self.assertIn('Controls pack is out of date',stale.stdout+stale.stderr)
+            pack_report.write_text(json.dumps({'input_layout':3}),encoding='utf-8')
             plain=json.loads(run().stdout)
             self.assertTrue(plain['pak'].endswith('vr_menus\\SM2VR_FirstPerson_Test.pak'))
             self.assertNotIn('SM2VR_CHASE_CAM',plain['vars'])
@@ -136,7 +144,9 @@ $vars=@{}; Get-ChildItem Env:SM2VR_* | ForEach-Object { $vars[$_.Name]=$_.Value 
             self.assertEqual(Path(fade['vars']['SM2VR_PLAYER_DISTANCE_FADE_CONTROL']).read_text().strip(),'opaque')
             snapshots=json.loads(run('-EyeSnapshots').stdout)
             self.assertEqual(snapshots['vars']['SM2VR_EYE_DUMP_DIR'],snapshots['vars']['SM2VR_ORDINARY_DUMP_DIR'])
-            full=json.loads(run('-Controls','-Gestures','-Trace','-DirectLaunch').stdout)
+            full_result=run('-Controls','-Gestures','-Trace','-DirectLaunch')
+            self.assertEqual(full_result.returncode,0,full_result.stdout+full_result.stderr)
+            full=json.loads(full_result.stdout)
             self.assertTrue(full['pak'].endswith('vr_controls\\SM2VR_FirstPerson_Test.pak'))
             self.assertEqual(full['vars']['SM2VR_SWING_MELEE'],'1','confirmed sword loadout enables light/power motion attacks')
             for name in ('SM2VR_CONTROLLERS','SM2VR_HANDS','SM2VR_BODY_FOLLOW','SM2VR_WEAPON_AIM',

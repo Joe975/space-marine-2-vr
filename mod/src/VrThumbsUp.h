@@ -86,14 +86,16 @@ private:
 };
 
 // The finger targets the arm driver gets: live curls in, edited curls out (left, right).
+// photo_hand: the hand that holds B, whose thumb PhotoThumb keeps (1 when left-handed).
 class Shaper {
 public:
     using Fingers=std::array<std::optional<Curl>,2>;
-    explicit Shaper(Mode mode=Mode::play,Settings settings={}):m_mode{mode},m_settings{settings},m_photo{settings} {}
+    explicit Shaper(Mode mode=Mode::play,Settings settings={},size_t photo_hand=0):m_mode{mode},m_settings{settings},m_photo{settings},m_photo_hand{photo_hand} {}
     Fingers apply(Fingers fingers,bool entering,Clock::time_point now) {
         if(m_mode==Mode::off) return fingers;
-        const auto thumb=m_photo.update(fingers[0],entering,now);
-        if(thumb && fingers[0]) (*fingers[0])[0]=*thumb;
+        auto& held=fingers[m_photo_hand];
+        const auto thumb=m_photo.update(held,entering,now);
+        if(thumb && held) (*held)[0]=*thumb;
         if(m_mode==Mode::play || entering) for(size_t hand=0;hand<2;++hand) if(fingers[hand]) {
             const auto shaped=shape(*fingers[hand],m_settings);
             if(shaped!=*fingers[hand]) ++m_shaped[hand];
@@ -109,6 +111,7 @@ private:
     Mode m_mode;
     Settings m_settings;
     PhotoThumb m_photo;
+    size_t m_photo_hand{};
     std::array<uint64_t,2> m_shaped{};
 };
 } // namespace vr_thumbs_up

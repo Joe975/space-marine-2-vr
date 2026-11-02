@@ -360,6 +360,27 @@ void single_frame_submission(Host& gpu) {
     check(gpu.queue->Signal(gpu.fence.Get(),++gpu.tick));wait(gpu.fence.Get(),gpu.tick);session.enable(false);
 }
 }
+// Left-handed play: the actions the runtime is told about change hands; poses and motors do not
+// (docs/LEFT_HANDED.md). The launcher's environment reaches the suggestions.
+void left_handed_bindings(Host& gpu) {
+    SetEnvironmentVariableA("SM2VR_CONTROLLERS","1");
+    for(const bool keep:{false,true}) {
+        SetEnvironmentVariableA("SM2VR_LEFT_HANDED","1");SetEnvironmentVariableA("SM2VR_LEFT_HANDED_KEEP_STICKS",keep?"1":nullptr);
+        Fixture fixture{gpu};fixture.input_extensions=true;fixture.check_pixels=false;
+        OpenXrBackend backend{fixture.api(),+[]{return true;}};
+        require(backend.prepare_graphics(gpu.queue.Get()) && backend.start(),"left-handed fixture must start");
+        const auto& index=fixture.suggested.at("/interaction_profiles/valve/index_controller");
+        const auto bound=[&](const char* a,const char* p){return std::ranges::find(index,std::pair<std::string,std::string>{a,p})!=index.end();};
+        require(bound("fire","/user/hand/left/input/trigger/value") && bound("parry","/user/hand/right/input/squeeze/force"),"left-handed actions read the other hand");
+        require(backend.input_bindings()=="Index,Touch","the accepted binding sets can be logged");
+        require(bound("move",keep?"/user/hand/left/input/thumbstick":"/user/hand/right/input/thumbstick"),"the walking stick follows keep_sticks");
+        require(bound("hand_pose","/user/hand/left/input/grip/pose") && bound("hand_pose","/user/hand/right/input/grip/pose"),"the grip poses stay physical");
+        require(bound("haptic","/user/hand/left/output/haptic") && bound("haptic","/user/hand/right/output/haptic"),"the motors stay physical");
+        const auto& touch=fixture.suggested.at("/interaction_profiles/oculus/touch_controller");
+        require(std::ranges::find(touch,std::pair<std::string,std::string>{"confirm","/user/hand/left/input/x/click"})!=touch.end(),"Touch's X is the left hand's A");
+    }
+    SetEnvironmentVariableA("SM2VR_LEFT_HANDED",nullptr);SetEnvironmentVariableA("SM2VR_LEFT_HANDED_KEEP_STICKS",nullptr);SetEnvironmentVariableA("SM2VR_CONTROLLERS",nullptr);
+}
 // Controls: bindings, the VrControllerSample contract, raw-equivalent grips, curls, focus,
 // the scripted-head fallback and the compact HUD quad, all through the injected runtime.
 void controller_input(Host& gpu,const EyeTextureCapture::Pair& pair) {
@@ -583,7 +604,7 @@ int main() {
             require(backend.transfer(pair,gpu.queue.Get())==VrBackend::Transfer::accepted && backend.completion_queue(gpu.queue.Get())==gpu.queue.Get(),"the fallback transfers and ends leases on the game's queue");
             backend.stop();
         }
-        controller_input(gpu,pair);
+        controller_input(gpu,pair);left_handed_bindings(gpu);
         for(int failure=0;failure<3;++failure) {
             Fixture fixture{gpu};fixture.missing_extension=failure==0;fixture.wrong_adapter=failure==1;fixture.fail_swapchain=failure==2;
             OpenXrBackend backend{fixture.api(),+[]{return true;}};require(backend.prepare_graphics(gpu.queue.Get()),"fixture queue must be valid");

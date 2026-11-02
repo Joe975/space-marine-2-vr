@@ -57,6 +57,17 @@ void guard_pose() {
     t+=11ms;require(!g.update(H,hand(0,-0.2f,-0.1f,1.0f),0,true,t),"an outstretched arm beyond reach is not a guard");
     t+=11ms;require(!g.update(H,hand(0,0.5f,-0.1f,0.25f),0,true,t),"a hand far to the right is outside the guard");
 }
+void guard_raised_floor() {
+    for(float yaw:{0.f,1.2f,-2.4f}) {
+        VrGuard g;auto t=T0;const auto H=head(yaw);
+        require(std::abs(g.settings()[VrGuard::MIN_HEIGHT]-(-.40f))<1e-6f,"parry floor raised exactly 15 cm from 55 to 40 cm below eyes");
+        g.update(H,hand(yaw,-.2f,-.8f,.25f),0,true,t);
+        t+=100ms;require(!g.update(H,hand(yaw,-.2f,-.41f,.25f),0,true,t),"low forearm pose that formerly parried cannot enter guard");
+        t+=100ms;require(g.update(H,hand(yaw,-.2f,-.39f,.25f),0,true,t),"raising above new floor immediately parries");
+        t+=100ms;require(g.update(H,hand(yaw,-.2f,-.44f,.25f),0,true,t),"held guard retains existing 5 cm hysteresis");
+        t+=100ms;require(!g.update(H,hand(yaw,-.2f,-.46f,.25f),0,true,t),"lowering beyond new floor plus margin releases block");
+    }
+}
 void guard_timing() {
     VrGuard g;auto t=T0;const auto H=head(0);
     g.update(H,hand(0,-0.3f,-0.8f,0,Point::down),0,true,t);
@@ -507,7 +518,7 @@ int main() {
     try {
         left_push();
         grenade_aim_direction();grenade_aim_measured_throws();grenade_aim_recorded_on_throw();
-        guard_pose();guard_timing();guard_aim_latch_and_yield();guard_entry_near_face();guard_belt_rest();guard_yaw_invariance();guard_settings();
+        guard_pose();guard_raised_floor();guard_timing();guard_aim_latch_and_yield();guard_entry_near_face();guard_belt_rest();guard_yaw_invariance();guard_settings();
         grenade_throw();grenade_walking_and_gaps();grenade_cached_samples();grenade_modes_and_settings();grenade_release_ownership();grenade_belt_head_looks();grenade_settings_migration();
     } catch(const std::exception& e) { std::cerr<<"FAIL: "<<e.what()<<'\n';return 1; }
     std::cout<<"vr_gestures: all checks passed\n";return 0;

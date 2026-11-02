@@ -10,6 +10,7 @@
 #include "VrBodyRenderPlacement.h"
 #include "NativeArmPoseInvalidation.h"
 #include "VrMeleeSweep.h"
+#include "VrTwoHandAim.h"
 #include <filesystem>
 #include <iosfwd>
 #include <atomic>
@@ -30,7 +31,7 @@ public:
     // firearm_trigger: the pad's RT or LT is pressed (a shot or aim); the upright twist stands down (vr_upright::FireHold).
     // units_per_metre: the Marine's (VrEye::marine_units_per_metre), for grips and body placement; wrists are already world poses.
     // gaze: the player's gaze in the world, on the way into camera mode only: the head turns to it (VrHeadAim.h).
-    struct Targets { uintptr_t actor{}; uint64_t reference{},epoch{}; Clock::time_point captured{}; std::array<std::optional<Matrix>,2> wrists; std::array<std::optional<vr_finger::Curl>,2> fingers; float units_per_metre{1}; bool firearm_trigger{}; std::optional<vr_arm::Vector> gaze; };
+    struct Targets { uintptr_t actor{}; uint64_t reference{},epoch{}; Clock::time_point captured{}; std::array<std::optional<Matrix>,2> wrists; std::array<std::optional<vr_finger::Curl>,2> fingers; float units_per_metre{1}; bool firearm_trigger{}; std::optional<vr_arm::Vector> gaze; vr_two_hand::Request support;float tracking_units_per_metre{}; };
     struct Api {
         std::function<bool(const EngineArmProbe::Pose&,Clock::time_point)> current;
         std::function<void(uintptr_t)> enter,leave;
@@ -52,6 +53,9 @@ public:
         bool resolve_pose_enabled{},pose_recovery_failed{};uint64_t recovery_calls{},recovery_failures{};
         std::array<uint64_t,static_cast<size_t>(vr_body_placement::Refusal::Count)> body_placement_refusals{};
         std::optional<vr_weapon::Grip> weapon_grip; uint64_t weapon_grip_switches{},weapon_left_refused{},weapon_primary_draws{}; bool weapon_seated{true}; // The committed grip; settled grip changes; left readings refused for a primary (frames); primaries landed by a draw from the pistol; the fit came from the grip's socket.
+        bool left_handed{};uint64_t sword_moves{},sword_refused{};
+        bool two_hand_active{};uint64_t two_hand_updates{},two_hand_refused{};
+        std::array<uint64_t,4> two_hand_refusals{}; // pose, arm solve, unmapped bone, hierarchy
         uint64_t head_aims{},head_aim_refused{},head_aim_limited{};float head_aim_degrees{}; }; // Publications whose head turned to the gaze, refused, stopped at the limits; the last turn from the animation.
     static EngineArmDriver& get();
     void configure(Api);
@@ -69,6 +73,11 @@ public:
     bool set_body_placement(const vr_body_placement::Settings&);
     bool set_body_placement_control(const std::filesystem::path&);
     void follow_weapon(bool);
+    void enable_two_hand(bool);
+    std::optional<vr_two_hand::Model> support_model(Clock::time_point now=Clock::now()) const;
+    // Left-handed play (VrHandedness.h): the gun and the sword change wrists; the arms stay on their sides.
+    void set_left_handed(bool);
+    bool left_handed() const;
     // A weapon switch was requested (the native D-pad down went out): for GripSwitch::SWITCH_WINDOW a
     // primary may give way to the pistol in the left hand (vr_weapon::GripSwitch).
     void weapon_switch(Clock::time_point now);
@@ -108,7 +117,8 @@ private:
     bool m_allowed{},m_head_allowed{true};
     uint64_t m_epoch{};
     std::optional<Targets> m_targets;
-    bool m_weapon_enabled{};
+    bool m_weapon_enabled{},m_left_handed{};
+    Matrix grip_locked(size_t) const;
     vr_upright::Settings m_upright;vr_upright::FireHold m_fire_hold;
     vr_body_placement::Settings m_body_placement;
     std::atomic<bool> m_body_control_enabled{false};
@@ -129,6 +139,10 @@ private:
     float m_trace_units{1}; // Last known world units per metre, for trace metrics when no targets are live.
     std::optional<NativeHead> m_native_head;
     std::optional<NativeMotion> m_native_motion;
+    bool m_two_hand_enabled{},m_support_valid{};uint64_t m_support_generation{1};
+    std::optional<vr_two_hand::Model> m_support_model;
+    std::optional<Matrix> m_support_anchor;
+    std::optional<std::array<uint64_t,3>> m_support_anchor_key;
     vr_weapon::Settings m_weapon_settings;
     std::function<void(const VrWeaponAim::Pose&)> m_weapon_observer;
     std::function<void(const Sword&)> m_sword_observer;

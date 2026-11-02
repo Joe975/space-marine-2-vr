@@ -45,6 +45,7 @@ public:
     void stop()override{m_timeline.cancel("stopped");m_input.reset();m_last_tracking.reset();m_using_cached=false;m_real->stop();}
     std::string status()const override{return m_using_cached?"test scripted head; cached native optics":m_real->status();}
     std::string input_status()const override{return "test driver: "+m_timeline.state()+" "+m_timeline.id();}
+    std::string input_bindings()const override{return m_real->input_bindings();}
     std::string finger_status()const override{return "test driver: neutral curls";}
 private:
     void poll(Clock::time_point now,const Tracking& live,bool allowed,bool cached){

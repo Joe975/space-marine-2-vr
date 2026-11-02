@@ -24,13 +24,14 @@
 //
 // Joe, 23 Oct: the zone grew to reach further from the face and higher: max_entry_forward
 // 0.30 -> 0.38 m (still short of VrLeftPush's 0.40 m end point) and max_height 0.20 -> 0.30 m.
+// Joe, 3 Nov: raise the floor 15 cm to avoid accidental parry (55 -> 40 cm below the eyes).
 class VrGuard {
 public:
     using Clock=std::chrono::steady_clock;
     using Values=vr_body::Parameters<10>;
     enum Index { MIN_HEIGHT,MAX_HEIGHT,MIN_FORWARD,MAX_FORWARD,MIN_LATERAL,MAX_LATERAL,MIN_ANGLE,EXIT_MARGIN,MIN_HOLD,MAX_ENTRY_FORWARD };
     static constexpr std::array<Values::Parameter,10> PARAMETERS{{
-        {"min_height_metres",-0.55f,-0.9f,0}, {"max_height_metres",0.3f,-0.3f,0.5f},
+        {"min_height_metres",-0.40f,-0.9f,0}, {"max_height_metres",0.3f,-0.3f,0.5f},
         {"min_forward_metres",0.15f,0,0.5f}, {"max_forward_metres",0.75f,0.3f,1},
         {"min_lateral_metres",-0.5f,-0.8f,0}, {"max_lateral_metres",0.3f,-0.1f,0.6f},
         {"min_angle_degrees",58,0,90}, {"exit_margin_metres",0.05f,0,0.15f}, {"min_hold_ms",80,30,250},

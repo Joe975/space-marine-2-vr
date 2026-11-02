@@ -12,12 +12,15 @@ BASE = json.loads((REPO / 'installer' / 'launch.json').read_text(encoding='utf-8
 # Profile change -> the run-ordinary-headset.ps1 switches that select the same thing.
 CASES = {
     'shipped': ({}, []),
+    'no_two_hand_aim': ({'two_hand_aim': False}, ['-NoTwoHandAim']),
     'openvr': ({'runtime': 'OpenVR'}, ['-Runtime', 'OpenVR']),
     'no_gestures': ({'gestures': False, 'grenade_aim': False}, ['-NoGestures']),
     'haptics_gain': ({'haptics_gain': 0.5}, ['-HapticsGain', '0.5']),
     'trace_and_native_shadows': ({'trace': True, 'native_shadows': True}, ['-Trace', '-NativeShadows']),
     'guard_guide': ({'guard_guide': True}, ['-GuardGuide']),
     'photo_native_pose': ({'photo_native_pose': True}, ['-PhotoNativePose']),
+    'left_handed': ({'left_handed': True}, ['-LeftHanded']),
+    'left_handed_keep_sticks': ({'left_handed': True, 'left_handed_keep_sticks': True}, ['-LeftHanded', '-LeftHandedKeepSticks']),
     'thumbs_up_photo': ({'thumbs_up': 'photo'}, ['-ThumbsUp', 'photo']),
     'thumbs_up_off': ({'thumbs_up': 'off'}, ['-ThumbsUp', 'off']),
     'opt_outs': ({'chainsword_rev': False, 'gaze_camera': False, 'grenade_aim': False,
@@ -42,7 +45,7 @@ class ProfileParityTests(unittest.TestCase):
         shipped = run_ps_json(FIXTURES / 'profile_env.ps1', REPO / 'installer' / 'launch.json', REPO / 'config',
                               dev['SM2VR_ORDINARY_DUMP_DIR'])
         self.assertEqual(dict(sorted(shipped['env'].items())), dev)
-        for name in ('SM2VR_NATIVE_HUD', 'SM2VR_UPRIGHT_TORSO', 'SM2VR_GAZE_CAMERA', 'SM2VR_GRENADE_AIM', 'SM2VR_HAPTICS'):
+        for name in ('SM2VR_TWO_HAND_AIM', 'SM2VR_NATIVE_HUD', 'SM2VR_UPRIGHT_TORSO', 'SM2VR_GAZE_CAMERA', 'SM2VR_GRENADE_AIM', 'SM2VR_HAPTICS'):
             self.assertEqual(dev.get(name), '1', name)
 
     def test_every_player_toggle_has_a_parity_case(self):
@@ -99,10 +102,45 @@ class ProfileParityTests(unittest.TestCase):
         self.assertEqual(more, {**full, 'SM2VR_DIAG_NO_NATIVE_REFERENCE': '1'})
         self.assertNotEqual(run_ps(script, '-PrintEnv', '-EnvSet', 'PATH=x').returncode, 0, 'only SM2VR_* names may be set')
 
+    def test_main_hand_from_the_app_sets_what_the_launcher_switches_set(self):
+        # The app's Main hand box (settings.json) over the packaged profile.
+        TEMP.mkdir(parents=True, exist_ok=True)
+        script = REPO / 'scripts' / 'run-ordinary-headset.ps1'
+        for hand, switches in (('left', ['-LeftHanded']), ('left_sticks', ['-LeftHanded', '-LeftHandedKeepSticks'])):
+            with self.subTest(hand), tempfile.TemporaryDirectory(dir=TEMP) as work:
+                dev = run_ps_json(script, *dev_switches(switches), '-Tag', 'hand', '-PrintEnv')
+                app = run_ps_json(FIXTURES / 'profile_env.ps1', REPO / 'installer' / 'launch.json', REPO / 'config', dev['SM2VR_ORDINARY_DUMP_DIR'], '-MainHand', hand)
+                self.assertEqual(dict(sorted(app['env'].items())), dev)
+
+    def test_main_hand_right_wins_over_the_profile_and_none_leaves_it(self):
+        TEMP.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=TEMP) as work:
+            profile = Path(work) / 'launch.json'
+            profile.write_text(json.dumps({**BASE, 'left_handed': True}), encoding='utf-8')
+            chosen = run_ps_json(FIXTURES / 'profile_env.ps1', profile, REPO / 'config', work, '-MainHand', 'right')
+            self.assertNotIn('SM2VR_LEFT_HANDED', chosen['env'])
+            unchosen = run_ps_json(FIXTURES / 'profile_env.ps1', profile, REPO / 'config', work)
+            self.assertEqual(unchosen['env']['SM2VR_LEFT_HANDED'], '1')
+
+    def test_bad_main_hands_are_refused(self):
+        TEMP.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=TEMP) as work:
+            profile = Path(work) / 'launch.json'
+            profile.write_text(json.dumps(BASE), encoding='utf-8')
+            self.assertNotEqual(run_ps(FIXTURES / 'profile_env.ps1', profile, REPO / 'config', work, '-MainHand', 'Left').returncode, 0)
+            profile.write_text(json.dumps({**BASE, 'runtime': 'OpenVR'}), encoding='utf-8')
+            self.assertNotEqual(run_ps(FIXTURES / 'profile_env.ps1', profile, REPO / 'config', work, '-MainHand', 'left').returncode, 0)
+
+    def test_left_handed_switches_are_refused_without_their_needs(self):
+        script = REPO / 'scripts' / 'run-ordinary-headset.ps1'
+        for switches in (['-LeftHanded'], ['-Controls', '-LeftHanded', '-Runtime', 'OpenVR'], ['-Controls', '-LeftHandedKeepSticks']):
+            with self.subTest(switches):
+                self.assertNotEqual(run_ps(script, *switches, '-PrintEnv').returncode, 0)
+
     def test_inconsistent_profiles_are_refused(self):
         TEMP.mkdir(parents=True, exist_ok=True)
         for changes in ({'controls': False}, {'gestures': False}, {'runtime': 'openxr'}, {'snap_degrees': 0}, {'haptics_gain': 3},
-                        {'thumbs_up': 'Photo'}, {'thumbs_up': 'photo', 'controls': False, 'gestures': False, 'grenade_aim': False,
+                        {'left_handed': True, 'runtime': 'OpenVR'}, {'left_handed_keep_sticks': True}, {'thumbs_up': 'Photo'}, {'thumbs_up': 'photo', 'controls': False, 'gestures': False, 'grenade_aim': False,
                          'upright_torso': False, 'compact_hud': False, 'haptics': False}):
             with self.subTest(changes), tempfile.TemporaryDirectory(dir=TEMP) as work:
                 profile = Path(work) / 'launch.json'

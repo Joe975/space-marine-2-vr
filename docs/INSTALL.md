@@ -94,6 +94,9 @@ It's playable, not finished. What you'll most likely hit:
   loading, gaze camera, guard guide, room walking) have only been tested by scripts, not played
   much in the headset yet.
 
+**Left-handed?** Set **Main hand** in the SM2VR app before you press Play. Weapons, holsters,
+gestures and buttons change sides ([LEFT_HANDED](LEFT_HANDED.md)).
+
 **Comfort.** The body turns with your head and you move with the stick, with snap turn. Walking
 around your room moves the Marine too. Against a wall the Marine stops and your view stops soon
 after, while your head carries on: step back. If you get motion sick easily, start with short

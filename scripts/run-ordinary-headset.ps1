@@ -17,9 +17,9 @@
 # -Profile -PerformanceProbes, a flat/stereo A/B control (scripts\stereo-hold.ps1) and a hidden
 # companion that records PresentMon, nvidia-smi and 20 Hz thread stacks next to cpu_trace.csv.
 param([int]$Seconds=900,[string]$Tag='ordinary_headset',[switch]$DirectLaunch,[switch]$CapturePixels,[switch]$ShareVolumeFrame,[switch]$Profile,[switch]$ShadingControl,
-    [switch]$Controls,[switch]$Gestures,[double]$HapticsGain=1,[switch]$NoHaptics,[switch]$Trace,[switch]$NoUprightTwist,[switch]$KeepHeadVisible,[switch]$PhotoNativePose,[switch]$BodyPlacementCandidate,[switch]$PlayerPartVisibilityCandidate,[switch]$EyeSourceControl,[switch]$AsyncLightingControl,[switch]$LightHoldControl,[switch]$HarvestOnceControl,[switch]$FarLightCacheControl,[switch]$SecondCameraPlainTestControl,[switch]$LightListLog,[switch]$LightClampControl,[switch]$LightCapSortControl,[switch]$LightListCopyControl,[switch]$ToneSourceControl,[switch]$FlareProbe,[switch]$FlareHideControl,[switch]$NoAdaptationMirror,[switch]$AdaptationControl,[int]$SecondCameraId=-1,[switch]$NativeHzb,[switch]$NoTrackerGuard,[int]$StereoWarmupJobs=0,[switch]$InvalidateArmPoseCandidate,[switch]$ResolveArmPoseCandidate,[switch]$TestDriver,[switch]$ScriptedHead,[switch]$EyeSnapshots,[switch]$PlayerDistanceFade,[switch]$TakeoverControl,[switch]$NoChainswordRev,[switch]$NativeShadows,[switch]$NoGrenadeAim,[switch]$GrenadeVelocityProbe,[switch]$NoGazeCamera,[switch]$GuardGuide,
+    [switch]$Controls,[switch]$Gestures,[double]$HapticsGain=1,[switch]$NoHaptics,[switch]$Trace,[switch]$NoUprightTwist,[switch]$KeepHeadVisible,[switch]$LeftHanded,[switch]$LeftHandedKeepSticks,[switch]$PhotoNativePose,[switch]$BodyPlacementCandidate,[switch]$PlayerPartVisibilityCandidate,[switch]$EyeSourceControl,[switch]$AsyncLightingControl,[switch]$LightHoldControl,[switch]$HarvestOnceControl,[switch]$FarLightCacheControl,[switch]$SecondCameraPlainTestControl,[switch]$LightListLog,[switch]$LightClampControl,[switch]$LightCapSortControl,[switch]$LightListCopyControl,[switch]$ToneSourceControl,[switch]$FlareProbe,[switch]$FlareHideControl,[switch]$NoAdaptationMirror,[switch]$AdaptationControl,[int]$SecondCameraId=-1,[switch]$NativeHzb,[switch]$NoTrackerGuard,[int]$StereoWarmupJobs=0,[switch]$InvalidateArmPoseCandidate,[switch]$ResolveArmPoseCandidate,[switch]$TestDriver,[switch]$ScriptedHead,[switch]$EyeSnapshots,[switch]$PlayerDistanceFade,[switch]$TakeoverControl,[switch]$NoChainswordRev,[switch]$NativeShadows,[switch]$NoGrenadeAim,[switch]$GrenadeVelocityProbe,[switch]$NoGazeCamera,[switch]$GuardGuide,
     [ValidateSet('OpenVR','OpenXR')][string]$Runtime='OpenXR',[ValidateSet('shared','copy','capsort','native')][string]$StereoLights='capsort',[ValidateSet('play','photo','off')][string]$ThumbsUp='play',[ValidateSet('replay','animation','hand')][string]$MeleeSweep='replay',[switch]$GripFitLog,[switch]$CopyAllocationControl,[switch]$PerformanceProbes,[switch]$HandoffControl,[switch]$QueryDependencies,[switch]$DrawVisibilityProbe,[switch]$WorkerVisibilityProbe,[switch]$RenderDocCapture,[int]$InjectStereoSuspendSeconds=0,[int]$InjectRecordsMoveSeconds=0,
-    [string]$Resolution='',[string]$WindowMode='',[string]$RenderResolution='',[string]$Antialiasing='',[string]$GameArgs='',[string]$DesktopWindow='',[string]$OutputSize='',[string]$OutputSizeMode='',[switch]$ExperimentalOutputSize,[switch]$PerfCampaign,[ValidateRange(0,50)][int]$PerfSampleHz=20,[switch]$QueueTimeline,[switch]$OpenXrGameQueue,[switch]$NoOpenXrSubmitThread,[switch]$ChaseCam,[switch]$PrintEnv,[switch]$AutoContinue,[string]$InGameKeys='',[string]$EnvOff='',[string]$EnvSet='',[string]$EffectsPack='',[ValidateSet('','off','native','left_only','shared_objects','shared')][string]$HzbControl='',[switch]$NoCompactHud,[switch]$NoUprightTorso)
+    [string]$Resolution='',[string]$WindowMode='',[string]$RenderResolution='',[string]$Antialiasing='',[string]$GameArgs='',[string]$DesktopWindow='',[string]$OutputSize='',[string]$OutputSizeMode='',[switch]$ExperimentalOutputSize,[switch]$PerfCampaign,[ValidateRange(0,50)][int]$PerfSampleHz=20,[switch]$QueueTimeline,[switch]$OpenXrGameQueue,[switch]$NoOpenXrSubmitThread,[switch]$ChaseCam,[switch]$PrintEnv,[switch]$AutoContinue,[string]$InGameKeys='',[string]$EnvOff='',[string]$EnvSet='',[string]$EffectsPack='',[ValidateSet('','off','native','left_only','shared_objects','shared')][string]$HzbControl='',[switch]$NoCompactHud,[switch]$NoUprightTorso,[switch]$NoTwoHandAim)
 # Without [CmdletBinding()] PowerShell drops unknown switches into $args; a misspelt or removed
 # switch must stop the launch instead of silently running something else (docs/FLAGS.md).
 if ($args.Count) { throw "Unknown launcher arguments: $($args -join ' ') (switches: docs/FLAGS.md)" }
@@ -28,7 +28,7 @@ if ($args.Count) { throw "Unknown launcher arguments: $($args -join ' ') (switch
 # run's launch-flags.json and its "launch flags:" line, so a log shows whether it ran what players get.
 $switchClass = [ordered]@{
     'shipped' = @('Controls','Gestures','ChaseCam')
-    'opt-out' = @('NoChainswordRev','NoCompactHud','NoGazeCamera','NoGrenadeAim','NoUprightTorso','NoHaptics','HapticsGain','KeepHeadVisible','PhotoNativePose','ThumbsUp','MeleeSweep','GuardGuide','NativeShadows','Trace','Runtime')
+    'opt-out' = @('NoTwoHandAim','NoChainswordRev','NoCompactHud','NoGazeCamera','NoGrenadeAim','NoUprightTorso','NoHaptics','HapticsGain','KeepHeadVisible','LeftHanded','LeftHandedKeepSticks','PhotoNativePose','ThumbsUp','MeleeSweep','GuardGuide','NativeShadows','Trace','Runtime')
     'diagnostic' = @('HzbControl','StereoLights','CapturePixels','ShareVolumeFrame','ShadingControl','NoUprightTwist','BodyPlacementCandidate','PlayerPartVisibilityCandidate','EyeSourceControl','AsyncLightingControl','LightHoldControl','HarvestOnceControl','FarLightCacheControl','SecondCameraPlainTestControl','LightListLog','LightClampControl','LightCapSortControl','LightListCopyControl','ToneSourceControl','FlareProbe','NoAdaptationMirror','AdaptationControl','SecondCameraId','NativeHzb','NoTrackerGuard','StereoWarmupJobs','InvalidateArmPoseCandidate','ResolveArmPoseCandidate','PlayerDistanceFade','TakeoverControl','GrenadeVelocityProbe','CopyAllocationControl','HandoffControl','DrawVisibilityProbe','WorkerVisibilityProbe','InjectStereoSuspendSeconds','InjectRecordsMoveSeconds','OutputSize','OutputSizeMode','ExperimentalOutputSize','OpenXrGameQueue','NoOpenXrSubmitThread','EnvOff','EnvSet')
     'dev tool' = @('Seconds','Tag','PrintEnv','DirectLaunch','Profile','PerformanceProbes','QueryDependencies','QueueTimeline','PerfCampaign','PerfSampleHz','FlareHideControl','EffectsPack','TestDriver','ScriptedHead','EyeSnapshots','RenderDocCapture','GripFitLog','Resolution','WindowMode','RenderResolution','Antialiasing','DesktopWindow','GameArgs','AutoContinue','InGameKeys')
 }
@@ -52,6 +52,7 @@ if ($ScriptedHead -and -not $TestDriver) { throw '-ScriptedHead needs -TestDrive
 if ($Gestures -and -not $Controls) { throw '-Gestures needs -Controls (controllers, hands and body following).' }
 if ($NoGrenadeAim -and -not $Gestures) { throw '-NoGrenadeAim needs -Gestures (grenade aim is part of the grenade gesture).' }
 if ($GrenadeVelocityProbe -and ($NoGrenadeAim -or -not $Gestures)) { throw '-GrenadeVelocityProbe needs -Gestures with grenade aim on (native launch velocity samples).' }
+if ($NoTwoHandAim -and -not $Controls) { throw '-NoTwoHandAim needs -Controls.' }
 if ($NoChainswordRev -and -not $Controls) { throw '-NoChainswordRev needs -Controls (the analog chainsword rev only exists with controls).' }
 if ($NoGazeCamera -and -not $Controls) { throw '-NoGazeCamera needs -Controls (the gaze camera only exists with controls).' }
 if ($GuardGuide -and -not $Controls) { throw '-GuardGuide needs -Controls (the guard guide only exists with controls).' }
@@ -63,6 +64,9 @@ $nativeHudOn = ($Controls -or $ChaseCam) -and -not $NoCompactHud
 $uprightTorsoOn = $Controls -and -not $NoUprightTorso
 if ($NoUprightTwist -and -not $uprightTorsoOn) { throw '-NoUprightTwist needs the upright torso (-Controls without -NoUprightTorso); it keeps the lean correction and leaves the native shoulder twist (A/B for docs/PAULDRON.md).' }
 if ($KeepHeadVisible -and -not $Controls) { throw '-KeepHeadVisible needs -Controls (diagnostic comparison of existing head hiding).' }
+if ($LeftHanded -and -not $Controls) { throw '-LeftHanded needs -Controls (it swaps the motion controls).' }
+if ($LeftHanded -and $Runtime -ne 'OpenXR') { throw '-LeftHanded needs -Runtime OpenXR (only its bindings swap in code; docs/LEFT_HANDED.md).' }
+if ($LeftHandedKeepSticks -and -not $LeftHanded) { throw '-LeftHandedKeepSticks needs -LeftHanded.' }
 if ($PhotoNativePose -and -not $Controls) { throw '-PhotoNativePose needs -Controls (photo mode keeps the game''s own arm pose instead of the player''s).' }
 if ($ThumbsUp -ne 'play' -and -not $Controls) { throw '-ThumbsUp needs -Controls (it shapes the finger-tracked hands).' }
 if ($MeleeSweep -ne 'replay' -and -not $Controls) { throw '-MeleeSweep needs -Controls (it picks the sword the melee hit check sweeps).' }
@@ -216,6 +220,9 @@ try {
         if ($ResolveArmPoseCandidate) { $env:SM2VR_RESOLVE_ARM_POSE='1' }
         # Diagnostic A/B for near-body mesh distortion; keep every other control unchanged.
         if (-not $KeepHeadVisible) { $env:SM2VR_HIDE_HEAD='1' }
+        # Left-handed play (docs/LEFT_HANDED.md): weapons, holsters and buttons change hands.
+        if ($LeftHanded) { $env:SM2VR_LEFT_HANDED='1' }
+        if ($LeftHandedKeepSticks) { $env:SM2VR_LEFT_HANDED_KEEP_STICKS='1' }
         # Photo mode freezes the player's arm and finger pose (docs/VIEWER_MODE.md); this opts out.
         if ($PhotoNativePose) { $env:SM2VR_PHOTO_NATIVE_POSE='1' }
         # Thumbs-up (docs/THUMBS_UP_2026-10-26.md): play by default; photo = only up to the photo freeze; off = live curls only.
@@ -285,6 +292,7 @@ try {
             Set-Content -LiteralPath $env:SM2VR_PLAYER_PART_VISIBILITY_CONTROL -Value 'native' -Encoding ascii
         }
         $env:SM2VR_BODY_FOLLOW='1'
+        if (-not $NoTwoHandAim) { $env:SM2VR_TWO_HAND_AIM='1' }
         $env:SM2VR_WEAPON_AIM='1'; $env:SM2VR_WEAPON_CONFIG=Join-Path $config 'index_weapon.calibration'
         # Analog chainsword rev: right trigger with the pistol/chainsword out sets teeth speed and
         # rev volume. On by default since 20 October; -NoChainswordRev opts out.

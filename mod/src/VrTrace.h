@@ -40,6 +40,7 @@ struct Input {
     std::optional<VrControllerSample> sample; // After gestures/holsters/weapon-hand routing.
     std::optional<VrControllerSample> raw_sample;
     bool supporting{},two_handed{};
+    bool left_handed{}; // Hands stay physical; sample, raw_sample and every gesture field are logical (docs/LEFT_HANDED.md).
     // Trigger routing (VrCombatRouting): confirmed gun hand (true = pistol/chainsword out),
     // whether fire and rev are re-armed, and whether a short attachment loss is held over.
     std::optional<bool> loadout_secondary; bool triggers_rearmed{},rev_rearmed{},rev_holdover{};
@@ -417,6 +418,7 @@ inline std::string sample(double t,const std::optional<Input>& input,const std::
         if(i.raw_sample){const auto& s=*i.raw_sample;j.key("raw_controls").open().key("right_trigger").number(s.fire,3).key("left_trigger").number(s.aim,3).key("right_grip").number(s.melee,3).key("left_grip").number(s.parry,3)
             .key("left_a").boolean(s.recenter).key("left_b").boolean(s.menu).close();} // Raw Left A/B: was Left B pressed, and for how long.
         j.key("support_aim").boolean(i.supporting).key("two_handed").boolean(i.two_handed);
+        if(i.left_handed) j.key("left_handed").boolean(true);
         j.key("loadout");if(i.loadout_secondary)j.string(*i.loadout_secondary?"secondary":"primary");else j.null();
         j.key("triggers_rearmed").boolean(i.triggers_rearmed).key("rev_rearmed").boolean(i.rev_rearmed).key("rev_holdover").boolean(i.rev_holdover);
         j.key("swing_melee").boolean(i.sample && i.sample->swing_melee).key("swing_power").boolean(i.sample && i.sample->swing_power);

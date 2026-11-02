@@ -1,9 +1,12 @@
 #pragma once
 #include "VrControllerInput.h"
+#include "VrHandedness.h"
 #include <array>
 #include <cmath>
 #include <span>
+#include <string>
 #include <string_view>
+#include <vector>
 
 // OpenXR counterpart of config/vr_actions.json + config/bindings_index.json. The action
 // names match the SteamVR manifest so both runtimes produce the same VrControllerSample.
@@ -100,5 +103,31 @@ inline std::optional<Sample> sample(const Values& v,bool touch_layout=false) {
 inline const Profile* profile(std::string_view path) {
     for(const auto& p:PROFILES) if(path==p.path) return &p;
     return nullptr;
+}
+// The same input on the other hand. Index has A and B on both hands; Touch has X and Y on the left.
+inline std::string mirrored(std::string_view path,bool touch_layout) {
+    constexpr std::string_view LEFT{"/user/hand/left/"},RIGHT{"/user/hand/right/"};
+    const bool left=path.starts_with(LEFT);
+    if(!left && !path.starts_with(RIGHT)) return std::string{path};
+    auto out=std::string{left?RIGHT:LEFT}+std::string{path.substr((left?LEFT:RIGHT).size())};
+    if(touch_layout) {
+        constexpr std::array<std::array<std::string_view,2>,2> FACE{{{"/input/a/","/input/x/"},{"/input/b/","/input/y/"}}};
+        for(const auto& pair:FACE) for(size_t from=0;from<2;++from) {
+            const auto at=out.find(pair[from]);
+            if(at!=std::string::npos) return out.replace(at,pair[from].size(),pair[1-from]);
+        }
+    }
+    return out;
+}
+// The profile's bindings for this player (docs/LEFT_HANDED.md). Left-handed, every action reads the
+// other hand; the rest of the mod never learns of it. keep_sticks leaves walking and turning alone.
+struct Bound { Action action;std::string path; };
+inline std::vector<Bound> bindings(const Profile& p,const vr_hand::Settings& hand) {
+    std::vector<Bound> out;
+    for(const auto& b:p.bindings) {
+        const bool stick=b.action==move || b.action==sprint || b.action==turn || b.action==finisher;
+        out.push_back({b.action,hand.left_handed && !(stick && hand.keep_sticks)?mirrored(b.path,p.touch_layout):std::string{b.path}});
+    }
+    return out;
 }
 }

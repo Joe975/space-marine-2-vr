@@ -160,7 +160,8 @@ function Start-Sm2Play {
     if (Get-Sm2BinProcesses $Game.Bin) { throw 'Space Marine 2 is already running.' }
     Repair-Sm2AfterCrash -Game $Game -StateRoot $StateRoot -LogRoot $LogRoot | Out-Null
     $install = Read-Sm2InstallState $StateRoot
-    $playProfile = Read-Sm2Profile $Package.Profile
+    $settings = Read-Sm2Json (Join-Path $StateRoot 'settings.json')
+    $playProfile = Set-Sm2MainHand (Read-Sm2Profile $Package.Profile) $(if ($settings) { $settings.main_hand })
     $runDir = Join-Path $StateRoot ('runs\' + (Get-Date -Format 'yyyyMMdd_HHmmss') + '_play')
     $launch = ConvertTo-Sm2Launch -Profile $playProfile -ConfigDirectory (Join-Path $StateRoot 'config') -DumpDirectory (Join-Path $runDir 'dump') -Chase:($View -eq 'chase')
     $pack = $(if ($View -eq 'chase') { $install.pack.chase.path } else { $install.pack.path })

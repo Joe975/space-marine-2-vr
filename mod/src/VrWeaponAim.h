@@ -1,5 +1,6 @@
 #pragma once
 #include "VrArmPose.h"
+#include "VrHandedness.h"
 #include <chrono>
 #include <cstdint>
 #include <mutex>
@@ -264,11 +265,14 @@ inline constexpr float CARRY_METRES=.50f;
 // previous_grip: the committed grip (default: from previous_hand). The fit is kept only while the
 // grip is unchanged. switcher: debounces the reading (GripSwitch); without it a reading applies at once.
 // previous_seated: the committed fit's Attachment::seated.
+// swap: left-handed play (VrHandedness.h). The reading, the fit and Attachment::hand keep the game's
+// own hand, which is the logical one (0 the pistol's hand); only the wrist that carries the gun is
+// the other one.
 inline std::optional<Attachment> retarget(std::span<const vr_arm::Matrix> original,
     std::span<const vr_arm::Matrix> changed,std::span<const int32_t> parents,std::span<const std::string> names,
     const vr_arm::Matrix& root,const vr_arm::Matrix& grip,float units_per_metre,std::optional<size_t> previous_hand=std::nullopt,
     const std::optional<vr_arm::Matrix>& previous_relative=std::nullopt,std::optional<Grip> previous_grip=std::nullopt,
-    GripSwitch* switcher=nullptr,GripSwitch::Clock::time_point now={},bool previous_seated=true) {
+    GripSwitch* switcher=nullptr,GripSwitch::Clock::time_point now={},bool previous_seated=true,const vr_hand::Swap* swap=nullptr) {
     if(names.size()!=parents.size() || !vr_camera::rigid(grip) || !std::isfinite(units_per_metre) || units_per_metre<0.01f || units_per_metre>100) return {};
     const auto index=[&](const char* name)->std::optional<size_t> {
         const auto it=std::find(names.begin(),names.end(),name);
@@ -317,7 +321,9 @@ inline std::optional<Attachment> retarget(std::span<const vr_arm::Matrix> origin
     const auto relative=!carried && same && previous_relative && (waiting || previous_seated)?
         *previous_relative:vr_camera::multiply(authored,vr_camera::inverse(before[source_hand]));
     if(!vr_camera::rigid(relative)) return {};
-    const auto world=vr_camera::multiply(vr_camera::multiply(offset,relative),after[source_hand]);
+    if(swap && !left) return {};
+    const auto fitted=vr_camera::multiply(offset,relative);
+    const auto world=swap?vr_camera::multiply(swap->moved(fitted,driven_hand),after[driven_hand==0?*hand:*left]):vr_camera::multiply(fitted,after[source_hand]);
     const auto local=vr_camera::multiply(world,vr_camera::inverse(after[*animation]));
     if(!vr_camera::rigid(world) || !vr_camera::rigid(local)) return {};
     return Attachment{*gun,local,world,driven_hand,relative,held,!waiting};

@@ -16,6 +16,7 @@
 #include "VrCombatRouting.h"
 #include "UnknownGrace.h"
 #include "VrWeaponAim.h"
+#include "VrTwoHandAim.h"
 #include "VrTrace.h"
 #include "VrEyeSourceDiagnostic.h"
 #include "VrLeftAButton.h"
@@ -70,6 +71,8 @@ public:
     virtual bool test_tracking_fallback_available() const { return false; }
     virtual std::optional<Tracking> test_tracking_seed() const { return {}; }
     virtual std::string input_status() const { return "controller input unavailable"; }
+    // The controller binding sets the runtime took (a rejected set leaves that controller's input dead).
+    virtual std::string input_bindings() const { return {}; }
     virtual std::string finger_status() const { return "skeletal input unavailable"; }
     // Game rumble on the controllers (vr_rumble::Driver commands, left then right). False
     // when the runtime cannot play haptics now (no input focus, unsupported backend).
@@ -176,6 +179,7 @@ public:
     // The shutter tick on the right hand. False when the runtime can't play it now.
     bool photo_pulse();
     std::string input_status() const;
+    std::string input_bindings() const;
     std::string finger_status() const;
     void enable_swing_melee(bool);
     // Called (under the session lock) when a physical swing commits its native attack request.
@@ -214,6 +218,9 @@ public:
     // Left-arm push (VrLeftPush): the native held strike, knockback, with the sword out.
     void enable_left_push(bool);
     bool left_push_enabled() const;
+    // Left-handed play: the gestures see a mirrored player (VrHandedness.h). Set before tracking starts.
+    void set_left_handed(bool value);
+    bool left_handed() const;
     VrLeftPush::Snapshot left_push_statistics() const;
     // Game rumble -> controller haptics (docs/HAPTICS.md), played from poll_controllers.
     // `source` is the engine's rumble mailbox; tests pass their own.
@@ -227,6 +234,10 @@ public:
     bool set_grenade_aim_settings(const VrGrenadeAim::Settings&);
     VrGrenadeAim::Settings grenade_aim_settings() const;
     VrGrenadeThrow::Snapshot grenade_statistics() const;
+    void enable_two_hand(bool);
+    void note_support_contact(const std::optional<vr_two_hand::Contact>&);
+    vr_two_hand::Request two_hand_request(std::chrono::steady_clock::time_point now) const;
+    vr_two_hand::Grip::State two_hand_state() const;
     bool set_support_settings(const VrSupportGrip::Settings&);
     VrSupportGrip::Settings support_settings() const;
     VrSupportGrip::Snapshot support_statistics() const;
@@ -345,6 +356,7 @@ private:
     bool m_swing_enabled{},m_swing_touch_gate{};
     VrHolster m_holster;
     std::optional<VrSwingMelee::Pose> m_left_pose; // Raw left controller and head, as m_swing_pose is for the right.
+    bool m_left_handed{}; // Then both poses are the mirrored player: left is the support hand, right the weapon hand.
     VrHandMotion m_left_motion; // Left endpoint speed: a left punch must not become a right swing.
     VrTwoHanded m_two_handed; // Both hands on the sword: no left veto, no guard.
     VrGunMeleeGate m_gun_gate; // Bolter-out swings: triggers released and no support grip for 300 ms.
@@ -358,6 +370,7 @@ private:
     static constexpr auto UNKNOWN_LOADOUT=std::chrono::seconds(2); // Held weapon unknown this long: draws, swings and primary triggers allowed.
     UnknownGrace m_loadout_grace{UNKNOWN_LOADOUT};
     VrSupportGrip m_support;
+    bool m_two_hand_enabled{};vr_two_hand::Grip m_two_hand_grip;std::optional<vr_two_hand::Contact> m_support_contact;
     VrCombatRouting m_combat;
     struct ThrowAim {vr_camera::Matrix relative{};std::optional<vr_camera::Matrix> world;uint64_t epoch{},sequence{};std::chrono::steady_clock::time_point released{};uintptr_t actor{};float speed_scale{1};};
     std::optional<ThrowAim> m_throw_aim;

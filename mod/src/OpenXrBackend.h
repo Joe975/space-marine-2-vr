@@ -31,6 +31,7 @@ public:
     bool test_tracking_fallback_available() const override;
     std::optional<Tracking> test_tracking_seed() const override;
     std::string input_status() const override { return m_input_status; }
+    std::string input_bindings() const override { return m_input_bindings; }
     bool rumble(const vr_rumble::Commands&) override;
     std::string finger_status() const override { return "left="+m_finger_status[0]+" right="+m_finger_status[1]; }
 private:
@@ -42,5 +43,6 @@ private:
     std::string m_status{"waiting for running SteamVR OpenXR runtime"};
     std::optional<std::pair<int,bool>> m_status_key; // session state and queue mode m_status was built for.
     std::string m_input_status{"controller input disabled"};
+    std::string m_input_bindings; // Set before the session starts, read from other threads after.
     std::array<std::string,2> m_finger_status{"inactive","inactive"};
 };

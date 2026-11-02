@@ -324,10 +324,12 @@ struct OpenXrBackend::State {
         vibration.countSubactionPaths=2; vibration.subactionPaths=hand_paths.data();
         if(XR_FAILED(api.CreateAction(action_set,&vibration,&haptic))) return "OpenXR haptic action creation failed";
         unsigned accepted{};
+        // Left-handed play swaps the bindings here and nowhere else (docs/LEFT_HANDED.md): poses and haptics stay physical.
+        const vr_hand::Settings hand{environment_flag("SM2VR_LEFT_HANDED"),environment_flag("SM2VR_LEFT_HANDED_KEEP_STICKS")};
         for(const auto& definition:openxr_input::PROFILES) {
             std::vector<XrActionSuggestedBinding> bindings; XrPath profile_path{},binding{};
             bool valid=path(definition.path,profile_path);
-            for(const auto& b:definition.bindings) { valid=valid && path(b.path,binding); bindings.push_back({actions[b.action],binding}); }
+            for(const auto& b:openxr_input::bindings(definition,hand)) { valid=valid && path(b.path.c_str(),binding); bindings.push_back({actions[b.action],binding}); }
             for(const auto* grip:{"/user/hand/left/input/grip/pose","/user/hand/right/input/grip/pose"}) { valid=valid && path(grip,binding); bindings.push_back({hand_pose,binding}); }
             for(const auto* motor:{"/user/hand/left/output/haptic","/user/hand/right/output/haptic"}) { valid=valid && path(motor,binding); bindings.push_back({haptic,binding}); }
             XrInteractionProfileSuggestedBinding suggested{XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING};
@@ -599,6 +601,7 @@ bool OpenXrBackend::start() {
         // failure leaves rendering running with neutral controls.
         const auto problem=s.initialize_input();
         const bool hands=std::ranges::any_of(s.hand_trackers,[](auto t){return t!=XR_NULL_HANDLE;});
+        m_input_bindings=s.accepted_profiles;
         m_input_status=problem.empty()?"waiting for OpenXR controller focus; bindings "+s.accepted_profiles+"; hand tracking "+(hands?"on":"off")+
             (s.grip_offset.measured?"":"; grip offset unmeasured (render-model candidate)"):problem;
     }

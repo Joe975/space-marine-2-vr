@@ -91,6 +91,12 @@ scene_mode::Scene scene_of(const EngineCinematicState::Snapshot& s,bool screen_m
     return scene_mode::classify({s.available,s.published,s.requested,s.scripted,screen_menu});
 }
 
+bool env_flag_set(const char* name) { char value[8]{};return GetEnvironmentVariableA(name,value,sizeof value) && std::atoi(value)==1; }
+// Left-handed play (docs/LEFT_HANDED.md). OpenXR only: its bindings swap in code, where SteamVR's
+// action manifest would keep whatever binding it last saw. Half a swap is worse than none, so
+// on OpenVR the gestures and weapons stay right-handed too (the launchers refuse the pair).
+bool left_handed_requested() { return env_flag_set("SM2VR_LEFT_HANDED") && env_flag_set("SM2VR_OPENXR"); }
+
 // On a game build the address table does not know, nothing is hooked (every module fails closed).
 // Porting starts offline from the new Retail.exe (scripts/scan_game_build.py, then
 // docs/GAME_PATCH_2026-10-21.md); the DLL carries no signatures to scan with.
@@ -281,7 +287,7 @@ std::optional<std::string> Sm2Probe::on_initialize()
         if ((hands || demo || arms || m_controller_input.motion_preference()) && installed) {
             const auto arm_installed=EngineArmProbe::get().install_in_game(GetModuleHandleW(nullptr));
             EngineArmProbe::get().enable(arm_installed);
-            if ((hands || demo) && arm_installed) { EngineArmDriver::get().configure_native(demo); EngineArmDriver::get().enable(true); }
+            if ((hands || demo) && arm_installed) { EngineArmDriver::get().configure_native(demo); EngineArmDriver::get().enable(true); EngineArmDriver::get().set_left_handed(left_handed_requested()); EngineArmDriver::get().enable_two_hand(env_flag_set("SM2VR_TWO_HAND_AIM")); }
             spdlog::info("ArmProbe: installed={} read_only={} target_source={}",arm_installed,!(hands || demo),hands?"Index":demo?"diagnostic":"none");
             // The melee hit check sweeps GUN_R as the arm driver writes it: give it the sword's path
             // instead (docs/MELEE_SWEEP.md). SM2VR_MELEE_SWEEP: replay (default), animation or hand;
@@ -313,7 +319,7 @@ std::optional<std::string> Sm2Probe::on_initialize()
             const auto thumbs_length=GetEnvironmentVariableA("SM2VR_THUMBS_UP",thumbs_up,sizeof thumbs_up);
             const auto thumbs_mode=thumbs_length<sizeof thumbs_up?vr_thumbs_up::parse(std::string_view{thumbs_up,thumbs_length}):std::nullopt;
             if(!thumbs_mode) spdlog::warn("VrThumbsUp: SM2VR_THUMBS_UP must be play, photo or off; using play");
-            { std::lock_guard lock{m_thumbs_up_mutex};m_thumbs_up=vr_thumbs_up::Shaper{thumbs_mode.value_or(vr_thumbs_up::Mode::play)}; }
+            { std::lock_guard lock{m_thumbs_up_mutex};m_thumbs_up=vr_thumbs_up::Shaper{thumbs_mode.value_or(vr_thumbs_up::Mode::play),{},left_handed_requested()?size_t{1}:size_t{0}}; }
             spdlog::info("VrThumbsUp: mode={}",vr_thumbs_up::name(thumbs_mode.value_or(vr_thumbs_up::Mode::play)));
             if(aiming && arm_installed && EngineWeaponProbe::get().installed() && (hands || demo)) {
                 EngineWeaponProbe::get().aim_driver().enable(true);
@@ -389,6 +395,7 @@ std::optional<std::string> Sm2Probe::on_initialize()
                         targets.captured=poses->captured;
                         // Grips and body placement are lengths on the Marine; the wrists below use the eyes' scale.
                         targets.units_per_metre=poses->units_per_metre/poses->fit_factor;
+                        targets.tracking_units_per_metre=poses->units_per_metre;
                         // Thumbs-up shape and, up to the photo freeze, the left thumb from before the B hold.
                         const bool entering=vr_viewer::before_freeze(m_vr_session->viewer_status().state);
                         vr_thumbs_up::Shaper::Fingers fingers{};
@@ -399,6 +406,12 @@ std::optional<std::string> Sm2Probe::on_initialize()
                             targets.fingers[hand]=fingers[hand];
                         }
                     }
+                    std::optional<vr_two_hand::Contact> contact;
+                    if(const auto model=EngineArmDriver::get().support_model(now);model && poses && model->actor==targets.actor && model->epoch==targets.epoch && targets.wrists[model->dominant] && poses->relative[model->dominant]) {
+                        contact=vr_two_hand::contact(*model,*targets.wrists[model->dominant],*poses->relative[model->dominant],EngineArmDriver::get().grip(1-model->dominant),anchor,poses->units_per_metre,EngineArmDriver::get().left_handed());
+                    }
+                    m_vr_session->note_support_contact(contact);
+                    targets.support=m_vr_session->two_hand_request(now);
                     EngineArmDriver::get().targets(targets);
                     const auto throw_pose=m_grenade_aim_candidate && targets.actor?m_vr_session->grenade_aim(anchor,targets.actor,eye.tracking_epoch,now):std::nullopt;
                     EngineWeaponProbe::get().aim_driver().throw_aim(std::nullopt);
@@ -1177,6 +1190,9 @@ void Sm2Probe::on_present()
                 spdlog::warn("VrTestDriver: exclusive scripted controllers enabled; scripted_head={}",allow_head);
             }
             m_vr_session = std::make_unique<VrSession>(std::move(backend));
+            m_vr_session->set_left_handed(left_handed_requested());
+            m_vr_session->enable_two_hand(env_flag_set("SM2VR_TWO_HAND_AIM"));
+            spdlog::info("Handedness: left_handed={} keep_sticks={}",m_vr_session->left_handed(),left_handed_requested() && env_flag_set("SM2VR_LEFT_HANDED_KEEP_STICKS"));
             if(m_ordinary_headset)m_vr_session->set_render_path(VrSession::RenderPath::ordinary);
             {   // docs/OPENXR_SUBMIT_THREAD.md: runtime frame calls off the render/Present thread (OpenXR default;
                 // SM2VR_OPENXR_NO_SUBMIT_THREAD=1 keeps them on it).
@@ -1452,7 +1468,7 @@ void Sm2Probe::on_present()
     const auto weapon_poses=m_vr_session?m_vr_session->controller_poses():std::nullopt;
     const auto weapon_epoch=m_vr_session?m_vr_session->epoch():0;
     const auto weapon_gate=VrWeaponAim::gate(first_person_features() && weapon_foreground==GetCurrentProcessId(),m_weapon_demo,m_runtime_enabled,
-        weapon_poses && weapon_poses->relative[1] && weapon_poses->tracking_epoch==weapon_epoch && EngineBodyFollowing::get().snapshot().follow.anchored,weapon_epoch);
+        weapon_poses && weapon_poses->relative[EngineArmDriver::get().left_handed()?0:1] && weapon_poses->tracking_epoch==weapon_epoch && EngineBodyFollowing::get().snapshot().follow.anchored,weapon_epoch);
     EngineWeaponProbe::get().aim_driver().allow(weapon_gate.allowed,weapon_gate.epoch);
     // Third person too: the native camera stays in the helmet, so its camera-distance fade
     // would turn the whole Marine translucent when seen from the diorama or shoulder camera.
@@ -1726,11 +1742,17 @@ void Sm2Probe::on_present()
             // primary_draws: pistol-to-primary switches landed by the draw (the gun left both sockets).
             // fit_seated: false while a primary landed off its socket uses the carried gun's fit.
             const auto arm_weapon=EngineArmDriver::get().snapshot();
+            // A rejected binding set leaves that controller dead, and the test driver never reads them.
+            if(auto bindings=m_vr_session->input_bindings();bindings!=m_logged_bindings) {
+                m_logged_bindings=std::move(bindings);
+                spdlog::info("OpenXrInput: bindings accepted='{}' left_handed={}",m_logged_bindings,m_vr_session->left_handed());
+            }
             spdlog::info("VrHolster: enabled={} primary={} secondary={} salutes={} misses={} zone={} hand=[{},{},{}] last_press_slot={} last_press=[{},{},{}] touch_gate={} held={} grip={} grip_switches={} left_refused={} primary_draws={} fit_seated={} supports={}",
                 m_vr_session->holsters_enabled(),holster.primary,holster.secondary,holster.salutes,holster.misses,static_cast<int>(holster.zone),holster.height,holster.lateral,holster.forward,
                 static_cast<int>(holster.last_slot),holster.last_press[0],holster.last_press[1],holster.last_press[2],m_vr_session->trigger_lift_required(),
                 m_logged_secondary_equipped?(*m_logged_secondary_equipped?"secondary":"primary"):"unknown",
-                arm_weapon.weapon_grip?vr_weapon::name(*arm_weapon.weapon_grip):"none",arm_weapon.weapon_grip_switches,arm_weapon.weapon_left_refused,arm_weapon.weapon_primary_draws,arm_weapon.weapon_seated,m_vr_session->support_statistics().engagements);
+                arm_weapon.weapon_grip?vr_weapon::name(*arm_weapon.weapon_grip):"none",arm_weapon.weapon_grip_switches,arm_weapon.weapon_left_refused,arm_weapon.weapon_primary_draws,arm_weapon.weapon_seated,m_vr_session->support_statistics().engagements+m_vr_session->two_hand_state().engagements);
+            spdlog::info("TwoHandAim: active={} committed={} refused={} pose={} arms={} unmapped={} hierarchy={} reserved={} held={}",arm_weapon.two_hand_active,arm_weapon.two_hand_updates,arm_weapon.two_hand_refused,arm_weapon.two_hand_refusals[0],arm_weapon.two_hand_refusals[1],arm_weapon.two_hand_refusals[2],arm_weapon.two_hand_refusals[3],m_vr_session->two_hand_state().reserved,m_vr_session->two_hand_state().held);
             spdlog::info("VrControllers: enabled={} armed={} status={} pad_packet={} move=[{},{}] buttons={:#x} snaps={} snap_degrees={} native_state_polls={} input_gate={} native_hook={} native_updates={} native_registrations={} native_failures={} native_dispatch_healthy={} native_dispatch_repairs={}",
                 input.enabled,input.armed,m_vr_session->input_status(),input.pad.dwPacketNumber,input.pad.Gamepad.sThumbLX,
                 input.pad.Gamepad.sThumbLY,input.pad.Gamepad.wButtons,input.snaps,input.snap_degrees,EngineControllerRegistration::get().state_polls(),input.reason,

@@ -85,6 +85,13 @@ $uninstallButton = New-BarButton 'Uninstall'
 $channelLabel = New-Object Windows.Forms.Label; $channelLabel.Text = 'Channel:'; $channelLabel.AutoSize = $true; $channelLabel.Margin = New-Object Windows.Forms.Padding(12, 8, 0, 0); $bar.Controls.Add($channelLabel)
 $channelBox = New-Object Windows.Forms.ComboBox; $channelBox.DropDownStyle = 'DropDownList'; [void]$channelBox.Items.AddRange(@('Stable', 'Beta')); $channelBox.Width = 90; $bar.Controls.Add($channelBox)
 $channelBox.SelectedIndex = $(if ($settings.channel -eq 'beta') { 1 } else { 0 })
+# Read at the next Play (Set-Sm2MainHand). Saved here, not in launch.json: an update replaces that.
+# One group, so the label never wraps away from its box on the narrow window.
+$handGroup = New-Object Windows.Forms.FlowLayoutPanel; $handGroup.AutoSize = $true; $handGroup.WrapContents = $false; $handGroup.Margin = New-Object Windows.Forms.Padding(0); $bar.Controls.Add($handGroup)
+$handLabel = New-Object Windows.Forms.Label; $handLabel.Text = 'Main hand:'; $handLabel.AutoSize = $true; $handLabel.Margin = New-Object Windows.Forms.Padding(4, 8, 0, 0); $handGroup.Controls.Add($handLabel)
+$handBox = New-Object Windows.Forms.ComboBox; $handBox.DropDownStyle = 'DropDownList'; [void]$handBox.Items.AddRange(@($Sm2MainHands.Values)); $handBox.Width = 170; $handGroup.Controls.Add($handBox)
+$handBox.SelectedIndex = [Math]::Max(0, [array]::IndexOf(@($Sm2MainHands.Keys), [string]$settings.main_hand))
+$handBox.Add_SelectedIndexChanged({ $settings | Add-Member -Force NoteProperty main_hand @($Sm2MainHands.Keys)[$handBox.SelectedIndex]; Save-Settings })
 
 $colors = @{ ok = 'SeaGreen'; ready = 'SeaGreen'; running = 'SteelBlue'; warn = 'DarkOrange'; fail = 'Firebrick'; todo = 'Gray' }
 $words = @{ ok = 'OK'; ready = 'READY'; running = 'RUNNING'; warn = 'ONE STEP'; fail = 'PROBLEM'; todo = 'WAITING' }
@@ -122,7 +129,7 @@ function Update-View {
         if ($s.Action2) { $r.Button2.Text = $buttonText[$s.Action2] }
         $r.Button2.Enabled = -not $ui.Busy
     }
-    foreach ($b in $reportButton, $updatesButton, $uninstallButton, $channelBox) { $b.Enabled = -not $ui.Busy }
+    foreach ($b in $reportButton, $updatesButton, $uninstallButton, $channelBox, $handBox) { $b.Enabled = -not $ui.Busy }
     return $steps
 }
 
@@ -295,7 +302,7 @@ if ($SelfTest) {
         $image.Save($Screenshot, [Drawing.Imaging.ImageFormat]::Png); $image.Dispose()
         $form.Hide()
     }
-    @{ steps = @($steps | ForEach-Object { @{ status = $_.Status; action = $_.Action; title = $_.Title } }); log = $log.Text } | ConvertTo-Json -Depth 4
+    @{ steps = @($steps | ForEach-Object { @{ status = $_.Status; action = $_.Action; title = $_.Title } }); log = $log.Text; main_hand = [string]$handBox.SelectedItem } | ConvertTo-Json -Depth 4
     $form.Dispose()
     return
 }

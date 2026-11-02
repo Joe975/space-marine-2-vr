@@ -216,10 +216,14 @@ void EngineArmDriver::poll_body_placement_control(Clock::time_point now) {
             m_state.body_control_revision,m_state.body_control_polls,m_state.body_control_rejected);
 }
 void EngineArmDriver::follow_weapon(bool value) {std::scoped_lock lock{m_mutex};m_weapon_enabled=value;m_weapon_hand.reset();m_weapon_relative.reset();m_weapon_grip.reset();m_weapon_seated=true;m_weapon_switch.reset();if(m_weapon_observer) m_weapon_observer({});}
-void EngineArmDriver::weapon_switch(Clock::time_point now) {std::scoped_lock lock{m_mutex};m_weapon_switch.weapon_switch(now);}
+void EngineArmDriver::weapon_switch(Clock::time_point now) {std::scoped_lock lock{m_mutex};m_weapon_switch.weapon_switch(now);m_support_model.reset();m_support_valid=false;++m_support_generation;}
+void EngineArmDriver::enable_two_hand(bool value) {std::scoped_lock lock{m_mutex};m_two_hand_enabled=value;m_support_model.reset();m_support_valid=false;++m_support_generation;}
+std::optional<vr_two_hand::Model> EngineArmDriver::support_model(Clock::time_point now) const {
+    std::scoped_lock lock{m_mutex};return m_weapon_enabled && m_two_hand_enabled && m_support_valid && m_allowed && m_support_model && m_support_model->epoch==m_epoch && fresh(m_support_model->captured,now)?m_support_model:std::nullopt;
+}
 bool EngineArmDriver::weapon_enabled() const {std::scoped_lock lock{m_mutex};return m_weapon_enabled;}
 bool EngineArmDriver::set_weapon_settings(const vr_weapon::Settings& settings) {
-    if(!settings.valid()) return false;std::scoped_lock lock{m_mutex};m_weapon_settings=settings;if(m_weapon_observer) m_weapon_observer({});return true;
+    if(!settings.valid()) return false;std::scoped_lock lock{m_mutex};m_weapon_settings=settings;m_support_model.reset();m_support_valid=false;++m_support_generation;if(m_weapon_observer) m_weapon_observer({});return true;
 }
 vr_weapon::Settings EngineArmDriver::weapon_settings() const {std::scoped_lock lock{m_mutex};return m_weapon_settings;}
 void EngineArmDriver::set_weapon_observer(std::function<void(const VrWeaponAim::Pose&)> observer) {std::scoped_lock lock{m_mutex};m_weapon_observer=std::move(observer);}
@@ -229,15 +233,18 @@ void EngineArmDriver::targets(const Targets& value) {
     if ((!m_state.enabled && !m_state.head_hidden) || !m_allowed || !value.actor || !value.reference || value.epoch!=m_epoch) { m_targets.reset(); return; }
     m_targets=value;
 }
-bool EngineArmDriver::set_settings(const Settings& settings) { if (!settings.valid()) { return false; } std::scoped_lock lock{m_mutex}; m_settings=settings; m_targets.reset(); return true; }
+bool EngineArmDriver::set_settings(const Settings& settings) { if (!settings.valid()) { return false; } std::scoped_lock lock{m_mutex}; m_settings=settings;m_support_model.reset();m_support_valid=false;++m_support_generation; m_targets.reset(); return true; }
 EngineArmDriver::Settings EngineArmDriver::settings() const { std::scoped_lock lock{m_mutex}; return m_settings; }
 EngineArmDriver::Snapshot EngineArmDriver::snapshot() const {
     std::scoped_lock lock{m_mutex}; auto out=m_state; out.weapon_grip=m_weapon_grip; out.weapon_grip_switches=m_weapon_switch.switches(); out.weapon_left_refused=m_weapon_switch.refused(); out.weapon_primary_draws=m_weapon_switch.draws(); out.weapon_seated=m_weapon_seated; return out;
 }
 std::optional<EngineArmDriver::NativeHead> EngineArmDriver::native_head() const { std::scoped_lock lock{m_mutex}; return m_native_head; }
 std::optional<EngineArmDriver::NativeMotion> EngineArmDriver::native_motion() const { std::scoped_lock lock{m_mutex}; return m_native_motion; }
-EngineArmDriver::Matrix EngineArmDriver::grip(size_t hand) const {
-    std::scoped_lock lock{m_mutex}; if (hand>1) { return vr_camera::IDENTITY; }
+void EngineArmDriver::set_left_handed(bool value) {std::scoped_lock lock{m_mutex};m_left_handed=m_state.left_handed=value;m_support_model.reset();m_support_valid=false;++m_support_generation;m_weapon_hand.reset();m_weapon_relative.reset();m_weapon_grip.reset();m_weapon_seated=true;m_weapon_switch.reset();}
+bool EngineArmDriver::left_handed() const {std::scoped_lock lock{m_mutex};return m_left_handed;}
+EngineArmDriver::Matrix EngineArmDriver::grip(size_t hand) const { std::scoped_lock lock{m_mutex};return grip_locked(hand); }
+EngineArmDriver::Matrix EngineArmDriver::grip_locked(size_t hand) const {
+    if (hand>1) { return vr_camera::IDENTITY; }
     auto out=vr_camera::IDENTITY;
     for (int i=0;i<3;++i) {
         const auto a=m_settings.grips[hand].degrees[i]*0.01745329252f; auto rotation=vr_camera::IDENTITY;
@@ -257,7 +264,9 @@ void EngineArmDriver::apply(const EngineArmProbe::Pose& pose,Clock::time_point n
 }
 void EngineArmDriver::apply_publication(const EngineArmProbe::Pose& pose,Clock::time_point now) {
     std::scoped_lock lock{m_mutex}; ++m_state.updates;m_state.body_applied_back_metres=0;m_state.invalidation={};
-    VrWeaponAim::Pose weapon{};
+    VrWeaponAim::Pose weapon{};m_support_valid=false;m_state.two_hand_active=false;
+    if(!m_targets || !m_targets->support.held || !m_targets->wrists[0] || !m_targets->wrists[1]){m_support_anchor.reset();m_support_anchor_key.reset();}
+    std::optional<vr_two_hand::Model> support_model;bool two_hand_active=false;
     struct Notify { std::function<void(const VrWeaponAim::Pose&)>& callback;VrWeaponAim::Pose& pose;~Notify(){if(callback) callback(pose);} } notify{m_weapon_observer,weapon};
     std::optional<vr_trace::Character> trace;
     const char* stage="guard";const char* placement_refusal="";
@@ -305,7 +314,7 @@ void EngineArmDriver::apply_publication(const EngineArmProbe::Pose& pose,Clock::
         if (bone.rig_index>=locals.size() || bone.skin_index<0 || bone.skin_index>=4096 || mapping[bone.rig_index]!=-1) { ++m_state.rejected; return; }
         locals[bone.rig_index]=bone.local; mapping[bone.rig_index]=bone.skin_index;
     }
-    original=locals; uint64_t solved_hands{},finger_hands{};bool right_solved=false;
+    original=locals; uint64_t solved_hands{},finger_hands{};std::array<bool,2> arm_solved{};
     bool body_placed=false;
     stage="body_placement";
     if(m_state.enabled && m_body_placement.back_metres>0) {
@@ -338,6 +347,7 @@ void EngineArmDriver::apply_publication(const EngineArmProbe::Pose& pose,Clock::
         else ++m_state.upright_rejected;
     }
     stage="arms";
+    const auto arm_source=locals; // One native arm solve per candidate, not a second solve over stretched VR limbs.
     for (size_t hand=0;hand<2;++hand) if (m_state.enabled && m_targets->wrists[hand]) {
         const auto solve=[&](bool shield_twist){return vr_arm::solve_named(locals,pose.layout->parents,pose.layout->names,pose.world,hand,*m_targets->wrists[hand],vr_arm::rotate(m_settings.elbow_poles[hand],pose.world),true,shield_twist);};
         const auto unmapped=[&](const std::optional<vr_arm::Result>& s){for (size_t i=0;i<locals.size();++i) if (s->locals[i]!=locals[i] && mapping[i]<0) return true;return false;};
@@ -350,7 +360,7 @@ void EngineArmDriver::apply_publication(const EngineArmProbe::Pose& pose,Clock::
         bool mapped=!unmapped(solved);
         if (!mapped) { continue; }
         locals=solved->locals; m_state.errors[hand]=solved->target_error; ++solved_hands;
-        if(hand==1) right_solved=true;
+        arm_solved[hand]=true;
         if(m_state.fingers_enabled && m_targets->fingers[hand]) {
             const auto fingers=vr_finger::solve(locals,pose.layout->bind_locals,pose.layout->parents,pose.layout->names,hand,*m_targets->fingers[hand]);
             bool finger_mapped=fingers.has_value();
@@ -364,17 +374,90 @@ void EngineArmDriver::apply_publication(const EngineArmProbe::Pose& pose,Clock::
     }
     std::optional<vr_weapon::Attachment> attachment;
     stage="weapon";
-    if(m_weapon_enabled && right_solved) {
+    // Left-handed, weapons move to the other wrist; without a usable fit they stay off rather than right-handed.
+    const auto swap=m_left_handed?vr_hand::Swap::make(grip_locked(0),grip_locked(1),m_targets->units_per_metre):std::nullopt;
+    if(m_weapon_enabled && arm_solved[m_left_handed?0:1] && swap.has_value()==m_left_handed) {
         if(m_weapon_actor!=pose.owner.actor || m_weapon_layout!=pose.layout) {
             // Any rejected publication rebuilds the layout (EngineArmProbe::rig_layout) for the same
             // actor, who is still holding the same weapon: only a new actor holds the primary.
             if(m_weapon_actor!=pose.owner.actor) m_weapon_switch.new_actor();
+            m_support_model.reset();++m_support_generation;
             m_weapon_actor=pose.owner.actor;m_weapon_layout=pose.layout;m_weapon_hand.reset();m_weapon_relative.reset();m_weapon_grip.reset();m_weapon_seated=true;
         }
-        attachment=vr_weapon::retarget(original,locals,pose.layout->parents,pose.layout->names,pose.world,m_weapon_settings.matrix(),m_targets->units_per_metre,m_weapon_hand,m_weapon_relative,m_weapon_grip,&m_weapon_switch,now,m_weapon_seated);
+        attachment=vr_weapon::retarget(original,locals,pose.layout->parents,pose.layout->names,pose.world,m_weapon_settings.matrix(),m_targets->units_per_metre,m_weapon_hand,m_weapon_relative,m_weapon_grip,&m_weapon_switch,now,m_weapon_seated,swap?&*swap:nullptr);
+        if(attachment && m_two_hand_enabled && attachment->grip && vr_weapon::primary(*attachment->grip) && attachment->seated && arm_solved[0] && arm_solved[1]) {
+            std::vector<Matrix> world;
+            if(vr_arm::hierarchy(locals,pose.layout->parents,pose.world,world)) {
+                const auto name=m_left_handed?"HANDL":"HANDR";
+                const auto primary=std::find(pose.layout->names.begin(),pose.layout->names.end(),name);
+                if(primary!=pose.layout->names.end()) {
+                    if(attachment->grip!=m_weapon_grip || (m_support_model && (m_support_model->epoch!=m_targets->epoch || std::abs(m_support_model->units-m_targets->units_per_metre)>1e-5f))){m_support_model.reset();++m_support_generation;}
+                    support_model=m_support_model;
+                    if(!support_model)support_model=vr_two_hand::learn(original,pose.layout->parents,pose.layout->names,pose.world,*attachment,m_targets->units_per_metre,swap?&*swap:nullptr);
+                    if(support_model) {
+                        auto& model=*support_model;model.actor=pose.owner.actor;model.epoch=m_targets->epoch;model.generation=m_support_generation;model.captured=m_targets->captured;
+                        model.tracking_units=m_targets->tracking_units_per_metre==0?model.units:m_targets->tracking_units_per_metre;
+                        model.gun_to_primary=vr_camera::multiply(attachment->world,vr_camera::inverse(world[primary-pose.layout->names.begin()]));
+                        model.drawn_to_primary=model.gun_to_primary;
+                        if(m_targets->support.held && m_targets->support.epoch==model.epoch && m_targets->support.generation==model.generation) {
+                            const std::array<uint64_t,3> key{model.epoch,model.generation,m_targets->support.engagement};
+                            if(m_support_anchor_key!=key) {
+                                m_support_anchor.reset();m_support_anchor_key.reset();
+                                const auto main=vr_arm::position(*m_targets->wrists[model.dominant]);
+                                const auto other=vr_arm::position(*m_targets->wrists[1-model.dominant]);
+                                const auto native_support=vr_camera::multiply(model.support_to_gun,attachment->world);
+                                const std::array<vr_arm::Vector,3> region{main,vr_arm::position(native_support),vr_arm::position(attachment->world)};
+                                if(vr_arm::length(vr_arm::sub(other,main))>=.12f*model.tracking_units && vr_two_hand::region_distance(region,other)<=.12f*model.tracking_units) {
+                                    m_support_anchor=vr_camera::multiply(*m_targets->wrists[1-model.dominant],vr_camera::inverse(attachment->world));m_support_anchor_key=key;
+                                }
+                            }
+                            auto grabbed=model;if(m_support_anchor)grabbed.support_to_gun=*m_support_anchor;
+                            const auto constrained=m_support_anchor?vr_two_hand::solve(grabbed,m_targets->wrists):std::nullopt;
+                            const auto refuse=[&](size_t kind){++m_state.two_hand_refused;++m_state.two_hand_refusals[kind];};
+                            const auto staged=[&]()->std::optional<std::vector<Matrix>> {
+                                if(!constrained){refuse(0);return {};}
+                                auto candidate=arm_source;
+                                for(size_t h=0;h<2;++h) {
+                                    auto solved=vr_arm::solve_named(candidate,pose.layout->parents,pose.layout->names,pose.world,h,constrained->wrists[h],vr_arm::rotate(m_settings.elbow_poles[h],pose.world),true,false);
+                                    if(!solved || solved->target_error>.005f*model.units){refuse(1);return {};}
+                                    for(size_t i=0;i<candidate.size();++i)if(solved->locals[i]!=candidate[i] && mapping[i]<0){refuse(2);return {};}
+                                    candidate=std::move(solved->locals);
+                                    // Finger curls are wrist-local; reapply them to this fresh arm candidate.
+                                    if(m_state.fingers_enabled && m_targets->fingers[h]) {
+                                        const auto fingers=vr_finger::solve(candidate,pose.layout->bind_locals,pose.layout->parents,pose.layout->names,h,*m_targets->fingers[h]);
+                                        bool mapped=fingers.has_value();
+                                        if(fingers)for(size_t i=0;i<candidate.size();++i)if(fingers->locals[i]!=candidate[i] && mapping[i]<0)mapped=false;
+                                        if(mapped)candidate=fingers->locals;
+                                    }
+                                }
+                                return candidate;
+                            }();
+                            std::vector<Matrix> constrained_world;
+                            if(staged && vr_arm::hierarchy(*staged,pose.layout->parents,pose.world,constrained_world)) {
+                                locals=*staged;
+                                attachment->world=constrained->gun;
+                                const auto animation=pose.layout->parents[attachment->index];
+                                attachment->local=vr_camera::multiply(attachment->world,vr_camera::inverse(constrained_world[animation]));
+                                model.drawn_to_primary=vr_camera::multiply(attachment->world,vr_camera::inverse(*m_targets->wrists[model.dominant]));
+                                two_hand_active=true;
+                            } else if(staged)refuse(3);
+                            // A rejected constraint leaves the already solved, fresh one-hand
+                            // candidate intact. Commit it normally so one bad frame cannot
+                            // erase weapon ownership/contact and cancel a still-squeezed grip.
+                        }
+                    }
+                }
+            }
+        }
         if(attachment && mapping[attachment->index]>=0 && (attachment->hand==1 || solved_hands==2)) locals[attachment->index]=attachment->local;else attachment.reset();
     }
     if(body_placed && m_weapon_enabled && !attachment) { refuse_body(vr_body_placement::Refusal::Attachment);return; }
+    // After the gun: GUN_R is off its branch. With one wrist lost the sword stays on the right arm's animation.
+    if(swap && arm_solved[0] && arm_solved[1]) {
+        const auto sword=vr_hand::sword_to_left(locals,pose.layout->parents,pose.layout->names,pose.world,*swap);
+        if(sword && mapping[sword->index]>=0) {locals[sword->index]=sword->local;++m_state.sword_moves;}
+        else ++m_state.sword_refused;
+    }
     // On the way into camera mode: the frozen head looks where the player looked. A refusal keeps
     // the animated head and everything else in this publication.
     std::optional<vr_head_aim::Result> head_aim;
@@ -533,6 +616,7 @@ void EngineArmDriver::apply_publication(const EngineArmProbe::Pose& pose,Clock::
     if(body_placed) {++m_state.body_placement_updates;m_state.body_applied_back_metres=m_body_placement.back_metres;}
     if(head_aim) {++m_state.head_aims;m_state.head_aim_degrees=head_aim->turned_degrees;if(head_aim->limited) ++m_state.head_aim_limited;}
     if(attachment) {
+        if(support_model){m_support_model=support_model;m_support_valid=true;m_state.two_hand_active=two_hand_active;if(two_hand_active)++m_state.two_hand_updates;}else m_support_model.reset();
         m_weapon_hand=attachment->hand;
         m_weapon_relative=attachment->relative;
         m_weapon_grip=attachment->grip;

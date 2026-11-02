@@ -71,6 +71,20 @@ class LaunchTests(unittest.TestCase):
         self.assertFalse((self.state / 'running.lock').exists())
         self.assertEqual(self.install_json()['game_files'], [])
 
+    def test_the_main_hand_setting_reaches_the_game(self):
+        # The app's choice lives in the state folder, which an update leaves alone.
+        self.state.mkdir(parents=True, exist_ok=True)
+        (self.state / 'settings.json').write_text('{"main_hand": "left_sticks"}', encoding='utf-8')
+        command = '/c echo hand=%SM2VR_LEFT_HANDED% sticks=%SM2VR_LEFT_HANDED_KEEP_STICKS% >>probe.txt'
+        out = self.ps('play', command, pretend=True)
+        self.assertEqual((self.bin / 'probe.txt').read_text().split(), ['hand=1', 'sticks=1'])
+        self.assertEqual(out['result']['ExitCode'], 0)
+
+    def test_no_main_hand_setting_stays_right_handed(self):
+        command = '/c echo hand=%SM2VR_LEFT_HANDED% >>probe.txt'
+        self.ps('play', command, pretend=True)
+        self.assertEqual((self.bin / 'probe.txt').read_text().split(), ['hand=%SM2VR_LEFT_HANDED%'])
+
     def test_chase_session_installs_the_chase_pack_without_motion_controls(self):
         pak = '..\\..\\mods\\SM2VR_FirstPerson_Test.pak'
         command = (f'/c (type {pak}>>probe.txt) & echo. >>probe.txt'

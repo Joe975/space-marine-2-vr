@@ -149,6 +149,16 @@ class WindowSelfTest(unittest.TestCase):
         self.assertEqual([t for t, _ in steps], ['Game found', 'Steam and SteamVR ready', 'Game version supported', 'Install', 'Play in VR'])
         self.assertEqual(steps[0][1], 'ok')
         self.assertEqual(steps[2][1], 'ok')
+        self.assertEqual(view['main_hand'], 'Right', 'a new player is right-handed')
+        # The Main hand box shows the saved choice, and a bad one falls back rather than stopping the app.
+        (work / 'state').mkdir(exist_ok=True)
+        for saved, shown in (('left', 'Left'), ('left_sticks', 'Left, walk on left stick'), ('nonsense', 'Right')):
+            (work / 'state/settings.json').write_text(json.dumps({'game_root': None, 'channel': 'stable', 'main_hand': saved}), encoding='utf-8')
+            again = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File',
+                                    str(package / 'app/Sm2VrApp.ps1'), '-SelfTest'],
+                                   capture_output=True, text=True, encoding='utf-8', errors='replace', env=env, timeout=120)
+            self.assertEqual(again.returncode, 0, again.stdout + again.stderr)
+            self.assertEqual(json.loads(again.stdout)['main_hand'], shown)
         self.assertIn('SM2VR 0.1.0 for game version 2026-10-21', view['log'])
         # Steam/SteamVR are this machine's real state, so only the install step's wording is fixed.
         self.assertIn(steps[3][1], ('todo', 'fail'))

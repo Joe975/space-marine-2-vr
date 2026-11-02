@@ -12,7 +12,7 @@ VrSession::~VrSession() {
         for (auto& pending : m_pending) { retained->push_back(std::move(pending)); }
     }
 }
-void VrSession::invalidate() { m_reference.reset(); m_relative_controllers={}; m_fingers={}; m_swing_pose.reset();m_swing.reset();m_holster.reset();m_left_pose.reset();m_left_motion.reset();m_two_handed.reset();m_gun_gate.reset();m_power_trigger.reset();m_left_push.reset();m_guard.reset();m_grenade.reset();m_throw_aim.reset(); m_rig = vr_camera::IDENTITY; m_eyes.clear();m_ordinary_frames.clear(); ++m_epoch; ++m_reference_epoch; }
+void VrSession::invalidate() { m_support_contact.reset(); m_reference.reset(); m_relative_controllers={}; m_fingers={}; m_swing_pose.reset();m_swing.reset();m_holster.reset();m_left_pose.reset();m_left_motion.reset();m_two_handed.reset();m_gun_gate.reset();m_power_trigger.reset();m_left_push.reset();m_guard.reset();m_grenade.reset();m_throw_aim.reset(); m_rig = vr_camera::IDENTITY; m_eyes.clear();m_ordinary_frames.clear(); ++m_epoch; ++m_reference_epoch; }
 void VrSession::enable(bool enabled) {
     std::lock_guard lock{m_mutex};
     if (m_enabled == enabled) { return; }
@@ -196,12 +196,14 @@ VrGuardGuide::Settings VrSession::guard_guide_settings() const { std::lock_guard
 std::optional<VrGuardGuide::Draw> VrSession::guard_guide(std::chrono::steady_clock::time_point now) const {
     std::lock_guard lock{m_mutex};auto draw=m_guard_guide.current(now);
     // The guard zone is in body-scaled (Joe's) metres; draw it where this player's hand goes.
-    if(draw) { const float body=body_factor_locked();for(auto& quad:draw->quads) for(auto& c:quad.corners) {c.height/=body;c.lateral/=body;c.forward/=body;} }
+    if(draw) { const float body=body_factor_locked();for(auto& quad:draw->quads) for(auto& c:quad.corners) {c.height/=body;c.lateral/=m_left_handed?-body:body;c.forward/=body;} }
     return draw;
 }
 VrGuardGuide::Tracker::Status VrSession::guard_guide_status() const { std::lock_guard lock{m_mutex};return m_guard_guide.status(); }
 void VrSession::enable_left_push(bool value) { std::lock_guard lock{m_mutex};m_left_push_enabled=value;m_left_push.reset(); }
 bool VrSession::left_push_enabled() const { std::lock_guard lock{m_mutex};return m_left_push_enabled; }
+void VrSession::set_left_handed(bool value) { std::lock_guard lock{m_mutex};m_left_handed=value;invalidate(); }
+bool VrSession::left_handed() const { std::lock_guard lock{m_mutex};return m_left_handed; }
 VrLeftPush::Snapshot VrSession::left_push_statistics() const { std::lock_guard lock{m_mutex};return m_left_push.snapshot(); }
 void VrSession::enable_grenade_gesture(bool value) { std::lock_guard lock{m_mutex};m_grenade_enabled=value;m_grenade.reset();m_throw_aim.reset(); }
 bool VrSession::grenade_gesture_enabled() const { std::lock_guard lock{m_mutex};return m_grenade_enabled; }
@@ -210,6 +212,10 @@ VrGrenadeThrow::Settings VrSession::grenade_settings() const { std::lock_guard l
 bool VrSession::set_grenade_aim_settings(const VrGrenadeAim::Settings& value) { std::lock_guard lock{m_mutex};return m_grenade.set_aim_settings(value); }
 VrGrenadeAim::Settings VrSession::grenade_aim_settings() const { std::lock_guard lock{m_mutex};return m_grenade.aim_settings(); }
 VrGrenadeThrow::Snapshot VrSession::grenade_statistics() const { std::lock_guard lock{m_mutex};return m_grenade.snapshot(); }
+void VrSession::enable_two_hand(bool value) {std::lock_guard lock{m_mutex};m_two_hand_enabled=value;m_support_contact.reset();m_two_hand_grip.reset();m_support.reset();}
+void VrSession::note_support_contact(const std::optional<vr_two_hand::Contact>& value) {std::lock_guard lock{m_mutex};m_support_contact=value && value->epoch==m_epoch?value:std::nullopt;}
+vr_two_hand::Request VrSession::two_hand_request(std::chrono::steady_clock::time_point now)const {std::lock_guard lock{m_mutex};const auto s=m_two_hand_grip.state();return {m_epoch,s.generation,m_two_hand_enabled && s.held && m_support_contact && VrWeaponAim::fresh(m_support_contact->captured,now),s.engagements};}
+vr_two_hand::Grip::State VrSession::two_hand_state()const {std::lock_guard lock{m_mutex};return m_two_hand_grip.state();}
 bool VrSession::set_support_settings(const VrSupportGrip::Settings& value) {std::lock_guard lock{m_mutex};return m_support.set_settings(value);}
 VrSupportGrip::Settings VrSession::support_settings() const {std::lock_guard lock{m_mutex};return m_support.settings();}
 VrSupportGrip::Snapshot VrSession::support_statistics() const {std::lock_guard lock{m_mutex};return m_support.snapshot();}
@@ -251,7 +257,8 @@ void VrSession::update_rumble(bool foreground,std::chrono::steady_clock::time_po
     // One test pulse, retried each poll until the runtime takes it (it refuses before focus).
     if(allowed && m_rumble_test_pending && m_backend->rumble(vr_rumble::Driver::test(m_rumble_settings))) {m_rumble_test_pending=false;++m_rumble_tests;}
     if(!allowed && !m_rumble.playing()) return;
-    const auto commands=m_rumble.update(read,allowed,now,m_rumble_settings);
+    auto commands=m_rumble.update(read,allowed,now,m_rumble_settings);
+    if(m_left_handed) std::swap(commands[0],commands[1]); // The game's left motor is the support hand's.
     if(std::ranges::any_of(commands,[](const auto& c){return c.op!=vr_rumble::Command::Op::none;}) && !m_backend->rumble(commands)) ++m_rumble_failures;
 }
 void VrSession::update_sprint_camera(VrControllerInput& input,std::chrono::steady_clock::time_point now) {
@@ -365,8 +372,10 @@ void VrSession::poll_controllers_locked(VrControllerInput& input,bool foreground
     // A shot/aim or a primary support squeeze owns the hands before a holster
     // can acquire. Check this frame's geometry too, so simultaneous squeezes
     // cannot cycle a lowered supported rifle into the sidearm.
+    const bool contact_fresh=m_support_contact && m_support_contact->actor==m_swing_actor && m_support_contact->epoch==m_epoch && VrWeaponAim::fresh(m_support_contact->captured,now);
+    const bool actual_contact=m_two_hand_enabled && secondary_equipped!=std::optional{true} && contact_fresh && right_hand && left_hand && vr_two_hand::Grip::within_contact(*m_support_contact,*right_hand,*left_hand);
     const bool support_intent=sample && secondary_equipped==std::optional{false} && sample->parry>VrHolster::RELEASE &&
-        m_support.contains(zone_right,zone_left);
+        (m_two_hand_enabled?(actual_contact || m_two_hand_grip.state().reserved):m_support.contains(zone_right,zone_left));
     // A right thumb button squeezes the Index grip with it: never a holster grab (VrHolster::thumb_squeeze).
     const bool holster_acquisition=sample && sample->fire<=0.05f && sample->aim<=0.05f && !support_intent &&
         !VrHolster::thumb_squeeze(sample->confirm,sample->interact,sample->finisher,sample->grenade);
@@ -394,7 +403,7 @@ void VrSession::poll_controllers_locked(VrControllerInput& input,bool foreground
     // outside that zone first. Resetting grenade here also consumes the held squeeze
     // so loss of support geometry cannot become a delayed grenade grab.
     const bool continuing_support=gestures_allowed && secondary_equipped==std::optional{false} &&
-        m_support.snapshot().held && sample->parry>VrHolster::RELEASE && m_support.contains(zone_right,zone_left);
+        (m_two_hand_enabled?m_two_hand_grip.state().reserved:(m_support.snapshot().held && m_support.contains(zone_right,zone_left))) && sample->parry>VrHolster::RELEASE;
     const auto throws_before=m_grenade.snapshot().throws;
     const bool grenade=m_grenade.update(left_head,zone_left,sample?sample->parry:0,m_grenade_enabled && gestures_allowed && !continuing_support,now,left_fresh?std::optional{m_left_pose->captured}:std::nullopt);
     if(!gestures_allowed || !m_grenade_enabled || !left_fresh) m_throw_aim.reset();
@@ -407,6 +416,7 @@ void VrSession::poll_controllers_locked(VrControllerInput& input,bool foreground
             vr_arm::Vector direction{chosen[0],chosen[1],chosen[2]};
             if(vr_arm::length(direction)<.01f) direction={(*forward)[0],0,(*forward)[1]};
             auto launch=vr_arm::turn({0,0,1},direction);vr_arm::position(launch,vr_arm::position(*left_hand));
+            if(m_left_handed) launch=vr_hand::mirror(launch); // The throw leaves the real hand, along the real gaze.
             auto relative=vr_camera::multiply(vr_camera::multiply(launch,vr_camera::inverse(*m_reference)),m_rig);
             relative[13]+=height_offset_locked();
             vr_camera::Matrix level{};
@@ -417,10 +427,21 @@ void VrSession::poll_controllers_locked(VrControllerInput& input,bool foreground
             }
         }
     }
-    const bool supporting=m_support.update(zone_right,zone_left,sample?sample->parry:0,
-        gestures_allowed && secondary_equipped==std::optional{false} && !m_grenade.owns_grip());
+    const bool support_allowed=gestures_allowed && secondary_equipped==std::optional{false} && !m_grenade.owns_grip() &&
+        (!m_two_hand_enabled || (m_support_contact && m_support_contact->actor==m_swing_actor));
+    const bool supporting=m_two_hand_enabled?
+        m_two_hand_grip.update(m_support_contact,right_hand,left_hand,sample?sample->parry:0,support_allowed,m_epoch,now):
+        m_support.update(zone_right,zone_left,sample?sample->parry:0,support_allowed);
+    // A not-yet-known firearm/model cannot acknowledge a grab. Consume that
+    // squeeze until release rather than interpreting the failed grab as LB.
+    if(m_two_hand_enabled && gestures_allowed && secondary_equipped!=std::optional{true} && !m_grenade.owns_grip() && (actual_contact || !contact_fresh))
+        m_two_hand_grip.reserve(sample->parry);
+    const bool support_reserved=m_two_hand_enabled && m_two_hand_grip.state().reserved;
     if(sample && m_grenade_enabled) { sample->grenade_throw=grenade;if(m_grenade.owns_grip()) sample->parry=0; }
-    if(sample && supporting) sample->parry=0;
+    // Joe approved grab-only support grip (3 Nov): raw grip still reaches the
+    // gun/grenade detectors above, but gameplay parry comes from forearm guard.
+    // Menu shoulder-button routing returned earlier and remains unchanged.
+    if(sample && (m_two_hand_enabled || supporting || support_reserved)) sample->parry=0;
     // A grenade put back (squeezed at the belt and let go there, no throw) is one native LB tap as
     // it is let go (Joe, 25 Oct). In the barge that is Reject Mission (keymap ResetSelectedMission),
     // which a relaxed hand at the belt could never reach: every squeeze there was a grenade grab.
@@ -430,13 +451,16 @@ void VrSession::poll_controllers_locked(VrControllerInput& input,bool foreground
      if(grenade_state.cancels!=m_grenade_cancels_seen){m_grenade_cancels_seen=grenade_state.cancels;
         if(grenade_state.last==VrGrenadeThrow::Outcome::cancelled && grenade_state.in_zone && gestures_allowed)m_put_back_until=now+PUT_BACK_TAP;}
      if(grenade_state.holding)m_put_back_until={};} // A new grab ends a tap still running.
+    // A returned grenade is a grab/release too, so grab-only mode must not
+    // synthesize LB from it (or Reject Mission while walking the barge).
+    if(m_two_hand_enabled)m_put_back_until={};
     if(sample && now<m_put_back_until) sample->parry=1;
     // Both hands on the sword (Joe, 21 Oct): the left hand is not raising a guard.
     const bool two_handed=m_two_handed.update(zone_right,zone_left,now);
     // A grenade held or thrown pauses and latches the guard; a hand merely resting in the belt zone
     // only pauses it, so a raise straight out of the belt guards at once (VrGuard::poll, 26 Oct).
     const bool grenade_busy=m_grenade_enabled && m_grenade.busy(),at_belt=m_grenade_enabled && m_grenade.owns_grip() && !grenade_busy;
-    const bool guard=m_guard.poll(left_head,zone_left,sample?sample->aim:0,m_guard_enabled && gestures_allowed && !supporting && !two_handed && !grenade_busy,at_belt,m_guard_belt_latch,now);
+    const bool guard=m_guard.poll(left_head,zone_left,sample?sample->aim:0,m_guard_enabled && gestures_allowed && !supporting && !support_reserved && !actual_contact && !two_handed && !grenade_busy,at_belt,m_guard_belt_latch,now);
     if(sample && m_guard_enabled) sample->guard=guard;
     // Only the confirmed pistol/chainsword loadout owns sword motion. The raw
     // right trigger held (not a resting finger) selects power; the left trigger can still
@@ -488,8 +512,11 @@ void VrSession::trace_input_locked(const VrControllerInput& input,std::chrono::s
     vr_trace::Input record;record.time=now;record.epoch=m_epoch;record.armed=pad.armed;record.reason=pad.reason;
     record.blocked=pad.blocked;record.stall_resumes=pad.stall_resumes;record.last_stall_ms=pad.last_stall_ms;record.disarm=pad.disarm;
     record.head=m_trace_head;
-    if(m_left_pose) record.hands[0]=m_left_pose->hand;
-    if(m_swing_pose) record.hands[1]=m_swing_pose->hand;
+    // The trace keeps physical hands, as every analysis of it expects; record.left_handed says so.
+    const auto traced=[&](const VrSwingMelee::Pose& pose){return m_left_handed?vr_hand::mirror(pose.hand):pose.hand;};
+    if(m_left_pose) record.hands[m_left_handed?1:0]=traced(*m_left_pose);
+    if(m_swing_pose) record.hands[m_left_handed?0:1]=traced(*m_swing_pose);
+    record.left_handed=m_left_handed;
     record.sample=sample;record.raw_sample=raw_sample;record.supporting=supporting;record.two_handed=two_handed;record.menu=menu;
     {const auto routing=m_combat.snapshot();record.loadout_secondary=routing.secondary;record.triggers_rearmed=routing.rearmed;record.rev_rearmed=routing.rev_rearmed;record.rev_holdover=routing.rev_holdover;}
     record.pad=pad.pad.Gamepad;record.snaps=pad.snaps;
@@ -561,7 +588,7 @@ void VrSession::poll_viewer(VrControllerInput& input,bool foreground,std::chrono
         for(size_t hand=0;hand<2;++hand) if(m_relative_controllers[hand]) {
             const auto pose=vr_camera::multiply(*m_relative_controllers[hand],m_rig);rig.hands[hand]=vr_viewer::Vec{pose[12],pose[13],pose[14]};
         }
-        if(raw) {rig.left_grip=raw->parry;rig.right_grip=raw->melee;rig.move_x=raw->move_x;rig.move_y=raw->move_y;rig.turn_x=raw->turn_x;rig.turn_y=raw->turn_y;rig.preset=raw->fire;}
+        if(raw) {const auto grips=vr_hand::physical_grips(raw->parry,raw->melee,m_left_handed);rig.left_grip=grips[0];rig.right_grip=grips[1];rig.move_x=raw->move_x;rig.move_y=raw->move_y;rig.turn_x=raw->turn_x;rig.turn_y=raw->turn_y;rig.preset=raw->fire;}
         rig.snap_degrees=input.snapshot(now).snap_degrees;
         m_viewer.update(rig,std::chrono::duration<float>(now-m_viewer_polled).count());
     }
@@ -597,6 +624,7 @@ bool VrSession::photo_pulse() {
     return m_enabled && m_started && !m_failed && m_backend->rumble(vr_photo::pulse(m_rumble_settings.frequency));
 }
 std::string VrSession::input_status() const { std::lock_guard lock{m_mutex}; return m_backend->input_status(); }
+std::string VrSession::input_bindings() const { std::lock_guard lock{m_mutex}; return m_backend->input_bindings(); }
 std::string VrSession::finger_status() const { std::lock_guard lock{m_mutex}; return m_backend->finger_status(); }
 std::optional<VrSession::ControllerPoses> VrSession::controller_poses(std::chrono::steady_clock::time_point now) const {
     std::lock_guard lock{m_mutex};
@@ -684,10 +712,11 @@ bool VrSession::update_tracking(const VrBackend::Tracking& tracking,std::chrono:
     }
     m_head_received = now;
     m_swing_pose.reset();m_left_pose.reset();
-    if(tracking.controllers[1] && vr_camera::rigid(*tracking.controllers[1]))
-        m_swing_pose=VrSwingMelee::Pose{*tracking.controllers[1],tracking.head,now,m_epoch};
-    if(tracking.controllers[0] && vr_camera::rigid(*tracking.controllers[0]))
-        m_left_pose=VrSwingMelee::Pose{*tracking.controllers[0],tracking.head,now,m_epoch};
+    const auto player=vr_hand::logical(tracking.head,tracking.controllers,m_left_handed);
+    if(player.hands[1] && vr_camera::rigid(*player.hands[1]))
+        m_swing_pose=VrSwingMelee::Pose{*player.hands[1],player.head,now,m_epoch};
+    if(player.hands[0] && vr_camera::rigid(*player.hands[0]))
+        m_left_pose=VrSwingMelee::Pose{*player.hands[0],player.head,now,m_epoch};
     m_trace_head=tracking.head;
     return true;
 }

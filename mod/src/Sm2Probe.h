@@ -185,6 +185,7 @@ private:
     std::mutex m_thumbs_up_mutex;
     vr_thumbs_up::Shaper m_thumbs_up; // finger targets: thumbs-up shape and the photo-entry left thumb (SM2VR_THUMBS_UP)
     uint64_t m_thumbs_up_requests_logged{};
+    std::string m_logged_bindings;
     VrViewSettings m_view_settings;
     VrViewCamera m_view_camera;
     VrViewHotkeys m_view_hotkeys;

@@ -8,7 +8,7 @@ test does not mean every class, weapon or mission has been played through.
 |---|---|
 | Stereo and head tracking | Both eyes use the same game frame. Played on Index; performance remains poor in battles. |
 | First-person body and hands | The character's arms follow the controllers. Height calibration and body alignment are implemented; armour clipping and repeated class changes need more testing. |
-| Guns and holsters | A right-hand grab at the hip swaps between the primary and the pistol. Primaries stay in the right hand; the pistol is held in the left. Heavy weapons and sniper support need more headset checks. |
+| Guns and holsters | A right-hand grab at the hip swaps between primary and pistol. Grabbing the primary body holds two-hand aiming and native aimed mode. The grab region approximates the gun from native grips, rather than its full mesh. Left-handed mode mirrors the roles. Weapon and class coverage still needs more headset checks. |
 | Chainsword | Physical swings select light or power attacks by trigger state. Trigger depth controls revs. Melee still needs tuning. |
 | Guard and push | Forearm guarding and an open-palm knockback gesture. Gesture arbitration has automated coverage; class-specific blocking needs more playtests. |
 | Grenades | Grab at the belt and release during a throw. Direction and force follow the hand. Different grenade types and detonation need more headset checks. |

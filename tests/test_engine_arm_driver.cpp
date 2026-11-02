@@ -5,6 +5,7 @@
 #include <sstream>
 #include <stdexcept>
 #include "test_body_render_placement.h"
+#include "test_two_hand_publication.h"
 namespace {
 void require(bool value,const char* why) { if (!value) { throw std::runtime_error{why}; } }
 auto matrix(vr_arm::Vector p) { auto m=vr_camera::IDENTITY;vr_arm::position(m,p);return m; }
@@ -310,6 +311,51 @@ void weapon_publication() {
     targets.wrists[1]=matrix({.4f,1.2f,-.4f});driver.targets(targets);driver.apply(pose,now);driver.follow_weapon(false);require(!aim.pose(42,now),"live weapon off clears pose immediately");
 }
 }
+// Left-handed play (docs/LEFT_HANDED.md): each arm follows its own hand; the gun and the sword change
+// wrists in the same batch; the published hand stays the logical one, so routing never learns of it.
+void left_handed_publication() {
+    const auto now=EngineArmDriver::Clock::now();
+    auto layout=std::make_shared<EngineArmProbe::RigLayout>();
+    layout->names={"ROOT","BACKup","ARM1L","ARM2L","HANDL","GUN_L","ARM1R","ARM2R","HANDR","GUN_R","GUN_ANIM","Gun_pose"};
+    layout->parents={-1,0,1,2,3,4,1,6,7,8,1,10};
+    layout->bind_locals={matrix({0,0,0}),matrix({0,1,0}),matrix({-.2f,.5f,0}),matrix({-.4f,0,0}),matrix({-.4f,0,0}),matrix({-.1f,0,0}),
+        matrix({.2f,.5f,0}),matrix({.4f,0,0}),matrix({.4f,0,0}),matrix({.1f,0,0}),matrix({.1f,.2f,.3f}),matrix({.2f,0,0})};
+    // Gun_pose on GUN_R, the primary: rest it there through its parent's frame.
+    std::vector<vr_arm::Matrix> bind;require(vr_arm::hierarchy(layout->bind_locals,layout->parents,vr_camera::IDENTITY,bind),"bind hierarchy");
+    layout->bind_locals[11]=vr_camera::multiply(bind[9],vr_camera::inverse(bind[10]));
+    constexpr size_t N=12;std::array<vr_arm::Matrix,N> buffer{};
+    EngineArmProbe::Pose pose;pose.owner.actor=42;pose.owner.instance=99;pose.layout=layout;pose.world=vr_camera::IDENTITY;pose.world_valid=true;pose.received=now;pose.buffer=reinterpret_cast<uintptr_t>(buffer.data());
+    for(size_t i=0;i<N;++i) {buffer[i]=layout->bind_locals[i];pose.bones.push_back({static_cast<uint32_t>(i),static_cast<int16_t>(i),layout->bind_locals[i]});}
+    const auto original=buffer;bool locked{};VrWeaponAim aim;aim.enable(true);aim.allow(true,5);
+    EngineArmDriver driver;driver.configure({[](const auto&,auto){return true;},[&](auto){locked=true;},[&](auto){locked=false;},
+        [&](uintptr_t address,const auto& value){require(locked,"left-handed writes share the native lock");std::memcpy(reinterpret_cast<void*>(address),value.data(),sizeof(value));return true;}});
+    driver.set_weapon_observer([&](const auto& value){aim.publish(value);});
+    driver.enable(true);driver.follow_weapon(true);driver.allow(true,5);driver.set_left_handed(true);
+    EngineArmDriver::Targets targets;targets.actor=42;targets.reference=2;targets.epoch=5;targets.captured=now;targets.units_per_metre=.9f;
+    targets.wrists={matrix({-.5f,1.2f,-.5f}),matrix({.4f,1.1f,-.2f})};
+    const auto committed=[&]{auto l=layout->bind_locals;for(size_t i=0;i<N;++i)l[i]=buffer[i];std::vector<vr_arm::Matrix> w;require(vr_arm::hierarchy(l,layout->parents,vr_camera::IDENTITY,w),"committed hierarchy");return w;};
+    const auto apart=[](const vr_arm::Matrix& a,const vr_arm::Matrix& b){return vr_arm::length(vr_arm::sub(vr_arm::position(a),vr_arm::position(b)));};
+    std::optional<EngineArmDriver::Sword> sword;driver.set_sword_observer([&](const auto& s){sword=s;});
+    driver.targets(targets);driver.apply(pose,now);driver.set_sword_observer({});
+    auto world=committed();const auto source=aim.pose(42,now);
+    require(apart(world[4],*targets.wrists[0])<1e-4f && apart(world[8],*targets.wrists[1])<1e-4f,"each arm follows its own physical hand");
+    require(source && source->hand==1 && driver.snapshot().weapon_grip==vr_weapon::Grip::right,"the primary is still the right-hand grip to everything that routes on it");
+    require(apart(world[11],*targets.wrists[0])<.5f && apart(world[11],*targets.wrists[1])>.7f,"the gun rides the left wrist");
+    require(std::abs(world[11][12]-source->world[12])<1e-4f && std::abs(world[11][14]-source->world[14])<1e-4f,"the shot ray leaves the gun that was drawn");
+    require(apart(world[9],*targets.wrists[0])<.5f && apart(world[9],*targets.wrists[1])>.7f && driver.snapshot().sword_moves==1,"GUN_R, and the sword on it, rides the left wrist");
+    require(sword.has_value(),"the hit sweep's observer still runs");
+    const auto drawn=vr_camera::multiply(sword->final,world[0]);
+    require(apart(drawn,world[9])<1e-4f,"the melee hit check sees the sword where it was drawn");
+    // The right wrist (the support hand) is lost: the gun keeps going, the sword falls back to its bone.
+    buffer=original;auto one=targets;one.wrists[1].reset();driver.targets(one);driver.apply(pose,now);
+    require(aim.pose(42,now).has_value() && driver.snapshot().sword_moves==1 && buffer[9]==original[9],"with the right hand lost the gun stays and the sword socket is left to the animation");
+    // The left wrist is the weapon hand now: losing it releases the gun, as losing the right one does right-handed.
+    buffer=original;one=targets;one.wrists[0].reset();driver.targets(one);driver.apply(pose,now);
+    require(!aim.pose(42,now),"left hand loss cannot leave the gun attached to cached input");
+    // Off again: the right-handed path, unchanged.
+    driver.set_left_handed(false);buffer=original;driver.targets(targets);driver.apply(pose,now);world=committed();
+    require(apart(world[11],*targets.wrists[1])<.5f && buffer[9]==original[9],"right-handed, the gun rides the right wrist and GUN_R stays its animated child");
+}
 // Viewer entry (docs/VIEWER_MODE.md): the head is restored while the arms keep the player's
 // pose, so photo mode freezes tracked arms under a full-size head.
 void head_release_keeps_arms() {
@@ -409,7 +455,7 @@ void shield_publication() {
 }
 int main(int argc,char** argv) {
     try {
-        head_release_keeps_arms();gaze_reaches_the_publication();post_write_resolution();post_write_invalidation();weapon_publication();weapon_grip_survives_a_rebuilt_layout();upright_publication();recorded_embodiment_publication();shield_publication();body_placement_tests::run();
+        twohand_publication_tests::run();head_release_keeps_arms();gaze_reaches_the_publication();post_write_resolution();post_write_invalidation();weapon_publication();left_handed_publication();weapon_grip_survives_a_rebuilt_layout();upright_publication();recorded_embodiment_publication();shield_publication();body_placement_tests::run();
         EngineArmDriver driver;
         const auto now=EngineArmDriver::Clock::now();
         auto layout=std::make_shared<EngineArmProbe::RigLayout>();

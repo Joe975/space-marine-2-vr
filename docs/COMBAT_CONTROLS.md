@@ -11,7 +11,11 @@ game's native controls. A requested attack is not proof that the game accepted o
 - Sword swings require arm travel. Trigger released selects a light attack; trigger held selects
   power. Chained slashes are allowed. A strong bolter-out swing has separate gates to avoid
   treating aiming or recoil as an attack.
-- Forearm guard and left grip route the native parry/block input. Sword attacks and pushes
+- Grabbing the primary gun body holds native aimed mode (LT), with a rigid two-hand gun pose.
+  The padded grab region is inferred from native grips and the gun origin; it is not the full
+  mesh outline. Your hand stays at the chosen grab point. Releasing restores manual trigger aim.
+- Forearm guard routes native parry/block; grip is for grabbing. The guard floor is 40 cm below
+  the eyes in the body-scaled zone. Sword attacks and pushes
   suppress a held guard until it is rearmed. An open-palm push routes the held strike.
 - Grenades are grabbed at the left belt and thrown by releasing during hand travel. The hand's
   release direction and speed influence the throw. Slow release puts the grenade back.

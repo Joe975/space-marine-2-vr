@@ -15,6 +15,21 @@ constexpr Curl ON_STICK{0.838f,0.9f,1.0f,1.0f,1.0f};          // left thumb on t
 constexpr Curl ON_B{0.977f,0.245f,0.204f,0.235f,0.203f};      // left thumb on B, photo freeze 14:37:45
 constexpr Curl LEFT_OPEN_AIR{0.283f,0.245f,0.204f,0.235f,0.203f}; // left hand open, thumb in the air
 
+// Left-handed play puts B under the right thumb, so the right thumb is the one that lifts.
+void photo_hand_cases() {
+    const auto t0=Clock::time_point{}+std::chrono::hours(1);
+    Shaper right_handed{Mode::off},left_handed{Mode::play,{},1};
+    Shaper::Fingers lifted{std::nullopt,LEFT_OPEN_AIR},on_b{std::nullopt,ON_B};
+    left_handed.apply(lifted,false,t0);left_handed.apply(lifted,false,t0+milliseconds(400));
+    left_handed.apply(on_b,false,t0+milliseconds(500));
+    const auto entered=left_handed.apply(on_b,true,t0+milliseconds(1500));
+    require(left_handed.photo_latches()==1 && entered[1] && (*entered[1])[0]==LEFT_OPEN_AIR[0],"left-handed, the right thumb lifted before the hold stays up");
+    Shaper ordinary{Mode::play};
+    ordinary.apply(lifted,false,t0);ordinary.apply(lifted,false,t0+milliseconds(400));ordinary.apply(on_b,false,t0+milliseconds(500));
+    ordinary.apply(on_b,true,t0+milliseconds(1500));
+    require(ordinary.photo_latches()==0,"right-handed, the right thumb never latches");
+}
+
 void shape_cases() {
     const auto up=shape(JOE_THUMBS_UP);
     require(up==Curl{0,1,1,1,1},"a lifted thumb over a closed grip is a full thumbs-up, the loose middle finger closes");
@@ -116,7 +131,7 @@ void parse_cases() {
 
 int main() {
     try {
-        shape_cases();photo_thumb_cases();shaper_cases();parse_cases();
+        shape_cases();photo_thumb_cases();photo_hand_cases();shaper_cases();parse_cases();
         std::cout<<"thumbs-up shape, photo thumb recall, modes and knob parsing passed\n";return 0;
     }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}
 }

@@ -10,6 +10,9 @@ are correct; [Changing controls](DEVELOPING.md#changing-controls-and-gestures) e
 
 "Tap" acts on **release**. "Hold" acts once, after 1 second, while still held, and never also taps.
 
+Left-handed? Set **Main hand** in the SM2VR app. Left and right then swap in every table here,
+holsters and gestures included: [LEFT_HANDED](LEFT_HANDED.md).
+
 ## Left controller
 
 | Input | Does | Native pad |
@@ -21,10 +24,10 @@ are correct; [Changing controls](DEVELOPING.md#changing-controls-and-gestures) e
 | B press | Pause menu. A brush under 0.07 s does nothing, and neither does a press that also catches left A (both opened it mid-fight). B again closes it | Start |
 | B hold 1 s | Viewer mode: freeze the game, fly a free camera | none |
 | Trigger | Gun out: aim/zoom. Pistol out: fire the pistol | LT / RT |
-| Grip at the belt | Grab a grenade; throw by letting go of the grip mid-swing, forward and at least 1.5 m/s. Aim with the hand, not the head: it flies the way the hand was moving when you let go, sideways and up or down: a hand still rising throws high, a level one flat, a falling one low. A harder throw goes further. Frag, krak, shock and melta charges all follow the hand. A slow release at the belt puts it back and taps LB, which in the Battle Barge rejects the selected mission ("Reject Mission LB") | X on throw, LB tap on a put back |
-| Grip under the primary's barrel | Two-handed support: steadies aim. Any primary, the Heavy's heavy weapons too: left hand 10 to 65 cm ahead of the right controller, along where it points, within 22 cm of that line | LT full |
-| Grip elsewhere | Parry; held, a block (Bulwark: the shield comes up after a quarter second). A sword swing or punch drops it until you squeeze again | LB |
-| Forearm raised across the face, hand close to the face | Guard (parry/block) while the trigger is released; once raised it may drift outwards. Not after a pistol shot until the hand has left the zone | LB held |
+| Grip at the belt | Grab a grenade; release during a throw to throw it. A slow release puts it back without parrying or rejecting a mission | X on throw |
+| Grip on the primary gun body | Hold two-handed aiming at the chosen grab point. The padded region follows native grip positions and the gun origin; it is not the full mesh outline. Support holds the game's aimed mode and releasing it restores manual trigger aim | LT full |
+| Grip elsewhere | No direct parry/block input. Grip is for grabbing guns, grenades and holsters | none |
+| Forearm raised across the face, hand close to the face | Guard (parry/block); starts no lower than 40 cm below the eyes in the body-scaled zone. Lower the hand to release and rearm | LB held |
 | Open hand thrust straight out from the chest (sword out) | Knockback: the held strike. At least 30 cm at 2 m/s, ending 40 cm out at chest height. A fist, a squeezed grip or a raised guard is not a push; needs finger tracking ([details](COMBAT_CONTROLS.md)) | D-pad up |
 | Trackpad press up | Class ability; held, aimed ones aim at where you look and fire on release. Assault: hold it a moment (a fifth of a second) to leap into the air with the jump pack, onto the landing marker where you look; swing the sword in the air to slam down | Y |
 | Trackpad press down | Weapon cycle | D-pad down |
@@ -83,7 +86,7 @@ because Touch has no trackpads. Not yet tried on a Quest.
 | Left X and Y together, held 1 s | Recenter the headset. Press them together; neither the ability nor the pause menu happens | none |
 | Left stick click held 1 s | Scoreboard, held while the click is held. The click still toggles sprint; the scoreboard stops it | Back |
 | Right stick up | Stim | D-pad right |
-| Grip | A button, not a force sensor: pressed past a third, left grip parries anywhere outside the belt, barrel and holster zones | LB |
+| Grip | A button, not a force sensor: left grip grabs a gun or grenade; use forearm guarding to parry | grab / LT while supported |
 | Grenade | The belt grab-and-throw only (there is no right trackpad) | X on throw |
 | Weapon cycle | The right hip grab only (there is no left trackpad) | D-pad down |
 
@@ -143,3 +146,7 @@ Xbox-compatible gamepad plays the game exactly as on a flat screen. Start it wit
 | Back/View held + D-pad up/down | World bigger/smaller, from 2x life size to 1/20 (tabletop). The game doesn't see these D-pad presses |
 | F9 | Recenter the headset |
 | Head | Look around and lean; the camera's up/down tilt follows your head, not the game |
+
+## Two-hand aiming
+
+Two-hand aiming is enabled in the installer profile. Grab within the padded region along the primary gun body to hold native aimed mode; release grip to return to manual trigger aim. The support hand stays at the chosen grab point. The region approximates the body from native grip positions and the gun origin; barrel tips and protruding attachments may be outside it. Grip never directly parries in gameplay. Use forearm guarding, with a floor 40 cm below the eyes in the body-scaled zone. Returning a grenade sends no LB tap; menu grips retain their tab controls.

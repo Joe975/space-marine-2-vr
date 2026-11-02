@@ -978,6 +978,102 @@ vr_camera::Matrix left_hand(float x,float y,float z,int pointing) {
         pointing==1?vr_camera::Matrix{-1,0,0,0, 0,0,1,0, 0,1,0,0, 0,0,0,1}:vr_camera::IDENTITY;
     m[12]=x;m[13]=y;m[14]=z;return m;
 }
+// Left-handed play (docs/LEFT_HANDED.md). One scripted fight through the real poll: holsters, guard,
+// a grenade and a swing. A left-handed session given the same fight in a mirror sends the game the
+// same pad on every frame, so no gesture reads a physical pose behind the mirror's back.
+struct FightFrame { vr_camera::Matrix left,right;float melee{},parry{};bool sword{}; };
+std::vector<FightFrame> scripted_fight() {
+    std::vector<FightFrame> out;
+    auto rest=vr_camera::IDENTITY;rest[12]=.3f;rest[13]=1.25f;rest[14]=-.3f;
+    const auto hand=[&](float x,float y,float z){auto m=rest;m[12]=x;m[13]=y;m[14]=z;return m;};
+    const auto side=left_hand(-.3f,.9f,0,1),guard=left_hand(-.2f,1.6f,-.25f,0),belt=left_hand(-.25f,1,0,1);
+    const auto add=[&](int count,FightFrame f){for(int i=0;i<count;++i)out.push_back(f);};
+    add(8,{side,rest,0,0,true});
+    add(4,{side,hand(.25f,1,0),0,0,true});add(4,{side,hand(.25f,1,0),1,0,true});add(4,{side,hand(.25f,1,0),0,0,true}); // Hip draw.
+    add(30,{side,rest,0,0,true});
+    add(4,{guard,rest,0,0,true});add(12,{side,rest,0,0,true}); // Guard, LB.
+    add(4,{belt,rest,0,0,true});add(6,{belt,rest,0,1,true}); // Grenade taken at the belt.
+    for(int i=1;i<=10;++i) {const float f=i/10.f;out.push_back({left_hand(-.25f+.15f*f,1+.6f*f,-.6f*f,1),rest,0,i<10?1.f:0.f,true});} // Thrown, X.
+    add(40,{side,rest,0,0,true});
+    for(int i=0;i<6;++i) out.push_back({side,hand(.3f-.09f*i,1.3f,-.4f),0,0,true}); // A sword swing, RB.
+    add(20,{side,rest,0,0,true});
+    return out;
+}
+std::vector<WORD> play_fight(bool left_handed,bool mirrored) {
+    auto backend=std::make_unique<Backend>();auto* fake=backend.get();fake->present=true;
+    fake->controller_sample=VrControllerSample{};
+    const auto now=std::chrono::steady_clock::time_point{std::chrono::seconds(70)};
+    VrSession session{std::move(backend)};session.set_left_handed(left_handed);session.enable(true);session.poll(now);
+    session.enable_holsters(true);session.enable_guard(true);session.enable_grenade_gesture(true);session.allow_swing_melee(42);session.enable_swing_melee(true);
+    VrControllerInput input;input.enable(true);std::vector<WORD> pad;uint64_t frame=0;
+    if(mirrored) fake->pose.head=vr_hand::mirror(fake->pose.head);
+    for(const auto& f:scripted_fight()) {
+        fake->pose.controllers=mirrored?std::array<std::optional<vr_camera::Matrix>,2>{vr_hand::mirror(f.right),vr_hand::mirror(f.left)}:std::array<std::optional<vr_camera::Matrix>,2>{f.left,f.right};
+        fake->controller_sample->melee=f.melee;fake->controller_sample->parry=f.parry;
+        const auto time=now+std::chrono::milliseconds(20*(++frame));
+        require(session.eye({uint32_t(frame),frame,int(frame%2)},time).has_value(),"fixture must use real tracking acquisition");
+        session.poll_controllers(input,true,time,0,f.sword);
+        XINPUT_STATE native{};uint32_t result=ERROR_DEVICE_NOT_CONNECTED;input.get_state(&result,0,&native,time);
+        require(result==ERROR_SUCCESS,"fixture must read real cached native input");
+        pad.push_back(native.Gamepad.wButtons);
+    }
+    return pad;
+}
+void left_handed_fight_mirrors() {
+    const auto right=play_fight(false,false),left=play_fight(true,true);
+    WORD seen{};for(const auto buttons:right) seen|=buttons;
+    for(const WORD button:{XINPUT_GAMEPAD_DPAD_DOWN,XINPUT_GAMEPAD_LEFT_SHOULDER,XINPUT_GAMEPAD_X,XINPUT_GAMEPAD_RIGHT_SHOULDER})
+        require(seen&button,"the fight reaches the holster, the guard, the grenade and the swing");
+    require(left==right,"a left-handed player in the mirror sends the game the same pad, frame by frame");
+    require(play_fight(false,true)!=right,"mirrored without the setting, the fight does not work: the check can fail");
+    require(play_fight(true,false)!=right,"and the setting does change what an unmirrored player gets");
+}
+// The same swaps from the player's side: real left-hand zones, on the real left.
+void left_handed_session_zones() {
+    using namespace std::chrono;using Op=vr_rumble::Command::Op;
+    auto backend=std::make_unique<Backend>();auto* fake=backend.get();fake->present=true;
+    fake->controller_sample=VrControllerSample{};
+    const auto now=time_point_cast<steady_clock::duration>(steady_clock::time_point{seconds(90)});
+    VrSession session{std::move(backend)};session.set_left_handed(true);session.enable(true);session.poll(now);
+    session.enable_holsters(true);session.enable_guard(true);session.enable_guard_guide(true);
+    VrControllerInput input;input.enable(true);uint64_t frame=0;std::optional<bool> secondary=false;
+    auto left=vr_camera::IDENTITY,right=vr_camera::IDENTITY;right[12]=.3f;right[13]=.9f;
+    const auto step=[&]{
+        fake->pose.controllers={left,right};const auto time=now+milliseconds(20*(++frame));
+        require(session.eye({uint32_t(frame),frame,int(frame%2)},time).has_value(),"fixture must use real tracking acquisition");
+        session.poll_controllers(input,true,time,0,secondary);
+        XINPUT_STATE native{};uint32_t result=ERROR_DEVICE_NOT_CONNECTED;input.get_state(&result,0,&native,time);
+        return native.Gamepad.wButtons;
+    };
+    auto& sample=*fake->controller_sample;
+    // The right hip does nothing for this player; the left hip draws. (melee is the left grip: the bindings swapped it.)
+    left[12]=.25f;left[13]=1;step();step();step();sample.melee=1;
+    require(!(step()&XINPUT_GAMEPAD_DPAD_DOWN),"the left hand held at the right hip is not at its holster");
+    sample.melee=0;step();left[12]=-.25f;step();step();sample.melee=1;
+    require(step()&XINPUT_GAMEPAD_DPAD_DOWN,"the left hand at the left hip draws");
+    sample.melee=0;step();
+    // The guide stands where the real support hand, the right, has to go.
+    secondary=true;
+    const auto t=VrGuardGuide::target(session.guard_settings());
+    for(int i=0;i<4;++i) step();
+    const auto guide=session.guard_guide(now+milliseconds(20*frame));
+    require(guide.has_value() && !guide->quads.empty(),"the guide shows with the sword out");
+    float mean{};size_t corners{};for(const auto& q:guide->quads) for(const auto& c:q.corners) {mean+=c.lateral;++corners;}
+    require(t.lateral<0 && std::abs(mean/corners+t.lateral)<.05f,"the guide is drawn on the right of the head, for the right forearm");
+    // The trace keeps physical hands and says so.
+    const auto trace_path=std::filesystem::temp_directory_path()/"sm2vr_left_handed_trace_test.jsonl";
+    require(vr_trace::Recorder::get().open(trace_path,100,now+milliseconds(20*frame)),"trace opens");
+    step();vr_trace::Recorder::get().tick(now+milliseconds(20*frame));step();vr_trace::Recorder::get().tick(now+milliseconds(20*frame));vr_trace::Recorder::get().close();
+    std::ifstream in{trace_path};std::string line,all;while(std::getline(in,line)){all+=line;all+='\n';}
+    in.close();std::filesystem::remove(trace_path);
+    require(all.find("\"left\":[-0.2500")!=std::string::npos && all.find("\"right\":[0.3000")!=std::string::npos,"the trace's left hand is the physical left hand");
+    require(all.find("\"left_handed\":true")!=std::string::npos,"the trace says which way round its logical fields are");
+    // The game's left motor is the support hand's.
+    vr_rumble::Mailbox mailbox;mailbox.publish({65535,0},now+milliseconds(20*frame));
+    require(session.enable_rumble(true,{.5f,0},&mailbox),"rumble enables");
+    step();
+    require(fake->rumbles.size()==1 && fake->rumbles[0][1].op==Op::apply && fake->rumbles[0][0].op==Op::none,"the left motor plays on the physical right hand");
+}
 // Runs on both render paths. The single-frame (ordinary) path issues tracking per native
 // camera job through ordinary_frame, and input polls can repeat that cached sample, so
 // each step there polls twice without a new frame.
@@ -1254,7 +1350,7 @@ void melee_hand_arbitration_session() {
 // hand did. The native game aims along its own camera, which never turns with the headset.
 // The override direction must follow the player in the native world: compare it with the
 // submitted eye's world forward after snap turns and head yaw, through the real poll path.
-void grenade_aim_follows_snap_and_head() {
+void grenade_aim_follows_snap_and_head(bool left_handed) {
     const auto yawed=[](float yaw,float x,float y,float z) { // Rotation about +Y (right turn = positive yaw), then position.
         const float s=std::sin(yaw),c=std::cos(yaw);return vr_camera::Matrix{c,0,s,0, 0,1,0,0, -s,0,c,0, x,y,z,1};
     };
@@ -1265,7 +1361,7 @@ void grenade_aim_follows_snap_and_head() {
     for(const Case c:{Case{0,0,0,0},Case{0,1,0,0},Case{0,3,0,0},Case{0,-2,0,0},Case{.8f,0,0,0},Case{-.6f,2,0,0},Case{.5f,1,1,40},Case{0,-1,1,-30}}) {
         auto backend=std::make_unique<Backend>();auto* fake=backend.get();fake->present=true;fake->controller_sample=VrControllerSample{};
         const auto now=std::chrono::steady_clock::time_point{std::chrono::seconds(60)};
-        VrSession session{std::move(backend)};session.enable(true);session.poll(now);
+        VrSession session{std::move(backend)};session.set_left_handed(left_handed);session.enable(true);session.poll(now);
         session.enable_grenade_gesture(true);
         VrGrenadeAim::Settings aim;aim.values.values[VrGrenadeAim::HAND_YAW_WEIGHT]=c.hand_weight;aim.values.values[VrGrenadeAim::HAND_PITCH_WEIGHT]=0;
         aim.values.values[VrGrenadeAim::BASE_PITCH]=0;require(session.set_grenade_aim_settings(aim),"aim settings accepted");
@@ -1275,14 +1371,15 @@ void grenade_aim_follows_snap_and_head() {
         const auto step=[&](float head_yaw,float lateral,float height,float forward) {
             const float sn=std::sin(head_yaw),cs=std::cos(head_yaw);
             fake->pose.head=yawed(head_yaw,0,1.7f,0);
-            fake->pose.controllers[0]=yawed(head_yaw,lateral*cs+forward*sn,1.7f+height,lateral*sn-forward*cs);ms+=20;++frame;
+            fake->pose.controllers[left_handed?1:0]=yawed(head_yaw,lateral*cs+forward*sn,1.7f+height,lateral*sn-forward*cs);ms+=20;++frame;
             const auto time=now+std::chrono::milliseconds(ms);
             eye=session.eye({uint32_t(frame),frame,0},time);require(eye.has_value(),"fixture uses real tracking acquisition");
             session.poll_controllers(input,true,time);
             XINPUT_STATE native{};uint32_t result=ERROR_DEVICE_NOT_CONNECTED;input.get_state(&result,0,&native,time);
             return native.Gamepad.wButtons;
         };
-        constexpr float BELT_LATERAL=-.25f,BELT_HEIGHT=-.7f;
+        // Left-handed the support hand is the physical right, and throws from the right of the belt.
+        const float BELT_LATERAL=left_handed?.25f:-.25f,BELT_HEIGHT=-.7f;
         for(int i=0;i<3;++i) step(0,BELT_LATERAL,BELT_HEIGHT+.3f,.3f); // Reference at yaw 0; arm the pad.
         for(int i=0;i<std::abs(c.snaps);++i) {
             sample.turn_x=c.snaps>0?1.0f:-1.0f;step(0,BELT_LATERAL,BELT_HEIGHT+.3f,.3f);
@@ -1312,6 +1409,10 @@ void grenade_aim_follows_snap_and_head() {
         require(std::abs(std::abs(angle)-std::abs(expected))<1.5f,"launch yaw is the gaze yaw in the native world (plus the hand's share), after snaps and head yaw");
         require(expected==0 || (direction[0]*right[0]+direction[2]*right[2]>0)==(expected>0),"a throw to the right of the gaze lands right of it in the world");
         require(std::abs(direction[1])<.02f,"base pitch 0 and no hand pitch: level launch");
+        if(c.hand_weight==0) {
+            const std::array<float,3> from{launch->world[12]-world[12],launch->world[13]-world[13],launch->world[14]-world[14]};
+            require((from[0]*right[0]+from[2]*right[2]>0)==left_handed,"the throw leaves the hand that threw it, on its own side of the head");
+        }
     }
 }
 void third_person_session() {
@@ -1920,7 +2021,54 @@ void first_person_scale_session() {
     for(;ms<900;ms+=10) step(ms,SPRINT);
     require(session.sprint_camera(now+milliseconds(ms)).confirmed,"native sprint confirms at the Marine's scale");
 }
-int main() {
+
+// CPU-only end-to-end poll: actual-weapon acquisition owns analogue squeeze
+// onset before native LB routing, including mirrored physical hands.
+void actual_weapon_support_session(bool left_handed,bool ordinary) {
+    auto backend=std::make_unique<Backend>();auto* fake=backend.get();fake->present=true;fake->controller_sample=VrControllerSample{};
+    auto primary=vr_camera::IDENTITY,support=primary;primary[12]=.15f;primary[13]=1.4f;primary[14]=-.2f;
+    support[12]=.05f;support[13]=1.4f;support[14]=-.55f;
+    VrSession session{std::move(backend)};session.set_left_handed(left_handed);session.enable_two_hand(true);session.enable(true);session.set_stereo(true);session.enable_guard(true);session.enable_grenade_gesture(true);
+    session.allow_swing_melee(42);if(ordinary)session.set_render_path(VrSession::RenderPath::ordinary);
+    const auto start=std::chrono::steady_clock::time_point{std::chrono::seconds(400)};session.poll(start);VrControllerInput input;input.enable(true);uint64_t frame{};bool feed=true;uint64_t generation=9;
+    const auto step=[&](std::optional<bool> secondary=std::optional{false}) {
+        ++frame;const auto now=start+std::chrono::milliseconds(frame*20);
+        fake->pose.controllers=left_handed?std::array<std::optional<vr_camera::Matrix>,2>{vr_hand::mirror(primary),vr_hand::mirror(support)}:std::array<std::optional<vr_camera::Matrix>,2>{support,primary};
+        if(ordinary)require(session.ordinary_frame({uint32_t(frame),frame,0},now).has_value(),"actual support ordinary frame");else require(session.eye({uint32_t(frame),frame,int(frame%2)},now).has_value(),"actual support AFR frame");
+        auto local=vr_camera::IDENTITY;local[12]=-.1f;local[14]=-.35f;
+        session.note_support_contact(feed?std::optional{vr_two_hand::Contact{42,session.epoch(),generation,now,local}}:std::nullopt);
+        session.poll_controllers(input,true,now,0,secondary);return input.snapshot(now).pad.Gamepad;
+    };
+    for(int n=0;n<5;++n)step();auto& sample=*fake->controller_sample;
+    feed=false;sample.parry=.4f;auto pad=step(std::nullopt);
+    require(session.two_hand_state().reserved && !(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"unknown firearm/model fails closed without a parry");
+    feed=true;sample.parry=.7f;pad=step();require(!session.two_hand_state().held && !(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"newly confirmed firearm cannot inherit that squeeze");
+    sample.parry=0;step();
+    sample.parry=.4f;pad=step();require(session.two_hand_state().reserved && !(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER) && !pad.bLeftTrigger,"partial squeeze at actual gun cannot send LB before full support");
+    sample.parry=.7f;pad=step();require(session.two_hand_state().held && pad.bLeftTrigger==255 && !(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"full support sends aim without parry or gun-strike window");
+    sample.fire=.8f;pad=step();require(pad.bLeftTrigger==255 && pad.bRightTrigger>200,"supported firearm aims and fires through native LT and RT together");sample.fire=0;
+    sample.aim=.45f;pad=step();require(pad.bLeftTrigger==255,"support holds full native aim even with a partly pulled manual trigger");
+    sample.parry=0;pad=step();require(!session.two_hand_state().held && pad.bLeftTrigger>=114 && pad.bLeftTrigger<=116,"releasing grip preserves manual left-trigger aim");
+    sample.aim=0;pad=step();require(!pad.bLeftTrigger,"releasing both aim sources exits aimed mode");
+    sample.parry=1;pad=step();require(pad.bLeftTrigger==255,"a fresh supported grab restores native aimed mode");
+    feed=false;pad=step();require(!session.two_hand_state().held && !(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"missing geometry cancels support without a delayed parry");
+    feed=true;pad=step();require(!session.two_hand_state().held && !(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"held grip after recovery stays consumed");
+    sample.parry=0;step();sample.parry=1;pad=step();require(session.two_hand_state().held && pad.bLeftTrigger==255,"released grip can acquire again");
+    ++generation;pad=step();require(!session.two_hand_state().held && !(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"weapon switch rejects old hold without parry");
+    pad=step(true);require(!(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER) && !pad.bLeftTrigger,"switching to pistol cannot convert held support to parry or fire");
+    sample.parry=0;step(true);sample.parry=1;support[12]=-.4f;support[13]=1.5f;support[14]=0;
+    pad=step(true);require(!(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"grab-only grip away from gun does not parry with the sword out");
+    sample.parry=0;step(false);sample.parry=1;pad=step(false);require(!(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"grab-only grip away from gun does not parry with a primary out");
+    sample.parry=0;support=left_hand(-.3f,.9f,0,1);for(int n=0;n<6;++n)step(true);
+    support=left_hand(-.2f,1.6f,-.25f,0);pad=step(true);require(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER,"forearm gesture still starts native parry with no squeeze");
+    require(step(true).wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER,"holding the forearm guard still blocks");
+    support=left_hand(-.3f,.9f,0,1);for(int n=0;n<8;++n)step(true);
+    sample.parry=0;step();support[12]=-.25f;support[13]=1.0f;support[14]=0;step();sample.parry=1;pad=step();
+    require(session.grenade_statistics().holding && !session.two_hand_state().held && !(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"fresh belt squeeze remains grenade-owned");
+    sample.parry=0;for(int n=0;n<12;++n){pad=step();require(!(pad.wButtons&XINPUT_GAMEPAD_LEFT_SHOULDER),"returning a grenade in grab-only mode never synthesizes parry or Reject Mission");}
+}
+
+int main(int argc,char** argv) {
     try {
         {
             auto backend=std::make_unique<Backend>();auto* fake=backend.get();fake->present=true;
@@ -1944,6 +2092,7 @@ int main() {
             require(!shared.shared_eye({4,4,0},now),"retired frame must not be resampled under a reused identity");
             shared.enable(false);require(!shared.shared_eye({13,13,1},now),"disabled session must not supply cached poses");
         }
+        for(bool left:{false,true})for(bool ordinary:{false,true})actual_weapon_support_session(left,ordinary);
         conversions();third_person_session();left_a_button();touch_x_button();rumble_session();viewer_mode_session();eye_source_diagnostic();
         body_scale_session();
         shipped_eye_height();
@@ -1954,7 +2103,7 @@ int main() {
         weapon_controls_session(false);weapon_controls_session(true);stereo_pause_keeps_controls(false);stereo_pause_keeps_controls(true);
         primary_support_belt_ownership_session(false);primary_support_belt_ownership_session(true);
         sword_attack_modes_session(false);sword_attack_modes_session(true);
-        left_hand_gestures_session(false);left_hand_gestures_session(true);guard_guide_session(false);guard_guide_session(true);grenade_aim_follows_snap_and_head();melee_hand_arbitration_session();
+        left_hand_gestures_session(false);left_hand_gestures_session(true);guard_guide_session(false);guard_guide_session(true);grenade_aim_follows_snap_and_head(false);grenade_aim_follows_snap_and_head(true);left_handed_fight_mirrors();left_handed_session_zones();melee_hand_arbitration_session();
         controller_poses();
         calibration_files();
         sprint_camera_session();
@@ -2082,6 +2231,7 @@ int main() {
             const auto held_epoch = rig.epoch(); rig.eye({uint32_t(id),id,int(id%2)},held+std::chrono::milliseconds(50)); rig.poll_controllers(input,true,held+std::chrono::milliseconds(50));
             require(rig.epoch() == held_epoch,"held recenter button must not repeatedly reset camera epochs");
         }
+        if(argc==2 && std::string_view{argv[1]}=="--cpu-only"){std::cout<<"CPU-only session regression and actual support ownership passed\n";return 0;}
         Host gpu;
         ordinary_submission(gpu);menu_only_submission(gpu);screen_menu_over_stereo(gpu);menu_input_trace(gpu);pause_menu_left_b(gpu);menu_controls_coverage(gpu);
         lease_follows_completion_queue(gpu);submit_thread_session(gpu);

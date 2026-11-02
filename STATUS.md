@@ -3,7 +3,8 @@
 This is an experimental PC VR mod. I recommend it for the experience of standing in the game
 and exploring its scale. Large battles are slow even on an RTX 4090.
 
-Version 1.0.0 is the first release baseline. It remains a rough alpha: the version number starts
+Version 1.0.0 includes two-hand firearm grabs, left-handed controls and a higher parry floor.
+It remains a rough alpha: the version number starts
 the release sequence and does not mean the campaign or every control has been tested.
 
 ## Supported setup
