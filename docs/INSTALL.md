@@ -11,12 +11,12 @@ problems. Developers building from source: [DEVELOPING.md](DEVELOPING.md).
   update. There's no way to roll the game back. Supported now: **patch 15.2**, the Steam build of
   21 October 2026 (`CLIENT 15.2.PATCH.1454884` in the window title, `Retail.exe` timestamp
   `0x6ad10fcb`).
-- **A PC VR headset with SteamVR set as the OpenXR runtime.** It's been played on a Valve Index.
-  OpenXR is the default and should reach other headsets through SteamVR, but none have been
-  tried yet.
-- **Valve Index controllers for motion controls.** Index is the tested setup. Quest and Rift S
+- **A PC VR headset with SteamVR set as the OpenXR runtime.** It's been played on a Valve Index,
+  and a little on a Meta Quest 3 over Steam Link. OpenXR is the default and should reach other
+  headsets through SteamVR.
+- **Valve Index controllers for motion controls.** Index is the main tested setup. Quest and Rift S
   Touch controllers have their own layout ([Touch controllers](CONTROLS.md#touch-controllers-quest-rift-s)),
-  but haven't been played. A Quest plays over Steam Link, with SteamVR as the OpenXR runtime.
+  played a little on a Quest 3. A Quest plays over Steam Link, with SteamVR as the OpenXR runtime.
   The chase camera and the third-person views need an Xbox-compatible gamepad instead.
 - **A strong GPU.** It's developed on an RTX 4090 at Ultra Performance DLSS. Campaign fights run at
   a median of about 27-35 stereo pairs/s there (each pair is one game frame shown to both eyes),

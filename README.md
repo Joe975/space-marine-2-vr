@@ -26,8 +26,15 @@ distributed. The game data the mod needs is built on your PC from your own copy 
 For **Valve Index controllers**. Left/right below mean your physical hands. Tap acts when you
 release the button; a one-second hold does its own action. Quest and Rift S Touch controllers
 have no trackpads, so a few controls move, including recenter (X and Y held together):
-[Touch controllers](docs/CONTROLS.md#touch-controllers-quest-rift-s). Not yet played on Touch.
+[Touch controllers](docs/CONTROLS.md#touch-controllers-quest-rift-s). Tested on an Index, and a
+little on a Meta Quest 3 over Steam Link with its Touch controllers.
 The third-person views use a gamepad instead: [Controls - 3rd person](#controls---3rd-person).
+
+### Getting started
+
+Recenter as soon as you load into the game. Stand up straight and hold left A for one second
+(Touch: hold X and Y together). Otherwise your view can sit too far into the armour and clip
+through it.
 
 ### In game
 
@@ -43,7 +50,7 @@ The third-person views use a gamepad instead: [Controls - 3rd person](#controls-
 | Reload / interact | Tap right B to reload; hold it to use a pickup, console or armoury. Look at what you want to use, shove your hand inside it for good measure. |
 | Grenade / melta detonation | Left grip at your belt, then throw and release. Right trackpad press also uses equipment. Hold the right stick click to detonate a placed melta charge. |
 | Stim / class ability | Left trackpad right for a stim. Tap left A for your ability; hold left trackpad up for abilities that need aiming or charging. |
-| Pause / camera mode / recenter | Tap left B to pause; hold it one second for camera mode. Hold left A one second to recenter, standing straight. |
+| Pause / camera mode / recenter | Tap left B to pause; hold it one second for camera mode. Hold left A one second to recenter, standing straight (Touch: hold X and Y together). Putting the headset on recenters by itself. |
 
 <details>
 <summary>Move / sprint / turn: armour clipping</summary>
@@ -166,7 +173,7 @@ will probably serve you well.
 
 Space Marine 2 on Steam at patch 15.2, a PC VR headset with SteamVR as its OpenXR runtime, Valve
 Index controllers for motion controls (Quest and Rift S Touch controllers have their own layout,
-not yet played), or an Xbox-compatible gamepad for the chase camera and third-person views.
+played a little on a Quest 3 over Steam Link), or an Xbox-compatible gamepad for the chase camera and third-person views.
 Details and what to expect from the frame rate (terrible):
 [what you need](docs/INSTALL.md#what-you-need).
 
@@ -176,6 +183,20 @@ Details and what to expect from the frame rate (terrible):
    SteamVR and the game version, backs up your saves and builds the VR data from your own game files.
 3. Press **Play: motion controls** or **Play: chase camera**. The first start takes 3-4 minutes;
    put the headset on when the window says it's waiting for it.
+
+**Suggested settings.** Set these in the game's own video settings before you play; the mod
+doesn't change them.
+
+- **Upscaling:** DLSS on NVIDIA cards, TAA on anything else. FSR doesn't work: the headset shows
+  the flat game. TAA has only been tested on my 4090, so I don't know how it runs elsewhere.
+- **Quality:** high preset, DLSS Quality. It'll probably be a slideshow anyway, so it may as well
+  be a pretty one. The game is CPU-bound: dropping to Low only took a mission from about 26 to 29
+  fps on my 4090.
+- **Frame Generation:** off.
+- **Smaller monitor:** each eye renders at your monitor's resolution, so 1080p looks soft. Turn on
+  DSR (NVIDIA) or VSR (AMD) and set the Windows desktop to 3840x2160, no higher.
+
+More detail: [what you need](docs/INSTALL.md#what-you-need).
 
 The full guide, with saves, uninstall and the `dxgi.dll` clash with ReShade-style mods:
 [docs/INSTALL.md](docs/INSTALL.md).

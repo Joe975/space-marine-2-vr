@@ -10,10 +10,11 @@ the release sequence and does not mean the campaign or every control has been te
 ## Supported setup
 
 - Space Marine 2 on Steam, patch 15.2. The installer checks the exact supported game build.
-- SteamVR as the OpenXR runtime. Valve Index is the headset used for development and playtests.
+- SteamVR as the OpenXR runtime. Valve Index is the headset used for development and playtests;
+  it has also been played a little on a Meta Quest 3 over Steam Link.
 - Index controllers for first person, or an Xbox-compatible gamepad for the chase camera and the
-  diorama and shoulder views. Quest and Rift S Touch controllers have their own layout, not yet
-  played.
+  diorama and shoulder views. Quest and Rift S Touch controllers have their own layout, played a
+  little on the Quest 3.
 - Offline campaign only.
 
 ## Current behaviour

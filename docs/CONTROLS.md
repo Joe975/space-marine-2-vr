@@ -78,7 +78,7 @@ A Quest plays over Steam Link or another SteamVR stream; the game still renders 
 SteamVR must stay the OpenXR runtime: the Meta Horizon Link app often takes it when installed,
 and the installer's runtime check says so. The left controller's X and Y are the Index's
 left A and B; the right controller's A and B match. Everything above applies except these rows,
-because Touch has no trackpads. Not yet tried on a Quest.
+because Touch has no trackpads. Played a little on a Meta Quest 3 over Steam Link.
 
 | Input | Does | Native pad |
 |---|---|---|
