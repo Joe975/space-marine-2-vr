@@ -1,8 +1,9 @@
 {
- "name": "2026-10-21",
+ "name": "2026-11-27",
  "builds": [
   {
    "image": "exe",
+   "name": "2026-10-21",
    "reference_timestamp": 1791223574,
    "timestamp": 1792085963,
    "size_of_image": 89583616,
@@ -2724,7 +2725,7 @@
      "sites": [
       {
        "file": "EngineBodyFollowing.cpp",
-       "line": 7,
+       "line": 8,
        "symbol": "hashed"
       },
       {
@@ -4154,30 +4155,24 @@
      "sites": [
       {
        "file": "Sm2Probe.cpp",
-       "line": 191,
-       "symbol": ""
+       "line": 197,
+       "symbol": "hashed"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 198,
+       "symbol": "stamp"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 200,
+       "symbol": "stamp"
       }
      ],
      "status": "ref",
      "kind": "code",
      "rva": 32025664,
      "verified": 90,
-     "xor": []
-    },
-    {
-     "reference": 32025664,
-     "image": "exe",
-     "sites": [
-      {
-       "file": "Sm2Probe.cpp",
-       "line": 191,
-       "symbol": ""
-      }
-     ],
-     "status": "moved",
-     "kind": "code",
-     "rva": 32026496,
-     "verified": 95,
      "xor": []
     },
     {
@@ -4534,8 +4529,8 @@
      "sites": [
       {
        "file": "LightCapSortControl.h",
-       "line": 26,
-       "symbol": ""
+       "line": 24,
+       "symbol": "REFERENCE_SITE"
       }
      ],
      "status": "moved",
@@ -4545,60 +4540,24 @@
      "xor": []
     },
     {
-     "reference": 32480921,
-     "image": "exe",
-     "sites": [
-      {
-       "file": "LightCapSortControl.h",
-       "line": 26,
-       "symbol": ""
-      }
-     ],
-     "status": "moved",
-     "kind": "code",
-     "rva": 32481753,
-     "verified": 90,
-     "xor": [
-      [
-       50,
-       128
-      ],
-      [
-       51,
-       3
-      ]
-     ]
-    },
-    {
      "reference": 32484960,
      "image": "exe",
      "sites": [
       {
        "file": "NativeSecondCameraPlainLightTest.h",
-       "line": 30,
-       "symbol": ""
+       "line": 28,
+       "symbol": "REFERENCE_PREPARE"
+      },
+      {
+       "file": "NativeSecondCameraPlainLightTest.h",
+       "line": 29,
+       "symbol": "hashed"
       }
      ],
      "status": "ref",
      "kind": "code",
      "rva": 32485792,
      "verified": 94,
-     "xor": []
-    },
-    {
-     "reference": 32485792,
-     "image": "exe",
-     "sites": [
-      {
-       "file": "NativeSecondCameraPlainLightTest.h",
-       "line": 30,
-       "symbol": ""
-      }
-     ],
-     "status": "moved",
-     "kind": "code",
-     "rva": 32486624,
-     "verified": 90,
      "xor": []
     },
     {
@@ -7000,7 +6959,7 @@
      "sites": [
       {
        "file": "EngineBodyFollowing.cpp",
-       "line": 8,
+       "line": 9,
        "symbol": "hashed"
       },
       {
@@ -7872,17 +7831,17 @@
      "sites": [
       {
        "file": "Sm2Probe.cpp",
-       "line": 480,
+       "line": 504,
        "symbol": "rva"
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 526,
+       "line": 550,
        "symbol": "rva"
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 1272,
+       "line": 1299,
        "symbol": "rva"
       }
      ],
@@ -8095,29 +8054,13 @@
      "votes": 289
     },
     {
-     "reference": 83364960,
-     "image": "exe",
-     "sites": [
-      {
-       "file": "FarLightCacheControl.h",
-       "line": 23,
-       "symbol": ""
-      }
-     ],
-     "status": "ref",
-     "kind": "data",
-     "rva": 83364672,
-     "verified": 0,
-     "votes": 1
-    },
-    {
      "reference": 83365248,
      "image": "exe",
      "sites": [
       {
        "file": "FarLightCacheControl.h",
-       "line": 23,
-       "symbol": ""
+       "line": 22,
+       "symbol": "REFERENCE_CACHE"
       }
      ],
      "status": "ref",
@@ -8373,7 +8316,7 @@
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 1055,
+       "line": 1079,
        "symbol": "rva"
       }
      ],
@@ -8419,7 +8362,7 @@
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 1054,
+       "line": 1078,
        "symbol": "rva"
       }
      ],
@@ -8445,7 +8388,7 @@
       },
       {
        "file": "Sm2Probe.cpp",
-       "line": 2393,
+       "line": 2439,
        "symbol": "rva"
       }
      ],
@@ -8516,6 +8459,7 @@
   },
   {
    "image": "dll",
+   "name": "2026-10-21",
    "reference_timestamp": 1791224681,
    "timestamp": 1792086182,
    "size_of_image": 73584640,
@@ -8661,6 +8605,9228 @@
      "rva": 66876160,
      "verified": 0,
      "votes": 355
+    }
+   ]
+  },
+  {
+   "image": "exe",
+   "name": "2026-11-27",
+   "reference_timestamp": 1791223574,
+   "timestamp": 1794951826,
+   "size_of_image": 89628672,
+   "entries": [
+    {
+     "reference": 1048576,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "DxgiProxyBridge.h",
+       "line": 39,
+       "symbol": ""
+      },
+      {
+       "file": "EngineCinematicState.h",
+       "line": 34,
+       "symbol": ""
+      },
+      {
+       "file": "NativeCameraTransfer.cpp",
+       "line": 20,
+       "symbol": ""
+      },
+      {
+       "file": "NativeCommandBindingIdentity.h",
+       "line": 22,
+       "symbol": ""
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 32,
+       "symbol": ""
+      },
+      {
+       "file": "NativeFaultEvidence.cpp",
+       "line": 43,
+       "symbol": ""
+      },
+      {
+       "file": "NativeFaultEvidence.cpp",
+       "line": 48,
+       "symbol": ""
+      },
+      {
+       "file": "NativeOrdinaryBloom.cpp",
+       "line": 45,
+       "symbol": ""
+      },
+      {
+       "file": "NativeOrdinaryPacket.h",
+       "line": 36,
+       "symbol": ""
+      },
+      {
+       "file": "NativeOrdinaryProbe.cpp",
+       "line": 17,
+       "symbol": ""
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 25,
+       "symbol": ""
+      },
+      {
+       "file": "NativePipExperiment.h",
+       "line": 84,
+       "symbol": ""
+      },
+      {
+       "file": "NativePipLens.cpp",
+       "line": 30,
+       "symbol": ""
+      },
+      {
+       "file": "NativePipTonemap.cpp",
+       "line": 50,
+       "symbol": ""
+      },
+      {
+       "file": "NativeRenderProbe.cpp",
+       "line": 30,
+       "symbol": ""
+      },
+      {
+       "file": "NativeSceneFaultEvidence.cpp",
+       "line": 56,
+       "symbol": ""
+      },
+      {
+       "file": "NativeTemporalProbe.cpp",
+       "line": 24,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 1048592,
+     "verified": 0,
+     "xor": []
+    },
+    {
+     "reference": 1310720,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePlayerPartVisibility.h",
+       "line": 25,
+       "symbol": "OUTFIT_HIDDEN"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 1310800,
+     "verified": 0,
+     "xor": []
+    },
+    {
+     "reference": 3246240,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "0x318a00"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 22,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3242192,
+     "verified": 92,
+     "xor": [],
+     "delta": -4048
+    },
+    {
+     "reference": 3246592,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "0x31a0c0"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 21,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3242544,
+     "verified": 94,
+     "xor": [
+      [
+       42,
+       80
+      ],
+      [
+       43,
+       73
+      ]
+     ],
+     "delta": -4048
+    },
+    {
+     "reference": 3249536,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "0x322550"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 15,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3245488,
+     "verified": 94,
+     "xor": [
+      [
+       9,
+       240
+      ],
+      [
+       10,
+       141
+      ],
+      [
+       11,
+       1
+      ],
+      [
+       85,
+       160
+      ],
+      [
+       86,
+       148
+      ]
+     ],
+     "delta": -4048
+    },
+    {
+     "reference": 3249552,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "0x319580"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 16,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3245504,
+     "verified": 95,
+     "xor": [
+      [
+       69,
+       160
+      ],
+      [
+       70,
+       148
+      ],
+      [
+       88,
+       160
+      ],
+      [
+       89,
+       148
+      ]
+     ],
+     "delta": -4048
+    },
+    {
+     "reference": 3250432,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "0x319590"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 17,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3246384,
+     "verified": 96,
+     "xor": [],
+     "delta": -4048
+    },
+    {
+     "reference": 3252352,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "0x319900"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 18,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3248304,
+     "verified": 96,
+     "xor": [],
+     "delta": -4048
+    },
+    {
+     "reference": 3252384,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "0x31a080"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 19,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3248336,
+     "verified": 95,
+     "xor": [],
+     "delta": -4048
+    },
+    {
+     "reference": 3252416,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "0x31a0a0"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 20,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3248368,
+     "verified": 96,
+     "xor": [
+      [
+       92,
+       112
+      ],
+      [
+       93,
+       70
+      ]
+     ],
+     "delta": -4048
+    },
+    {
+     "reference": 3286336,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.h",
+       "line": 9,
+       "symbol": "WORLD_VIEW_RVA"
+      },
+      {
+       "file": "EngineWorldMarkers.h",
+       "line": 10,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3283520,
+     "verified": 96,
+     "xor": [
+      [
+       9,
+       192
+      ],
+      [
+       10,
+       134
+      ],
+      [
+       25,
+       192
+      ],
+      [
+       26,
+       135
+      ],
+      [
+       56,
+       248
+      ],
+      [
+       57,
+       228
+      ]
+     ],
+     "delta": -2816
+    },
+    {
+     "reference": 3286352,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 12,
+       "symbol": "READER_RVAS"
+      },
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 14,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 3283536,
+     "verified": 96,
+     "xor": [
+      [
+       9,
+       192
+      ],
+      [
+       10,
+       135
+      ],
+      [
+       40,
+       248
+      ],
+      [
+       41,
+       228
+      ],
+      [
+       92,
+       24
+      ],
+      [
+       93,
+       229
+      ]
+     ],
+     "delta": -2816
+    },
+    {
+     "reference": 4194304,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 36,
+       "symbol": ""
+      },
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 49,
+       "symbol": ""
+      },
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 54,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 4190512,
+     "verified": 96,
+     "xor": [
+      [
+       71,
+       160
+      ],
+      [
+       72,
+       151
+      ],
+      [
+       86,
+       128
+      ],
+      [
+       87,
+       112
+      ],
+      [
+       88,
+       3
+      ]
+     ]
+    },
+    {
+     "reference": 5645264,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyProbe.cpp",
+       "line": 11,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineBodyProbe.h",
+       "line": 19,
+       "symbol": "BODY_UPDATE_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 5658304,
+     "verified": 95,
+     "xor": [
+      [
+       82,
+       96
+      ],
+      [
+       83,
+       66
+      ]
+     ]
+    },
+    {
+     "reference": 12079712,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineScreenUi.h",
+       "line": 14,
+       "symbol": "LAYOUT_RVA"
+      },
+      {
+       "file": "EngineScreenUi.h",
+       "line": 15,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 12094272,
+     "verified": 92,
+     "xor": []
+    },
+    {
+     "reference": 12531344,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 81,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 12544112,
+     "verified": 90,
+     "xor": [
+      [
+       67,
+       16
+      ],
+      [
+       68,
+       86
+      ]
+     ]
+    },
+    {
+     "reference": 12535190,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 81,
+       "symbol": "rva"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 12547958,
+     "verified": 93,
+     "xor": [],
+     "delta": 12768
+    },
+    {
+     "reference": 12535200,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 81,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 12547968,
+     "verified": 92,
+     "xor": []
+    },
+    {
+     "reference": 12540267,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWorldMarkers.cpp",
+       "line": 81,
+       "symbol": "rva"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 12553035,
+     "verified": 93,
+     "xor": [],
+     "delta": 12768
+    },
+    {
+     "reference": 14074224,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeFaultEvidence.h",
+       "line": 20,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 58,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 14086176,
+     "verified": 96,
+     "xor": [
+      [
+       27,
+       192
+      ],
+      [
+       28,
+       3
+      ],
+      [
+       68,
+       96
+      ],
+      [
+       69,
+       79
+      ],
+      [
+       88,
+       48
+      ],
+      [
+       89,
+       167
+      ]
+     ]
+    },
+    {
+     "reference": 14074268,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeFaultEvidence.h",
+       "line": 21,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 14086220,
+     "verified": 96,
+     "xor": [
+      [
+       24,
+       96
+      ],
+      [
+       25,
+       79
+      ],
+      [
+       44,
+       48
+      ],
+      [
+       45,
+       167
+      ]
+     ]
+    },
+    {
+     "reference": 14882816,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineArmProbe.cpp",
+       "line": 13,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineArmProbe.h",
+       "line": 23,
+       "symbol": "PUBLISH_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 14894304,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 14934864,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineParryProbe.cpp",
+       "line": 15,
+       "symbol": "FIRE_RVA"
+      },
+      {
+       "file": "EngineParryProbe.cpp",
+       "line": 18,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 14946368,
+     "verified": 93,
+     "xor": [
+      [
+       20,
+       129
+      ],
+      [
+       21,
+       182
+      ],
+      [
+       22,
+       3
+      ],
+      [
+       40,
+       248
+      ],
+      [
+       41,
+       155
+      ],
+      [
+       74,
+       48
+      ],
+      [
+       75,
+       75
+      ],
+      [
+       87,
+       208
+      ],
+      [
+       88,
+       185
+      ]
+     ]
+    },
+    {
+     "reference": 14970304,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineArmProbe.cpp",
+       "line": 12,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineArmProbe.h",
+       "line": 23,
+       "symbol": "UPDATE_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 14981808,
+     "verified": 93,
+     "xor": [
+      [
+       24,
+       128
+      ],
+      [
+       25,
+       236
+      ],
+      [
+       26,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 15030304,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWeaponProbe.h",
+       "line": 14,
+       "symbol": "AIM_RVA"
+      },
+      {
+       "file": "EngineWeaponProbe.h",
+       "line": 16,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 15041808,
+     "verified": 89,
+     "xor": [
+      [
+       19,
+       128
+      ],
+      [
+       20,
+       147
+      ]
+     ]
+    },
+    {
+     "reference": 15040528,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWeaponProbe.h",
+       "line": 13,
+       "symbol": "RAY_RVA"
+      },
+      {
+       "file": "EngineWeaponProbe.h",
+       "line": 15,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 15052032,
+     "verified": 94,
+     "xor": [
+      [
+       57,
+       160
+      ],
+      [
+       58,
+       171
+      ],
+      [
+       59,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 16055856,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineRigidBodyVelocityProbe.cpp",
+       "line": 18,
+       "symbol": "stamp"
+      },
+      {
+       "file": "EngineRigidBodyVelocityProbe.cpp",
+       "line": 21,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineRigidBodyVelocityProbe.cpp",
+       "line": 22,
+       "symbol": "stamp"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 16067792,
+     "verified": 95,
+     "xor": [
+      [
+       70,
+       32
+      ],
+      [
+       71,
+       99
+      ]
+     ]
+    },
+    {
+     "reference": 16777216,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 32,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 16789504,
+     "verified": 3,
+     "xor": []
+    },
+    {
+     "reference": 16808480,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineMeleeSweep.cpp",
+       "line": 10,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineMeleeSweep.h",
+       "line": 26,
+       "symbol": "UPDATE_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 16820768,
+     "verified": 94,
+     "xor": [
+      [
+       61,
+       144
+      ],
+      [
+       62,
+       182
+      ],
+      [
+       63,
+       3
+      ],
+      [
+       70,
+       80
+      ],
+      [
+       71,
+       204
+      ],
+      [
+       90,
+       48
+      ],
+      [
+       91,
+       204
+      ]
+     ]
+    },
+    {
+     "reference": 19590462,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeGrenadeLaunch.h",
+       "line": 43,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 19606462,
+     "verified": 94,
+     "xor": [
+      [
+       3,
+       80
+      ],
+      [
+       4,
+       229
+      ],
+      [
+       13,
+       240
+      ],
+      [
+       14,
+       222
+      ],
+      [
+       15,
+       1
+      ],
+      [
+       20,
+       128
+      ],
+      [
+       21,
+       190
+      ],
+      [
+       88,
+       162
+      ]
+     ]
+    },
+    {
+     "reference": 20201232,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EnginePlayerOpacity.cpp",
+       "line": 10,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EnginePlayerOpacity.h",
+       "line": 18,
+       "symbol": "SETTER_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 20216384,
+     "verified": 96,
+     "xor": [
+      [
+       33,
+       11
+      ],
+      [
+       54,
+       32
+      ],
+      [
+       55,
+       120
+      ]
+     ]
+    },
+    {
+     "reference": 20234976,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyProbe.cpp",
+       "line": 120,
+       "symbol": "rva"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 126,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeFaultEvidence.h",
+       "line": 17,
+       "symbol": "EXE_FUNCTION_RVA"
+      },
+      {
+       "file": "NativeFaultEvidence.h",
+       "line": 19,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 54,
+       "symbol": "0x6ac3e716"
+      },
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 55,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 20250128,
+     "verified": 96,
+     "xor": [
+      [
+       10,
+       112
+      ],
+      [
+       11,
+       157
+      ],
+      [
+       12,
+       63
+      ]
+     ],
+     "delta": 15152
+    },
+    {
+     "reference": 20235020,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeFaultEvidence.h",
+       "line": 17,
+       "symbol": "EXE_RVA"
+      },
+      {
+       "file": "NativeFaultEvidence.h",
+       "line": 22,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 20250172,
+     "verified": 94,
+     "xor": [
+      [
+       69,
+       224
+      ],
+      [
+       70,
+       233
+      ],
+      [
+       76,
+       208
+      ],
+      [
+       77,
+       105
+      ],
+      [
+       86,
+       208
+      ],
+      [
+       87,
+       105
+      ]
+     ],
+     "delta": 15152
+    },
+    {
+     "reference": 20357344,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 59,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 20374048,
+     "verified": 96,
+     "xor": [
+      [
+       12,
+       80
+      ],
+      [
+       13,
+       246
+      ],
+      [
+       14,
+       3
+      ],
+      [
+       25,
+       144
+      ],
+      [
+       26,
+       192
+      ],
+      [
+       69,
+       240
+      ],
+      [
+       70,
+       111
+      ]
+     ]
+    },
+    {
+     "reference": 20586496,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyProbe.cpp",
+       "line": 112,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 20603600,
+     "verified": 94,
+     "xor": [
+      [
+       12,
+       168
+      ],
+      [
+       13,
+       161
+      ],
+      [
+       26,
+       152
+      ],
+      [
+       27,
+       161
+      ],
+      [
+       40,
+       104
+      ],
+      [
+       41,
+       162
+      ]
+     ]
+    },
+    {
+     "reference": 20595830,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyProbe.cpp",
+       "line": 79,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 20612934,
+     "verified": 91,
+     "xor": [
+      [
+       6,
+       35
+      ],
+      [
+       26,
+       35
+      ],
+      [
+       32,
+       112
+      ],
+      [
+       33,
+       98
+      ],
+      [
+       45,
+       112
+      ],
+      [
+       46,
+       98
+      ]
+     ]
+    },
+    {
+     "reference": 20608000,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyProbe.cpp",
+       "line": 112,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 20625104,
+     "verified": 94,
+     "xor": [
+      [
+       13,
+       144
+      ],
+      [
+       14,
+       161
+      ],
+      [
+       15,
+       7
+      ],
+      [
+       58,
+       192
+      ],
+      [
+       59,
+       77
+      ],
+      [
+       73,
+       32
+      ],
+      [
+       74,
+       62
+      ]
+     ]
+    },
+    {
+     "reference": 24050176,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyProbe.cpp",
+       "line": 112,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 24071984,
+     "verified": 92,
+     "xor": [
+      [
+       29,
+       16
+      ],
+      [
+       30,
+       246
+      ],
+      [
+       31,
+       31
+      ],
+      [
+       42,
+       16
+      ],
+      [
+       43,
+       246
+      ],
+      [
+       44,
+       31
+      ],
+      [
+       88,
+       96
+      ],
+      [
+       89,
+       17
+      ]
+     ]
+    },
+    {
+     "reference": 24050944,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyProbe.cpp",
+       "line": 112,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 24072752,
+     "verified": 93,
+     "xor": [
+      [
+       2,
+       240
+      ],
+      [
+       3,
+       112
+      ],
+      [
+       45,
+       48
+      ],
+      [
+       46,
+       242
+      ],
+      [
+       47,
+       31
+      ],
+      [
+       58,
+       48
+      ],
+      [
+       59,
+       242
+      ],
+      [
+       60,
+       31
+      ]
+     ]
+    },
+    {
+     "reference": 24236784,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyProbe.cpp",
+       "line": 12,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineBodyProbe.h",
+       "line": 19,
+       "symbol": "TRACKER_WORLD_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 24257632,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 24335280,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineCinematicState.h",
+       "line": 16,
+       "symbol": "GETTER_RVA"
+      },
+      {
+       "file": "EngineCinematicState.h",
+       "line": 17,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 24356128,
+     "verified": 96,
+     "xor": [
+      [
+       2,
+       92
+      ],
+      [
+       3,
+       86
+      ],
+      [
+       18,
+       188
+      ],
+      [
+       19,
+       86
+      ],
+      [
+       50,
+       196
+      ],
+      [
+       51,
+       86
+      ],
+      [
+       82,
+       188
+      ],
+      [
+       83,
+       86
+      ]
+     ]
+    },
+    {
+     "reference": 25179071,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineCameraProbe.h",
+       "line": 32,
+       "symbol": "MAIN_VIEW_RETURN_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25199855,
+     "verified": 92,
+     "xor": [
+      [
+       5,
+       208
+      ],
+      [
+       6,
+       69
+      ],
+      [
+       18,
+       80
+      ],
+      [
+       19,
+       78
+      ]
+     ]
+    },
+    {
+     "reference": 25184725,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineCameraProbe.h",
+       "line": 33,
+       "symbol": "ADDITIONAL_VIEW_RETURN_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25205509,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 25184880,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeRenderProbe.h",
+       "line": 22,
+       "symbol": "DISPATCH_RVA"
+      },
+      {
+       "file": "NativeRenderProbe.h",
+       "line": 26,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25205664,
+     "verified": 93,
+     "xor": [
+      [
+       56,
+       224
+      ],
+      [
+       57,
+       21
+      ],
+      [
+       63,
+       128
+      ],
+      [
+       64,
+       214
+      ],
+      [
+       65,
+       3
+      ],
+      [
+       81,
+       176
+      ],
+      [
+       82,
+       17
+      ]
+     ]
+    },
+    {
+     "reference": 25188672,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOcclusionHarvestOnce.h",
+       "line": 46,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOcclusionHarvestOnce.h",
+       "line": 51,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativePipLens.h",
+       "line": 20,
+       "symbol": "RENDER_RVA"
+      },
+      {
+       "file": "NativePipLens.h",
+       "line": 21,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeRenderProbe.h",
+       "line": 23,
+       "symbol": "SCENE_RVA"
+      },
+      {
+       "file": "NativeRenderProbe.h",
+       "line": 25,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25209456,
+     "verified": 93,
+     "xor": [
+      [
+       27,
+       240
+      ],
+      [
+       28,
+       71
+      ],
+      [
+       36,
+       176
+      ],
+      [
+       37,
+       124
+      ]
+     ]
+    },
+    {
+     "reference": 25189547,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 26,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 28,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 28,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25210331,
+     "verified": 92,
+     "xor": [
+      [
+       1,
+       240
+      ],
+      [
+       2,
+       20
+      ],
+      [
+       13,
+       192
+      ],
+      [
+       14,
+       106
+      ],
+      [
+       24,
+       112
+      ],
+      [
+       25,
+       169
+      ],
+      [
+       26,
+       1
+      ],
+      [
+       31,
+       16
+      ],
+      [
+       32,
+       116
+      ],
+      [
+       36,
+       48
+      ],
+      [
+       37,
+       44
+      ],
+      [
+       43,
+       48
+      ],
+      [
+       44,
+       169
+      ],
+      [
+       45,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25189552,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 31,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25210336,
+     "verified": 94,
+     "xor": [
+      [
+       8,
+       192
+      ],
+      [
+       9,
+       106
+      ],
+      [
+       19,
+       112
+      ],
+      [
+       20,
+       169
+      ],
+      [
+       21,
+       1
+      ],
+      [
+       26,
+       16
+      ],
+      [
+       27,
+       116
+      ],
+      [
+       31,
+       48
+      ],
+      [
+       32,
+       44
+      ],
+      [
+       38,
+       48
+      ],
+      [
+       39,
+       169
+      ],
+      [
+       40,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25191568,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneWaitTiming.h",
+       "line": 21,
+       "symbol": "DEPTH_CALLER"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25212352,
+     "verified": 94,
+     "xor": [
+      [
+       3,
+       16
+      ],
+      [
+       4,
+       89
+      ],
+      [
+       32,
+       176
+      ],
+      [
+       33,
+       115
+      ],
+      [
+       72,
+       48
+      ],
+      [
+       73,
+       20
+      ],
+      [
+       83,
+       208
+      ],
+      [
+       84,
+       116
+      ]
+     ]
+    },
+    {
+     "reference": 25193427,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneWaitTiming.h",
+       "line": 21,
+       "symbol": "SHADOW_CALLER"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25214211,
+     "verified": 93,
+     "xor": [
+      [
+       58,
+       208
+      ],
+      [
+       59,
+       61
+      ],
+      [
+       89,
+       48
+      ],
+      [
+       90,
+       105
+      ]
+     ]
+    },
+    {
+     "reference": 25194438,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneWaitTiming.h",
+       "line": 21,
+       "symbol": "THIRD_CALLER"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25215222,
+     "verified": 96,
+     "xor": [
+      [
+       3,
+       112
+      ],
+      [
+       4,
+       176
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       8,
+       48
+      ],
+      [
+       9,
+       38
+      ],
+      [
+       23,
+       120
+      ],
+      [
+       24,
+       252
+      ],
+      [
+       30,
+       16
+      ],
+      [
+       31,
+       172
+      ],
+      [
+       42,
+       240
+      ],
+      [
+       43,
+       235
+      ],
+      [
+       44,
+       15
+      ],
+      [
+       49,
+       120
+      ],
+      [
+       50,
+       105
+      ],
+      [
+       61,
+       48
+      ],
+      [
+       62,
+       98
+      ],
+      [
+       78,
+       16
+      ],
+      [
+       79,
+       105
+      ],
+      [
+       85,
+       16
+      ],
+      [
+       86,
+       105
+      ]
+     ]
+    },
+    {
+     "reference": 25207934,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinarySharpen.h",
+       "line": 28,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinarySharpen.h",
+       "line": 29,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinarySharpen.h",
+       "line": 29,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25228718,
+     "verified": 95,
+     "xor": [
+      [
+       1,
+       208
+      ],
+      [
+       2,
+       29
+      ],
+      [
+       15,
+       8
+      ],
+      [
+       16,
+       217
+      ],
+      [
+       27,
+       16
+      ],
+      [
+       28,
+       226
+      ],
+      [
+       29,
+       1
+      ],
+      [
+       46,
+       24
+      ],
+      [
+       47,
+       217
+      ],
+      [
+       63,
+       48
+      ],
+      [
+       64,
+       226
+      ],
+      [
+       65,
+       1
+      ],
+      [
+       81,
+       16
+      ],
+      [
+       82,
+       217
+      ]
+     ]
+    },
+    {
+     "reference": 25207939,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinarySharpen.h",
+       "line": 32,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25228723,
+     "verified": 96,
+     "xor": [
+      [
+       10,
+       8
+      ],
+      [
+       11,
+       217
+      ],
+      [
+       22,
+       16
+      ],
+      [
+       23,
+       226
+      ],
+      [
+       24,
+       1
+      ],
+      [
+       41,
+       24
+      ],
+      [
+       42,
+       217
+      ],
+      [
+       58,
+       48
+      ],
+      [
+       59,
+       226
+      ],
+      [
+       60,
+       1
+      ],
+      [
+       76,
+       16
+      ],
+      [
+       77,
+       217
+      ]
+     ]
+    },
+    {
+     "reference": 25208387,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeTemporalProbe.h",
+       "line": 18,
+       "symbol": "CALLS"
+      },
+      {
+       "file": "NativeTemporalProbe.h",
+       "line": 19,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25229171,
+     "verified": 95,
+     "xor": [
+      [
+       1,
+       176
+      ],
+      [
+       2,
+       107
+      ],
+      [
+       20,
+       56
+      ],
+      [
+       21,
+       217
+      ],
+      [
+       25,
+       16
+      ],
+      [
+       26,
+       230
+      ],
+      [
+       27,
+       1
+      ],
+      [
+       39,
+       48
+      ],
+      [
+       40,
+       217
+      ],
+      [
+       67,
+       16
+      ],
+      [
+       68,
+       217
+      ]
+     ]
+    },
+    {
+     "reference": 25208528,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 32,
+       "symbol": "SELECT_CALL"
+      },
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 33,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25229312,
+     "verified": 96,
+     "xor": [
+      [
+       13,
+       240
+      ],
+      [
+       14,
+       109
+      ],
+      [
+       61,
+       80
+      ],
+      [
+       62,
+       109
+      ],
+      [
+       80,
+       8
+      ],
+      [
+       81,
+       223
+      ],
+      [
+       85,
+       240
+      ],
+      [
+       86,
+       231
+      ],
+      [
+       87,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25208545,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.cpp",
+       "line": 264,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25229329,
+     "verified": 95,
+     "xor": [
+      [
+       44,
+       80
+      ],
+      [
+       45,
+       109
+      ],
+      [
+       63,
+       8
+      ],
+      [
+       64,
+       223
+      ],
+      [
+       68,
+       240
+      ],
+      [
+       69,
+       231
+      ],
+      [
+       70,
+       1
+      ],
+      [
+       91,
+       248
+      ],
+      [
+       92,
+       223
+      ]
+     ]
+    },
+    {
+     "reference": 25208588,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeTemporalProbe.h",
+       "line": 18,
+       "symbol": "0x180a849"
+      },
+      {
+       "file": "NativeTemporalProbe.h",
+       "line": 21,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25229372,
+     "verified": 96,
+     "xor": [
+      [
+       1,
+       80
+      ],
+      [
+       2,
+       109
+      ],
+      [
+       20,
+       8
+      ],
+      [
+       21,
+       223
+      ],
+      [
+       25,
+       240
+      ],
+      [
+       26,
+       231
+      ],
+      [
+       27,
+       1
+      ],
+      [
+       48,
+       248
+      ],
+      [
+       49,
+       223
+      ],
+      [
+       53,
+       48
+      ],
+      [
+       54,
+       230
+      ],
+      [
+       55,
+       1
+      ],
+      [
+       74,
+       8
+      ],
+      [
+       75,
+       220
+      ],
+      [
+       85,
+       176
+      ],
+      [
+       86,
+       29
+      ],
+      [
+       92,
+       16
+      ],
+      [
+       93,
+       223
+      ]
+     ]
+    },
+    {
+     "reference": 25208905,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeTemporalProbe.h",
+       "line": 18,
+       "symbol": "0x180a643"
+      },
+      {
+       "file": "NativeTemporalProbe.h",
+       "line": 20,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25229689,
+     "verified": 96,
+     "xor": [
+      [
+       1,
+       176
+      ],
+      [
+       2,
+       111
+      ],
+      [
+       20,
+       8
+      ],
+      [
+       21,
+       217
+      ],
+      [
+       25,
+       112
+      ],
+      [
+       26,
+       226
+      ],
+      [
+       27,
+       1
+      ],
+      [
+       41,
+       16
+      ],
+      [
+       42,
+       217
+      ],
+      [
+       77,
+       56
+      ],
+      [
+       78,
+       217
+      ],
+      [
+       85,
+       240
+      ],
+      [
+       86,
+       226
+      ],
+      [
+       87,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25209199,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 46,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 47,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25229983,
+     "verified": 95,
+     "xor": [
+      [
+       1,
+       112
+      ],
+      [
+       2,
+       55
+      ],
+      [
+       8,
+       240
+      ],
+      [
+       9,
+       219
+      ],
+      [
+       55,
+       24
+      ],
+      [
+       56,
+       219
+      ],
+      [
+       67,
+       16
+      ],
+      [
+       68,
+       238
+      ],
+      [
+       69,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25209204,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 48,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25229988,
+     "verified": 96,
+     "xor": [
+      [
+       3,
+       240
+      ],
+      [
+       4,
+       219
+      ],
+      [
+       50,
+       24
+      ],
+      [
+       51,
+       219
+      ],
+      [
+       62,
+       16
+      ],
+      [
+       63,
+       238
+      ],
+      [
+       64,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25209428,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 32,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 33,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 33,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25230212,
+     "verified": 92,
+     "xor": [
+      [
+       1,
+       80
+      ],
+      [
+       2,
+       59
+      ],
+      [
+       29,
+       8
+      ],
+      [
+       30,
+       217
+      ],
+      [
+       37,
+       16
+      ],
+      [
+       38,
+       238
+      ],
+      [
+       39,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25209433,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 36,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25230217,
+     "verified": 93,
+     "xor": [
+      [
+       24,
+       8
+      ],
+      [
+       25,
+       217
+      ],
+      [
+       32,
+       16
+      ],
+      [
+       33,
+       238
+      ],
+      [
+       34,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25210443,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 32,
+       "symbol": "COLOUR_CALL"
+      },
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 34,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25231227,
+     "verified": 95,
+     "xor": [
+      [
+       39,
+       176
+      ],
+      [
+       40,
+       55
+      ],
+      [
+       51,
+       8
+      ],
+      [
+       52,
+       233
+      ],
+      [
+       59,
+       48
+      ],
+      [
+       60,
+       230
+      ],
+      [
+       61,
+       1
+      ],
+      [
+       75,
+       56
+      ],
+      [
+       76,
+       233
+      ],
+      [
+       80,
+       16
+      ],
+      [
+       81,
+       230
+      ],
+      [
+       82,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25210486,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.cpp",
+       "line": 345,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 25231270,
+     "verified": 95,
+     "xor": [
+      [
+       8,
+       8
+      ],
+      [
+       9,
+       233
+      ],
+      [
+       16,
+       48
+      ],
+      [
+       17,
+       230
+      ],
+      [
+       18,
+       1
+      ],
+      [
+       32,
+       56
+      ],
+      [
+       33,
+       233
+      ],
+      [
+       37,
+       16
+      ],
+      [
+       38,
+       230
+      ],
+      [
+       39,
+       1
+      ],
+      [
+       75,
+       8
+      ],
+      [
+       76,
+       239
+      ],
+      [
+       80,
+       48
+      ],
+      [
+       81,
+       230
+      ],
+      [
+       82,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25215312,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeDepthReadyTiming.h",
+       "line": 14,
+       "symbol": "HELPER_RVA"
+      },
+      {
+       "file": "NativeDepthReadyTiming.h",
+       "line": 15,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25236096,
+     "verified": 93,
+     "xor": [
+      [
+       12,
+       160
+      ],
+      [
+       13,
+       119
+      ],
+      [
+       17,
+       160
+      ],
+      [
+       18,
+       119
+      ],
+      [
+       24,
+       48
+      ],
+      [
+       25,
+       235
+      ],
+      [
+       34,
+       176
+      ],
+      [
+       35,
+       195
+      ],
+      [
+       70,
+       160
+      ],
+      [
+       71,
+       119
+      ],
+      [
+       89,
+       72
+      ],
+      [
+       90,
+       64
+      ]
+     ]
+    },
+    {
+     "reference": 25550368,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyFollowing.cpp",
+       "line": 8,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineBodyFollowing.h",
+       "line": 10,
+       "symbol": "SET_YAW_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25571152,
+     "verified": 95,
+     "xor": [
+      [
+       13,
+       48
+      ],
+      [
+       14,
+       64
+      ],
+      [
+       28,
+       208
+      ],
+      [
+       29,
+       124
+      ]
+     ]
+    },
+    {
+     "reference": 25693840,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 12,
+       "symbol": "rva"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 14,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 15,
+       "symbol": "code"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25714848,
+     "verified": 96,
+     "xor": [
+      [
+       89,
+       104
+      ],
+      [
+       90,
+       189
+      ],
+      [
+       91,
+       31
+      ]
+     ]
+    },
+    {
+     "reference": 25696816,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 68,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 73,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25717824,
+     "verified": 95,
+     "xor": []
+    },
+    {
+     "reference": 25696880,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 69,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 74,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25717888,
+     "verified": 94,
+     "xor": [
+      [
+       76,
+       128
+      ],
+      [
+       77,
+       247
+      ],
+      [
+       78,
+       15
+      ]
+     ]
+    },
+    {
+     "reference": 25697456,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 70,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 75,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25718464,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 25700320,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 71,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 76,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25721328,
+     "verified": 96,
+     "xor": [
+      [
+       15,
+       48
+      ],
+      [
+       16,
+       32
+      ],
+      [
+       89,
+       16
+      ],
+      [
+       90,
+       164
+      ],
+      [
+       91,
+       31
+      ]
+     ]
+    },
+    {
+     "reference": 25700624,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 80,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 82,
+       "symbol": "rva"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 83,
+       "symbol": "code"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25721632,
+     "verified": 96,
+     "xor": [
+      [
+       4,
+       112
+      ],
+      [
+       5,
+       70
+      ],
+      [
+       23,
+       48
+      ],
+      [
+       24,
+       65
+      ],
+      [
+       62,
+       67
+      ]
+     ]
+    },
+    {
+     "reference": 25700632,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 80,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 82,
+       "symbol": "rva"
+      },
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 83,
+       "symbol": "code"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 25721640,
+     "verified": 95,
+     "xor": [
+      [
+       15,
+       48
+      ],
+      [
+       16,
+       65
+      ],
+      [
+       54,
+       67
+      ]
+     ],
+     "delta": 21008
+    },
+    {
+     "reference": 25721152,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipExperiment.h",
+       "line": 27,
+       "symbol": "REGISTER_RVA"
+      },
+      {
+       "file": "NativePipExperiment.h",
+       "line": 29,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25742160,
+     "verified": 92,
+     "xor": [
+      [
+       36,
+       64
+      ],
+      [
+       37,
+       49
+      ],
+      [
+       43,
+       144
+      ],
+      [
+       44,
+       243
+      ],
+      [
+       45,
+       1
+      ],
+      [
+       80,
+       240
+      ],
+      [
+       81,
+       49
+      ],
+      [
+       88,
+       64
+      ],
+      [
+       89,
+       49
+      ]
+     ]
+    },
+    {
+     "reference": 25721440,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipExperiment.h",
+       "line": 27,
+       "symbol": "RELEASE_RVA"
+      },
+      {
+       "file": "NativePipExperiment.h",
+       "line": 30,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25742448,
+     "verified": 89,
+     "xor": [
+      [
+       27,
+       64
+      ],
+      [
+       28,
+       51
+      ],
+      [
+       34,
+       144
+      ],
+      [
+       35,
+       241
+      ],
+      [
+       36,
+       1
+      ],
+      [
+       69,
+       208
+      ],
+      [
+       70,
+       55
+      ]
+     ]
+    },
+    {
+     "reference": 25722192,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipExperiment.h",
+       "line": 27,
+       "symbol": "GET_RVA"
+      },
+      {
+       "file": "NativePipExperiment.h",
+       "line": 28,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25743200,
+     "verified": 96,
+     "xor": [
+      [
+       5,
+       192
+      ],
+      [
+       6,
+       17
+      ],
+      [
+       12,
+       240
+      ],
+      [
+       13,
+       243
+      ],
+      [
+       14,
+       1
+      ],
+      [
+       31,
+       176
+      ],
+      [
+       32,
+       49
+      ],
+      [
+       58,
+       208
+      ],
+      [
+       59,
+       49
+      ],
+      [
+       85,
+       192
+      ],
+      [
+       86,
+       18
+      ],
+      [
+       92,
+       144
+      ],
+      [
+       93,
+       242
+      ],
+      [
+       94,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 25811504,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeFlareProbe.h",
+       "line": 33,
+       "symbol": "FLARE_BUILD"
+      },
+      {
+       "file": "NativeFlareProbe.h",
+       "line": 34,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25832512,
+     "verified": 95,
+     "xor": [
+      [
+       26,
+       232
+      ],
+      [
+       27,
+       115
+      ],
+      [
+       69,
+       128
+      ],
+      [
+       70,
+       212
+      ],
+      [
+       84,
+       220
+      ],
+      [
+       85,
+       114
+      ],
+      [
+       91,
+       112
+      ],
+      [
+       92,
+       119
+      ]
+     ]
+    },
+    {
+     "reference": 25828800,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeFlareProbe.h",
+       "line": 33,
+       "symbol": "FLARE_ISSUE"
+      },
+      {
+       "file": "NativeFlareProbe.h",
+       "line": 36,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25849808,
+     "verified": 96,
+     "xor": [
+      [
+       25,
+       16
+      ],
+      [
+       26,
+       170
+      ],
+      [
+       27,
+       1
+      ],
+      [
+       70,
+       228
+      ],
+      [
+       71,
+       243
+      ]
+     ]
+    },
+    {
+     "reference": 25829616,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeFlareProbe.h",
+       "line": 33,
+       "symbol": "FLARE_READ"
+      },
+      {
+       "file": "NativeFlareProbe.h",
+       "line": 35,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 25850624,
+     "verified": 95,
+     "xor": [
+      [
+       13,
+       16
+      ],
+      [
+       14,
+       170
+      ],
+      [
+       15,
+       1
+      ],
+      [
+       52,
+       164
+      ],
+      [
+       53,
+       241
+      ],
+      [
+       88,
+       192
+      ],
+      [
+       89,
+       23
+      ]
+     ]
+    },
+    {
+     "reference": 26103392,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineWeaponProbe.cpp",
+       "line": 99,
+       "symbol": "rva"
+      },
+      {
+       "file": "EngineWeaponProbe.cpp",
+       "line": 123,
+       "symbol": "rva"
+      },
+      {
+       "file": "EngineWeaponProbe.cpp",
+       "line": 137,
+       "symbol": "rva"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 26124576,
+     "verified": 91,
+     "xor": [
+      [
+       35,
+       128
+      ],
+      [
+       36,
+       240
+      ]
+     ],
+     "delta": 21184
+    },
+    {
+     "reference": 26502080,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 54,
+       "symbol": "0x134c2e0"
+      },
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 56,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 26523264,
+     "verified": 95,
+     "xor": [
+      [
+       26,
+       48
+      ],
+      [
+       27,
+       19
+      ],
+      [
+       51,
+       112
+      ],
+      [
+       52,
+       19
+      ],
+      [
+       58,
+       192
+      ],
+      [
+       59,
+       83
+      ],
+      [
+       71,
+       192
+      ],
+      [
+       72,
+       83
+      ]
+     ]
+    },
+    {
+     "reference": 30816368,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.cpp",
+       "line": 16,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineControllerRegistration.h",
+       "line": 45,
+       "symbol": "REGISTER_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 30842368,
+     "verified": 94,
+     "xor": [
+      [
+       27,
+       96
+      ],
+      [
+       82,
+       112
+      ],
+      [
+       83,
+       32
+      ]
+     ]
+    },
+    {
+     "reference": 30851840,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.cpp",
+       "line": 14,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineControllerRegistration.h",
+       "line": 44,
+       "symbol": "CONSTRUCT_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 30877840,
+     "verified": 92,
+     "xor": [
+      [
+       9,
+       144
+      ],
+      [
+       10,
+       195
+      ],
+      [
+       24,
+       32
+      ],
+      [
+       25,
+       222
+      ],
+      [
+       26,
+       31
+      ],
+      [
+       88,
+       32
+      ],
+      [
+       89,
+       210
+      ],
+      [
+       90,
+       31
+      ]
+     ]
+    },
+    {
+     "reference": 30851968,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.cpp",
+       "line": 17,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineControllerRegistration.h",
+       "line": 45,
+       "symbol": "INITIALIZE_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 30877968,
+     "verified": 91,
+     "xor": []
+    },
+    {
+     "reference": 30862496,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.cpp",
+       "line": 13,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineControllerRegistration.h",
+       "line": 44,
+       "symbol": "UPDATE_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 30888496,
+     "verified": 93,
+     "xor": [
+      [
+       31,
+       144
+      ],
+      [
+       32,
+       71
+      ],
+      [
+       41,
+       224
+      ],
+      [
+       42,
+       222
+      ],
+      [
+       47,
+       136
+      ],
+      [
+       48,
+       238
+      ],
+      [
+       60,
+       32
+      ],
+      [
+       61,
+       221
+      ],
+      [
+       66,
+       136
+      ],
+      [
+       67,
+       238
+      ],
+      [
+       84,
+       240
+      ],
+      [
+       85,
+       67
+      ]
+     ]
+    },
+    {
+     "reference": 30891312,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipLens.cpp",
+       "line": 8,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativePipLens.h",
+       "line": 20,
+       "symbol": "CACHE_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 30916736,
+     "verified": 95,
+     "xor": []
+    },
+    {
+     "reference": 30894928,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineCameraProbe.h",
+       "line": 30,
+       "symbol": "ADD_CAMERA_RVA"
+      },
+      {
+       "file": "EngineCameraProbe.h",
+       "line": 34,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 30920352,
+     "verified": 92,
+     "xor": [
+      [
+       48,
+       144
+      ],
+      [
+       49,
+       194
+      ],
+      [
+       50,
+       1
+      ],
+      [
+       59,
+       112
+      ],
+      [
+       60,
+       48
+      ]
+     ]
+    },
+    {
+     "reference": 30896285,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineProjectionHook.h",
+       "line": 15,
+       "symbol": "ADD_RETURN_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 30921709,
+     "verified": 96,
+     "xor": [
+      [
+       48,
+       16
+      ],
+      [
+       49,
+       49
+      ]
+     ]
+    },
+    {
+     "reference": 30897168,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeCameraTransfer.h",
+       "line": 12,
+       "symbol": "RESET_RVA"
+      },
+      {
+       "file": "NativeCameraTransfer.h",
+       "line": 14,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 30922592,
+     "verified": 91,
+     "xor": [
+      [
+       44,
+       208
+      ],
+      [
+       45,
+       63
+      ],
+      [
+       70,
+       240
+      ],
+      [
+       71,
+       45
+      ],
+      [
+       87,
+       208
+      ],
+      [
+       88,
+       45
+      ]
+     ]
+    },
+    {
+     "reference": 30897312,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeCameraTransfer.h",
+       "line": 12,
+       "symbol": "COPY_RVA"
+      },
+      {
+       "file": "NativeCameraTransfer.h",
+       "line": 15,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 30922736,
+     "verified": 96,
+     "xor": [
+      [
+       7,
+       80
+      ],
+      [
+       8,
+       46
+      ]
+     ]
+    },
+    {
+     "reference": 30931568,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EnginePlayerOpacity.cpp",
+       "line": 14,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EnginePlayerOpacity.h",
+       "line": 26,
+       "symbol": "REFRESH_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 30956992,
+     "verified": 95,
+     "xor": [
+      [
+       9,
+       240
+      ],
+      [
+       10,
+       69
+      ],
+      [
+       85,
+       80
+      ],
+      [
+       86,
+       194
+      ],
+      [
+       87,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 30978288,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EnginePlayerOpacity.cpp",
+       "line": 12,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EnginePlayerOpacity.h",
+       "line": 18,
+       "symbol": "DRAW_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 31003712,
+     "verified": 92,
+     "xor": []
+    },
+    {
+     "reference": 31002464,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePlayerPartVisibility.h",
+       "line": 182,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 31027888,
+     "verified": 96,
+     "xor": [
+      [
+       43,
+       112
+      ],
+      [
+       44,
+       13
+      ],
+      [
+       68,
+       144
+      ],
+      [
+       69,
+       19
+      ]
+     ]
+    },
+    {
+     "reference": 31010368,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeArmPoseInvalidation.h",
+       "line": 37,
+       "symbol": "RVA"
+      },
+      {
+       "file": "NativeArmPoseInvalidation.h",
+       "line": 66,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 31035792,
+     "verified": 91,
+     "xor": [
+      [
+       46,
+       64
+      ],
+      [
+       47,
+       34
+      ]
+     ]
+    },
+    {
+     "reference": 31011152,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeArmPoseInvalidation.h",
+       "line": 38,
+       "symbol": "FLUSH_RVA"
+      },
+      {
+       "file": "NativeArmPoseInvalidation.h",
+       "line": 62,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 31036576,
+     "verified": 95,
+     "xor": [
+      [
+       59,
+       64
+      ],
+      [
+       60,
+       34
+      ]
+     ]
+    },
+    {
+     "reference": 31020672,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EnginePlayerOpacity.cpp",
+       "line": 11,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EnginePlayerOpacity.h",
+       "line": 18,
+       "symbol": "GETTER_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 31046096,
+     "verified": 96,
+     "xor": [
+      [
+       22,
+       32
+      ],
+      [
+       23,
+       39
+      ],
+      [
+       69,
+       112
+      ],
+      [
+       70,
+       243
+      ],
+      [
+       71,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 31167797,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeHzbControl.h",
+       "line": 26,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeHzbControl.h",
+       "line": 37,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeHzbCulling.h",
+       "line": 82,
+       "symbol": "LWI_KEY_RVA"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 31193221,
+     "verified": 88,
+     "xor": [
+      [
+       9,
+       38
+      ],
+      [
+       10,
+       77
+      ],
+      [
+       27,
+       144
+      ],
+      [
+       28,
+       194
+      ],
+      [
+       34,
+       176
+      ],
+      [
+       35,
+       194
+      ],
+      [
+       45,
+       144
+      ],
+      [
+       46,
+       194
+      ]
+     ]
+    },
+    {
+     "reference": 31169712,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeHzbControl.h",
+       "line": 25,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeHzbControl.h",
+       "line": 38,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeHzbCulling.h",
+       "line": 105,
+       "symbol": "LWI_PASS_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 31195136,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 31590590,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 94,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 31616014,
+     "verified": 94,
+     "xor": [
+      [
+       1,
+       240
+      ],
+      [
+       2,
+       16
+      ]
+     ]
+    },
+    {
+     "reference": 31590595,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 40,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 31616019,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 31644095,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 93,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 31669519,
+     "verified": 93,
+     "xor": [
+      [
+       1,
+       240
+      ],
+      [
+       2,
+       48
+      ],
+      [
+       75,
+       80
+      ],
+      [
+       76,
+       66
+      ],
+      [
+       89,
+       80
+      ],
+      [
+       90,
+       66
+      ]
+     ]
+    },
+    {
+     "reference": 31644100,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 40,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 31669524,
+     "verified": 96,
+     "xor": [
+      [
+       70,
+       80
+      ],
+      [
+       71,
+       66
+      ],
+      [
+       84,
+       80
+      ],
+      [
+       85,
+       66
+      ]
+     ]
+    },
+    {
+     "reference": 31946992,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeDrawSkinSnapshot.h",
+       "line": 18,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeDrawSkinSnapshot.h",
+       "line": 36,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeDrawSkinSnapshot.h",
+       "line": 36,
+       "symbol": "code"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 31972416,
+     "verified": 95,
+     "xor": [
+      [
+       75,
+       208
+      ],
+      [
+       76,
+       70
+      ]
+     ]
+    },
+    {
+     "reference": 31951153,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EnginePlayerOpacity.cpp",
+       "line": 33,
+       "symbol": "stamp"
+      },
+      {
+       "file": "EnginePlayerOpacity.h",
+       "line": 76,
+       "symbol": "m_draw_caller"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 31976577,
+     "verified": 93,
+     "xor": []
+    },
+    {
+     "reference": 31953551,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 49,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 50,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 50,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 31978975,
+     "verified": 93,
+     "xor": [
+      [
+       1,
+       144
+      ],
+      [
+       2,
+       14
+      ],
+      [
+       49,
+       64
+      ],
+      [
+       50,
+       34
+      ]
+     ]
+    },
+    {
+     "reference": 31953556,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 52,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 31978980,
+     "verified": 96,
+     "xor": [
+      [
+       44,
+       64
+      ],
+      [
+       45,
+       34
+      ]
+     ]
+    },
+    {
+     "reference": 31955152,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EnginePlayerVisibilityProbe.cpp",
+       "line": 8,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EnginePlayerVisibilityProbe.h",
+       "line": 16,
+       "symbol": "FILTER_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 31980576,
+     "verified": 90,
+     "xor": []
+    },
+    {
+     "reference": 32024832,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 197,
+       "symbol": "hashed"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 198,
+       "symbol": "stamp"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 200,
+       "symbol": "stamp"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32050256,
+     "verified": 90,
+     "xor": []
+    },
+    {
+     "reference": 32035264,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeGradingIndexGuard.h",
+       "line": 21,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeGradingIndexGuard.h",
+       "line": 22,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeGradingIndexGuard.h",
+       "line": 23,
+       "symbol": "code"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32060688,
+     "verified": 96,
+     "xor": [
+      [
+       80,
+       128
+      ],
+      [
+       81,
+       98
+      ]
+     ]
+    },
+    {
+     "reference": 32048144,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 28,
+       "symbol": "TONE"
+      },
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 31,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativePipTonemap.h",
+       "line": 14,
+       "symbol": "RVA"
+      },
+      {
+       "file": "NativePipTonemap.h",
+       "line": 15,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32073568,
+     "verified": 91,
+     "xor": []
+    },
+    {
+     "reference": 32057152,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryGrading.h",
+       "line": 27,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryGrading.h",
+       "line": 28,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryGrading.h",
+       "line": 28,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryGrading.h",
+       "line": 28,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativePipTonemap.h",
+       "line": 16,
+       "symbol": "SCENE_RVA"
+      },
+      {
+       "file": "NativePipTonemap.h",
+       "line": 19,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32082576,
+     "verified": 96,
+     "xor": [
+      [
+       35,
+       176
+      ],
+      [
+       36,
+       81
+      ],
+      [
+       45,
+       94
+      ],
+      [
+       46,
+       205
+      ],
+      [
+       47,
+       3
+      ],
+      [
+       81,
+       208
+      ],
+      [
+       82,
+       80
+      ]
+     ]
+    },
+    {
+     "reference": 32340896,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeDrawSkinSnapshot.h",
+       "line": 19,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeDrawSkinSnapshot.h",
+       "line": 37,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeDrawSkinSnapshot.h",
+       "line": 37,
+       "symbol": "code"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32366752,
+     "verified": 93,
+     "xor": []
+    },
+    {
+     "reference": 32369312,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 93,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 95,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 95,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 97,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32395168,
+     "verified": 96,
+     "xor": [
+      [
+       23,
+       176
+      ],
+      [
+       24,
+       1
+      ],
+      [
+       35,
+       240
+      ],
+      [
+       36,
+       1
+      ],
+      [
+       42,
+       128
+      ],
+      [
+       43,
+       91
+      ]
+     ]
+    },
+    {
+     "reference": 32379184,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeHzbControl.h",
+       "line": 24,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeHzbControl.h",
+       "line": 30,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeHzbCulling.h",
+       "line": 59,
+       "symbol": "VISIBILITY_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32405040,
+     "verified": 94,
+     "xor": [
+      [
+       26,
+       128
+      ],
+      [
+       27,
+       193
+      ],
+      [
+       28,
+       1
+      ],
+      [
+       49,
+       50
+      ],
+      [
+       50,
+       192
+      ],
+      [
+       51,
+       1
+      ],
+      [
+       59,
+       96
+      ],
+      [
+       60,
+       199
+      ],
+      [
+       61,
+       1
+      ],
+      [
+       66,
+       64
+      ],
+      [
+       67,
+       211
+      ]
+     ]
+    },
+    {
+     "reference": 32476624,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 105,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 108,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 108,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 110,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32502480,
+     "verified": 92,
+     "xor": [
+      [
+       70,
+       80
+      ],
+      [
+       71,
+       2
+      ],
+      [
+       77,
+       128
+      ],
+      [
+       78,
+       220
+      ],
+      [
+       79,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 32479193,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 109,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 109,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 109,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 32505049,
+     "verified": 91,
+     "xor": [
+      [
+       1,
+       32
+      ],
+      [
+       2,
+       14
+      ],
+      [
+       23,
+       128
+      ],
+      [
+       24,
+       196
+      ],
+      [
+       25,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 32479198,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 85,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 32505054,
+     "verified": 94,
+     "xor": [
+      [
+       18,
+       128
+      ],
+      [
+       19,
+       196
+      ],
+      [
+       20,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 32480089,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "LightCapSortControl.h",
+       "line": 24,
+       "symbol": "REFERENCE_SITE"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 32505945,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 32484960,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSecondCameraPlainLightTest.h",
+       "line": 28,
+       "symbol": "REFERENCE_PREPARE"
+      },
+      {
+       "file": "NativeSecondCameraPlainLightTest.h",
+       "line": 29,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 32510816,
+     "verified": 94,
+     "xor": [
+      [
+       72,
+       240
+      ],
+      [
+       73,
+       12
+      ]
+     ]
+    },
+    {
+     "reference": 33004624,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 48,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 51,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 51,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 53,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33030704,
+     "verified": 94,
+     "xor": [
+      [
+       13,
+       160
+      ],
+      [
+       14,
+       192
+      ]
+     ]
+    },
+    {
+     "reference": 33004919,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeConsoleQueryAdmissionProbe.h",
+       "line": 34,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeConsoleQueryAdmissionProbe.h",
+       "line": 35,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeConsoleQueryAdmissionProbe.h",
+       "line": 35,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33030999,
+     "verified": 94,
+     "xor": [
+      [
+       1,
+       192
+      ],
+      [
+       2,
+       50
+      ]
+     ]
+    },
+    {
+     "reference": 33004924,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeConsoleQueryAdmissionProbe.h",
+       "line": 36,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 54,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33031004,
+     "verified": 92,
+     "xor": []
+    },
+    {
+     "reference": 33005184,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 49,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 51,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 51,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeObjectVisibilityProbe.h",
+       "line": 53,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33031264,
+     "verified": 92,
+     "xor": [
+      [
+       88,
+       32
+      ],
+      [
+       89,
+       118
+      ]
+     ]
+    },
+    {
+     "reference": 33007840,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 45,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 46,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 46,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 51,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33033920,
+     "verified": 94,
+     "xor": [
+      [
+       72,
+       224
+      ],
+      [
+       73,
+       197
+      ],
+      [
+       74,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 33012928,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 16,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 33,
+       "symbol": "signature"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33039008,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 33013520,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 47,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 48,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 48,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeWorkerVisibilityProbe.h",
+       "line": 51,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33039600,
+     "verified": 96,
+     "xor": [
+      [
+       52,
+       160
+      ],
+      [
+       53,
+       69
+      ]
+     ]
+    },
+    {
+     "reference": 33016192,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 17,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 33,
+       "symbol": "signature"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33042272,
+     "verified": 96,
+     "xor": [
+      [
+       92,
+       192
+      ],
+      [
+       93,
+       29
+      ]
+     ]
+    },
+    {
+     "reference": 33020212,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 57,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 57,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 57,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33046292,
+     "verified": 95,
+     "xor": [
+      [
+       23,
+       32
+      ],
+      [
+       24,
+       37
+      ],
+      [
+       63,
+       96
+      ],
+      [
+       64,
+       67
+      ]
+     ]
+    },
+    {
+     "reference": 33020217,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 62,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33046297,
+     "verified": 95,
+     "xor": [
+      [
+       18,
+       32
+      ],
+      [
+       19,
+       37
+      ],
+      [
+       58,
+       96
+      ],
+      [
+       59,
+       67
+      ]
+     ]
+    },
+    {
+     "reference": 33026288,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 44,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 46,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 46,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 48,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33052368,
+     "verified": 94,
+     "xor": [
+      [
+       57,
+       96
+      ],
+      [
+       58,
+       210
+      ]
+     ]
+    },
+    {
+     "reference": 33029008,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 54,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 56,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 56,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 58,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33055088,
+     "verified": 93,
+     "xor": []
+    },
+    {
+     "reference": 33050176,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 118,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 120,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 121,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 121,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 122,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33076256,
+     "verified": 92,
+     "xor": [
+      [
+       76,
+       192
+      ],
+      [
+       77,
+       29
+      ]
+     ]
+    },
+    {
+     "reference": 33057376,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 45,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 49,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 49,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33083456,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 33057381,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 59,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33083461,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 33058599,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 47,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 47,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33084679,
+     "verified": 89,
+     "xor": []
+    },
+    {
+     "reference": 33058604,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 51,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33084684,
+     "verified": 93,
+     "xor": []
+    },
+    {
+     "reference": 33067504,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 44,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 48,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 48,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 50,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33093584,
+     "verified": 94,
+     "xor": [
+      [
+       26,
+       160
+      ],
+      [
+       27,
+       195
+      ]
+     ]
+    },
+    {
+     "reference": 33075904,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightSection.h",
+       "line": 50,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryLightSection.h",
+       "line": 52,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLightSection.h",
+       "line": 53,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLightSection.h",
+       "line": 53,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryLightSection.h",
+       "line": 55,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLightSection.h",
+       "line": 56,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33101984,
+     "verified": 92,
+     "xor": [
+      [
+       16,
+       112
+      ],
+      [
+       17,
+       71
+      ]
+     ]
+    },
+    {
+     "reference": 33090416,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 92,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 95,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 95,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 96,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33116496,
+     "verified": 96,
+     "xor": [
+      [
+       73,
+       242
+      ],
+      [
+       74,
+       219
+      ],
+      [
+       83,
+       192
+      ],
+      [
+       84,
+       66
+      ],
+      [
+       88,
+       64
+      ],
+      [
+       89,
+       117
+      ]
+     ]
+    },
+    {
+     "reference": 33094384,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryProbe.h",
+       "line": 13,
+       "symbol": "COMPOSITOR_RVA"
+      },
+      {
+       "file": "NativeOrdinaryProbe.h",
+       "line": 15,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33120464,
+     "verified": 94,
+     "xor": [
+      [
+       77,
+       192
+      ],
+      [
+       78,
+       67
+      ]
+     ]
+    },
+    {
+     "reference": 33098528,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinarySharpen.h",
+       "line": 27,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinarySharpen.h",
+       "line": 29,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinarySharpen.h",
+       "line": 29,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinarySharpen.h",
+       "line": 32,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33124608,
+     "verified": 93,
+     "xor": [
+      [
+       57,
+       144
+      ],
+      [
+       58,
+       180
+      ],
+      [
+       59,
+       3
+      ],
+      [
+       75,
+       16
+      ],
+      [
+       76,
+       31
+      ],
+      [
+       89,
+       16
+      ],
+      [
+       90,
+       29
+      ]
+     ]
+    },
+    {
+     "reference": 33117584,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 28,
+       "symbol": "SELECTOR"
+      },
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 29,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33143664,
+     "verified": 95,
+     "xor": [
+      [
+       3,
+       8
+      ],
+      [
+       4,
+       193
+      ],
+      [
+       10,
+       104
+      ],
+      [
+       11,
+       78
+      ],
+      [
+       32,
+       64
+      ],
+      [
+       33,
+       115
+      ],
+      [
+       53,
+       64
+      ],
+      [
+       54,
+       19
+      ],
+      [
+       60,
+       168
+      ],
+      [
+       61,
+       77
+      ],
+      [
+       74,
+       24
+      ],
+      [
+       75,
+       223
+      ]
+     ]
+    },
+    {
+     "reference": 33117712,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeTemporalProbe.h",
+       "line": 16,
+       "symbol": "RVA"
+      },
+      {
+       "file": "NativeTemporalProbe.h",
+       "line": 17,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33143792,
+     "verified": 95,
+     "xor": []
+    },
+    {
+     "reference": 33133152,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightSection.h",
+       "line": 52,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLightSection.h",
+       "line": 56,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33159232,
+     "verified": 93,
+     "xor": [
+      [
+       80,
+       96
+      ],
+      [
+       81,
+       193
+      ]
+     ]
+    },
+    {
+     "reference": 33207856,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneFaultEvidence.h",
+       "line": 23,
+       "symbol": "CALLER"
+      },
+      {
+       "file": "NativeSceneFaultEvidence.h",
+       "line": 31,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33233936,
+     "verified": 94,
+     "xor": [
+      [
+       47,
+       240
+      ],
+      [
+       48,
+       244
+      ],
+      [
+       90,
+       16
+      ],
+      [
+       91,
+       37
+      ]
+     ]
+    },
+    {
+     "reference": 33207950,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneFaultEvidence.h",
+       "line": 23,
+       "symbol": "CALLER_RETURN"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33234030,
+     "verified": 95,
+     "xor": [
+      [
+       17,
+       48
+      ],
+      [
+       18,
+       43
+      ],
+      [
+       30,
+       16
+      ],
+      [
+       31,
+       39
+      ]
+     ]
+    },
+    {
+     "reference": 33209056,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 45,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 47,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 48,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33235136,
+     "verified": 90,
+     "xor": [
+      [
+       38,
+       224
+      ],
+      [
+       39,
+       64
+      ],
+      [
+       45,
+       208
+      ],
+      [
+       46,
+       239
+      ],
+      [
+       52,
+       88
+      ],
+      [
+       53,
+       194
+      ],
+      [
+       64,
+       192
+      ],
+      [
+       65,
+       54
+      ],
+      [
+       71,
+       104
+      ],
+      [
+       72,
+       194
+      ],
+      [
+       86,
+       64
+      ],
+      [
+       87,
+       55
+      ]
+     ]
+    },
+    {
+     "reference": 33209808,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 31,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 33,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 33,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 34,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33235888,
+     "verified": 92,
+     "xor": [
+      [
+       36,
+       160
+      ],
+      [
+       37,
+       64
+      ],
+      [
+       44,
+       208
+      ],
+      [
+       45,
+       225
+      ],
+      [
+       85,
+       104
+      ],
+      [
+       86,
+       194
+      ]
+     ]
+    },
+    {
+     "reference": 33210368,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 28,
+       "symbol": "COLOUR"
+      },
+      {
+       "file": "NativeOrdinaryBloom.h",
+       "line": 30,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativePipTonemap.h",
+       "line": 17,
+       "symbol": "OUTER_RVA"
+      },
+      {
+       "file": "NativePipTonemap.h",
+       "line": 18,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33236448,
+     "verified": 92,
+     "xor": [
+      [
+       69,
+       64
+      ],
+      [
+       70,
+       198
+      ],
+      [
+       82,
+       64
+      ],
+      [
+       83,
+       198
+      ]
+     ]
+    },
+    {
+     "reference": 33211440,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryProbe.h",
+       "line": 13,
+       "symbol": "POST_RVA"
+      },
+      {
+       "file": "NativeOrdinaryProbe.h",
+       "line": 14,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33237520,
+     "verified": 94,
+     "xor": [
+      [
+       58,
+       232
+      ],
+      [
+       59,
+       206
+      ]
+     ]
+    },
+    {
+     "reference": 33236756,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 91,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33262836,
+     "verified": 95,
+     "xor": [
+      [
+       1,
+       192
+      ],
+      [
+       2,
+       15
+      ]
+     ]
+    },
+    {
+     "reference": 33236761,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 39,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33262841,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 33236919,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 92,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33262999,
+     "verified": 96,
+     "xor": [
+      [
+       1,
+       64
+      ],
+      [
+       2,
+       13
+      ]
+     ]
+    },
+    {
+     "reference": 33236924,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 39,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33263004,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 33439184,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 25,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 28,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 28,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 29,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 33465264,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 33554608,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 46,
+       "symbol": "definition"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33580544,
+     "verified": 96,
+     "xor": [
+      [
+       3,
+       64
+      ],
+      [
+       4,
+       42
+      ],
+      [
+       70,
+       48
+      ],
+      [
+       71,
+       138
+      ]
+     ]
+    },
+    {
+     "reference": 33554611,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 20,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 33580547,
+     "verified": 0,
+     "xor": []
+    },
+    {
+     "reference": 34050608,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePoolMembership.h",
+       "line": 10,
+       "symbol": "RELEASE_RVA"
+      },
+      {
+       "file": "NativePoolReleaseBytes.h",
+       "line": 6,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34080080,
+     "verified": 544,
+     "xor": [
+      [
+       387,
+       64
+      ],
+      [
+       475,
+       192
+      ],
+      [
+       476,
+       21
+      ]
+     ]
+    },
+    {
+     "reference": 34088800,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 15,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 33,
+       "symbol": "signature"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34118272,
+     "verified": 94,
+     "xor": [
+      [
+       70,
+       253
+      ],
+      [
+       71,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 34115152,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineOutputSize.h",
+       "line": 120,
+       "symbol": "LOAD_RVA"
+      },
+      {
+       "file": "EngineOutputSize.h",
+       "line": 121,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34144624,
+     "verified": 96,
+     "xor": [
+      [
+       9,
+       251
+      ],
+      [
+       10,
+       1
+      ],
+      [
+       21,
+       85
+      ],
+      [
+       30,
+       87
+      ],
+      [
+       39,
+       219
+      ],
+      [
+       40,
+       1
+      ],
+      [
+       48,
+       61
+      ],
+      [
+       57,
+       203
+      ],
+      [
+       58,
+       1
+      ],
+      [
+       65,
+       120
+      ],
+      [
+       66,
+       204
+      ],
+      [
+       74,
+       104
+      ],
+      [
+       75,
+       60
+      ],
+      [
+       84,
+       253
+      ],
+      [
+       85,
+       1
+      ],
+      [
+       93,
+       253
+      ],
+      [
+       94,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 34129696,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 53,
+       "symbol": "rvas"
+      },
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 55,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34159168,
+     "verified": 91,
+     "xor": [
+      [
+       25,
+       77
+      ],
+      [
+       32,
+       77
+      ],
+      [
+       56,
+       77
+      ],
+      [
+       73,
+       75
+      ],
+      [
+       80,
+       75
+      ]
+     ]
+    },
+    {
+     "reference": 34129920,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 53,
+       "symbol": "0x208c720"
+      },
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 56,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34159392,
+     "verified": 91,
+     "xor": [
+      [
+       25,
+       53
+      ],
+      [
+       32,
+       53
+      ],
+      [
+       56,
+       53
+      ],
+      [
+       73,
+       53
+      ],
+      [
+       80,
+       59
+      ]
+     ]
+    },
+    {
+     "reference": 34130144,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 53,
+       "symbol": "0x208c800"
+      },
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 57,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34159616,
+     "verified": 91,
+     "xor": [
+      [
+       25,
+       59
+      ],
+      [
+       32,
+       59
+      ],
+      [
+       56,
+       59
+      ],
+      [
+       73,
+       59
+      ],
+      [
+       80,
+       59
+      ]
+     ]
+    },
+    {
+     "reference": 34158688,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 106,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 108,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 108,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 110,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34188160,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 34208448,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOcclusionHarvestOnce.h",
+       "line": 44,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeOcclusionHarvestOnce.h",
+       "line": 46,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOcclusionHarvestOnce.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOcclusionHarvestOnce.h",
+       "line": 47,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeOcclusionHarvestOnce.h",
+       "line": 49,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOcclusionHarvestOnce.h",
+       "line": 51,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeQueryDependencyProbe.h",
+       "line": 22,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeQueryDependencyProbe.h",
+       "line": 23,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeQueryDependencyProbe.h",
+       "line": 23,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeQueryDependencyProbe.h",
+       "line": 25,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34237920,
+     "verified": 94,
+     "xor": [
+      [
+       32,
+       48
+      ],
+      [
+       33,
+       85
+      ],
+      [
+       50,
+       224
+      ],
+      [
+       51,
+       42
+      ],
+      [
+       58,
+       87
+      ],
+      [
+       67,
+       112
+      ],
+      [
+       68,
+       85
+      ],
+      [
+       78,
+       219
+      ],
+      [
+       79,
+       3
+      ]
+     ]
+    },
+    {
+     "reference": 34330368,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EnginePlayerOpacity.cpp",
+       "line": 13,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EnginePlayerOpacity.h",
+       "line": 24,
+       "symbol": "PARAMS_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34359840,
+     "verified": 92,
+     "xor": [
+      [
+       39,
+       224
+      ],
+      [
+       40,
+       238
+      ],
+      [
+       41,
+       3
+      ],
+      [
+       85,
+       96
+      ],
+      [
+       86,
+       115
+      ]
+     ]
+    },
+    {
+     "reference": 34604576,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 111,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 175,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 177,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 177,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 178,
+       "symbol": "rva"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 34634048,
+     "verified": 95,
+     "xor": [
+      [
+       68,
+       40
+      ],
+      [
+       69,
+       37
+      ]
+     ],
+     "delta": 29472
+    },
+    {
+     "reference": 34604608,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 111,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 176,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 177,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 177,
+       "symbol": "code"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 34634080,
+     "verified": 96,
+     "xor": [
+      [
+       36,
+       40
+      ],
+      [
+       37,
+       37
+      ]
+     ],
+     "delta": 29472
+    },
+    {
+     "reference": 34670592,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineOutputSize.h",
+       "line": 116,
+       "symbol": "CREATE_RVA"
+      },
+      {
+       "file": "EngineOutputSize.h",
+       "line": 117,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34700064,
+     "verified": 94,
+     "xor": [
+      [
+       89,
+       224
+      ],
+      [
+       90,
+       202
+      ],
+      [
+       91,
+       3
+      ]
+     ]
+    },
+    {
+     "reference": 34672480,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineOutputSize.h",
+       "line": 118,
+       "symbol": "RESIZE_RVA"
+      },
+      {
+       "file": "EngineOutputSize.h",
+       "line": 119,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34701952,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 34684096,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 91,
+       "symbol": "0x2653c20"
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 94,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 34713568,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 34705472,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 91,
+       "symbol": "0x264b7b0"
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 96,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 34734944,
+     "verified": 96,
+     "xor": [
+      [
+       24,
+       176
+      ],
+      [
+       25,
+       253
+      ],
+      [
+       53,
+       192
+      ]
+     ]
+    },
+    {
+     "reference": 34854544,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeConsoleDrawCensus.h",
+       "line": 31,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeConsoleDrawCensus.h",
+       "line": 32,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeConsoleDrawCensus.h",
+       "line": 32,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeConsoleDrawCensus.h",
+       "line": 117,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 30,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 32,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 32,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 34884016,
+     "verified": 93,
+     "xor": []
+    },
+    {
+     "reference": 34854560,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeConsoleDrawCensus.h",
+       "line": 32,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 34884032,
+     "verified": 90,
+     "xor": []
+    },
+    {
+     "reference": 34856928,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 19,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 42,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 42,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 42,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 42,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 48,
+       "symbol": "rva"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 34886400,
+     "verified": 93,
+     "xor": []
+    },
+    {
+     "reference": 34873104,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 14,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 17,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 25,
+       "symbol": "code"
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 55,
+       "symbol": "code"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 34902576,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 34875088,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 29,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 32,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 32,
+       "symbol": "code"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34904560,
+     "verified": 94,
+     "xor": []
+    },
+    {
+     "reference": 34876320,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 28,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 32,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 32,
+       "symbol": "code"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 34905792,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 34876336,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeConsoleTargets.h",
+       "line": 32,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 34905808,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 35705024,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePlayerPartVisibility.h",
+       "line": 183,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 35734912,
+     "verified": 95,
+     "xor": []
+    },
+    {
+     "reference": 35793248,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineProjectionHook.h",
+       "line": 14,
+       "symbol": "BUILD_RVA"
+      },
+      {
+       "file": "EngineProjectionHook.h",
+       "line": 16,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 35822496,
+     "verified": 94,
+     "xor": [
+      [
+       28,
+       64
+      ],
+      [
+       29,
+       33
+      ]
+     ]
+    },
+    {
+     "reference": 35800208,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipLens.cpp",
+       "line": 9,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativePipLens.h",
+       "line": 20,
+       "symbol": "FRUSTUM_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 35829456,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 36029200,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePlayerPartVisibility.h",
+       "line": 184,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 36059024,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 36029248,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePlayerPartVisibility.h",
+       "line": 185,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 36059072,
+     "verified": 93,
+     "xor": []
+    },
+    {
+     "reference": 40155056,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 91,
+       "symbol": "0x2113cc0"
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 95,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 40188032,
+     "verified": 91,
+     "xor": []
+    },
+    {
+     "reference": 40177120,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneFaultEvidence.h",
+       "line": 23,
+       "symbol": "HOLDER"
+      },
+      {
+       "file": "NativeSceneFaultEvidence.h",
+       "line": 29,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 40210096,
+     "verified": 93,
+     "xor": [
+      [
+       22,
+       64
+      ],
+      [
+       23,
+       59
+      ],
+      [
+       77,
+       192
+      ],
+      [
+       78,
+       59
+      ]
+     ]
+    },
+    {
+     "reference": 40177146,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneFaultEvidence.h",
+       "line": 23,
+       "symbol": "HOLDER_RETURN"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 40210122,
+     "verified": 96,
+     "xor": [
+      [
+       51,
+       192
+      ],
+      [
+       52,
+       59
+      ],
+      [
+       68,
+       192
+      ],
+      [
+       69,
+       59
+      ]
+     ]
+    },
+    {
+     "reference": 40188960,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 91,
+       "symbol": "RVAS"
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 93,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 40221936,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 40765504,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.cpp",
+       "line": 15,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineControllerRegistration.h",
+       "line": 45,
+       "symbol": "ALLOCATE_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 40799696,
+     "verified": 96,
+     "xor": [
+      [
+       23,
+       152
+      ],
+      [
+       24,
+       55
+      ],
+      [
+       87,
+       152
+      ],
+      [
+       88,
+       55
+      ]
+     ]
+    },
+    {
+     "reference": 40774096,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 21,
+       "symbol": "timestamp"
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 27,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 34,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.h",
+       "line": 97,
+       "symbol": "hashed"
+      },
+      {
+       "file": "NativeSceneFaultEvidence.h",
+       "line": 23,
+       "symbol": "HELPER"
+      },
+      {
+       "file": "NativeSceneFaultEvidence.h",
+       "line": 27,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 40808288,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 40844352,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneWaitTiming.h",
+       "line": 21,
+       "symbol": "WAIT_RVA"
+      },
+      {
+       "file": "NativeSceneWaitTiming.h",
+       "line": 22,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 40878544,
+     "verified": 95,
+     "xor": [
+      [
+       10,
+       96
+      ],
+      [
+       11,
+       10
+      ],
+      [
+       76,
+       80
+      ],
+      [
+       77,
+       30
+      ]
+     ]
+    },
+    {
+     "reference": 45224848,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineBodyFollowing.cpp",
+       "line": 9,
+       "symbol": "hashed"
+      },
+      {
+       "file": "EngineBodyFollowing.h",
+       "line": 10,
+       "symbol": "CONTEXT_UPDATE_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 45261136,
+     "verified": 92,
+     "xor": []
+    },
+    {
+     "reference": 51804352,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 89,
+       "symbol": ""
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 51840624,
+     "verified": 94,
+     "xor": [
+      [
+       3,
+       240
+      ],
+      [
+       4,
+       96
+      ],
+      [
+       19,
+       80
+      ],
+      [
+       20,
+       96
+      ],
+      [
+       28,
+       80
+      ],
+      [
+       29,
+       96
+      ],
+      [
+       84,
+       176
+      ],
+      [
+       85,
+       97
+      ],
+      [
+       90,
+       176
+      ],
+      [
+       91,
+       97
+      ]
+     ]
+    },
+    {
+     "reference": 51810704,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineParryProbe.cpp",
+       "line": 15,
+       "symbol": "POST_ID_RVA"
+      },
+      {
+       "file": "EngineParryProbe.cpp",
+       "line": 17,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 51846976,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 51811472,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 91,
+       "symbol": ""
+      },
+      {
+       "file": "EngineParryProbe.cpp",
+       "line": 15,
+       "symbol": "POST_NAME_RVA"
+      },
+      {
+       "file": "EngineParryProbe.cpp",
+       "line": 16,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 51847744,
+     "verified": 96,
+     "xor": []
+    },
+    {
+     "reference": 51822208,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 90,
+       "symbol": ""
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 51858480,
+     "verified": 94,
+     "xor": [
+      [
+       8,
+       112
+      ],
+      [
+       9,
+       224
+      ],
+      [
+       10,
+       1
+      ],
+      [
+       47,
+       160
+      ],
+      [
+       48,
+       22
+      ],
+      [
+       49,
+       3
+      ],
+      [
+       54,
+       208
+      ],
+      [
+       55,
+       224
+      ],
+      [
+       56,
+       1
+      ],
+      [
+       68,
+       48
+      ],
+      [
+       83,
+       176
+      ],
+      [
+       84,
+       224
+      ],
+      [
+       85,
+       1
+      ]
+     ]
+    },
+    {
+     "reference": 51834640,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 101,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 51870912,
+     "verified": 92,
+     "xor": [
+      [
+       12,
+       80
+      ],
+      [
+       13,
+       96
+      ],
+      [
+       76,
+       240
+      ],
+      [
+       77,
+       10
+      ],
+      [
+       81,
+       112
+      ],
+      [
+       82,
+       11
+      ],
+      [
+       83,
+       3
+      ],
+      [
+       88,
+       112
+      ],
+      [
+       89,
+       96
+      ]
+     ]
+    },
+    {
+     "reference": 51842112,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 92,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 51878384,
+     "verified": 94,
+     "xor": [
+      [
+       17,
+       208
+      ],
+      [
+       18,
+       39
+      ],
+      [
+       36,
+       160
+      ],
+      [
+       37,
+       9
+      ],
+      [
+       38,
+       3
+      ],
+      [
+       43,
+       112
+      ],
+      [
+       44,
+       32
+      ],
+      [
+       57,
+       80
+      ],
+      [
+       73,
+       176
+      ],
+      [
+       74,
+       32
+      ]
+     ]
+    },
+    {
+     "reference": 51846624,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 93,
+       "symbol": ""
+      }
+     ],
+     "status": "ref",
+     "kind": "code",
+     "rva": 51882896,
+     "verified": 95,
+     "xor": [
+      [
+       8,
+       176
+      ],
+      [
+       9,
+       32
+      ],
+      [
+       47,
+       160
+      ],
+      [
+       48,
+       232
+      ],
+      [
+       49,
+       7
+      ],
+      [
+       54,
+       208
+      ],
+      [
+       55,
+       35
+      ],
+      [
+       68,
+       240
+      ],
+      [
+       69,
+       7
+      ],
+      [
+       79,
+       240
+      ],
+      [
+       80,
+       35
+      ]
+     ]
+    },
+    {
+     "reference": 51850368,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 95,
+       "symbol": ""
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 51886640,
+     "verified": 95,
+     "xor": [
+      [
+       41,
+       240
+      ],
+      [
+       42,
+       231
+      ],
+      [
+       49,
+       240
+      ],
+      [
+       50,
+       15
+      ],
+      [
+       78,
+       112
+      ]
+     ]
+    },
+    {
+     "reference": 51851008,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 94,
+       "symbol": ""
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 51887280,
+     "verified": 92,
+     "xor": [
+      [
+       6,
+       240
+      ],
+      [
+       7,
+       225
+      ],
+      [
+       25,
+       80
+      ],
+      [
+       77,
+       80
+      ],
+      [
+       78,
+       224
+      ],
+      [
+       85,
+       48
+      ]
+     ],
+     "delta": 36272
+    },
+    {
+     "reference": 51851056,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineParryProbe.cpp",
+       "line": 15,
+       "symbol": "GET_POSITION_RVA"
+      },
+      {
+       "file": "EngineParryProbe.cpp",
+       "line": 19,
+       "symbol": "hashed"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 51887328,
+     "verified": 91,
+     "xor": [
+      [
+       29,
+       80
+      ],
+      [
+       30,
+       224
+      ],
+      [
+       37,
+       48
+      ],
+      [
+       74,
+       176
+      ],
+      [
+       75,
+       26
+      ],
+      [
+       81,
+       240
+      ],
+      [
+       82,
+       26
+      ],
+      [
+       87,
+       208
+      ],
+      [
+       88,
+       225
+      ]
+     ]
+    },
+    {
+     "reference": 56533008,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineRigidBodyVelocityProbe.cpp",
+       "line": 18,
+       "symbol": "stamp"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 56570288,
+     "verified": 0,
+     "votes": 2
+    },
+    {
+     "reference": 56884496,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 114,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 56922288,
+     "verified": 0,
+     "votes": 1
+    },
+    {
+     "reference": 57064224,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.cpp",
+       "line": 104,
+       "symbol": "r"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 57102032,
+     "verified": 0,
+     "votes": 3
+    },
+    {
+     "reference": 57065440,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.cpp",
+       "line": 104,
+       "symbol": "r"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 57103248,
+     "verified": 0,
+     "votes": 2
+    },
+    {
+     "reference": 57478296,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 24,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 38,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 54,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 57516128,
+     "verified": 0,
+     "votes": 4
+    },
+    {
+     "reference": 57478320,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 17,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 24,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 38,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeCommandResourceEvidence.h",
+       "line": 54,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 57516152,
+     "verified": 0,
+     "votes": 1
+    },
+    {
+     "reference": 58345536,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 109,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 58383344,
+     "verified": 0,
+     "votes": 3
+    },
+    {
+     "reference": 58346264,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 36,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 58384072,
+     "verified": 0,
+     "votes": 3
+    },
+    {
+     "reference": 58555776,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 42,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 42,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeSceneClearProbe.h",
+       "line": 48,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 58593584,
+     "verified": 0,
+     "votes": 3
+    },
+    {
+     "reference": 63456092,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipTonemap.cpp",
+       "line": 73,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 63493980,
+     "verified": 0,
+     "votes": 1616
+    },
+    {
+     "reference": 63456436,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipTonemap.cpp",
+       "line": 74,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 63494324,
+     "verified": 0,
+     "votes": 3756
+    },
+    {
+     "reference": 67108864,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "DxgiProxyBridge.h",
+       "line": 35,
+       "symbol": ""
+      },
+      {
+       "file": "DxgiProxyBridge.h",
+       "line": 42,
+       "symbol": ""
+      }
+     ],
+     "status": "unmapped",
+     "kind": "data"
+    },
+    {
+     "reference": 80363531,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 98,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 80404585,
+     "verified": 0,
+     "votes": 4
+    },
+    {
+     "reference": 80429059,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeAsyncLightingControl.h",
+       "line": 51,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeAsyncLightingControl.h",
+       "line": 51,
+       "symbol": ""
+      },
+      {
+       "file": "NativeHzbCulling.h",
+       "line": 19,
+       "symbol": "SWITCH_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 80470137,
+     "verified": 0,
+     "votes": 2
+    },
+    {
+     "reference": 80429173,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeAsyncLightingControl.h",
+       "line": 26,
+       "symbol": "TILED_SWITCH"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 80470243,
+     "verified": 0,
+     "votes": 3
+    },
+    {
+     "reference": 80429184,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 98,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 80470256,
+     "verified": 0,
+     "votes": 11
+    },
+    {
+     "reference": 80442350,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeAsyncLightingControl.h",
+       "line": 26,
+       "symbol": "ASYNC_SWITCH"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 80485324,
+     "verified": 0,
+     "votes": 7
+    },
+    {
+     "reference": 81035008,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeAsyncLightingControl.h",
+       "line": 51,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeAsyncLightingControl.h",
+       "line": 51,
+       "symbol": ""
+      },
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 54,
+       "symbol": "0x19463c0"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 81076096,
+     "verified": 0,
+     "votes": 362
+    },
+    {
+     "reference": 81035068,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeDrawSkinSnapshot.h",
+       "line": 24,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeDrawSkinSnapshot.h",
+       "line": 50,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 81076156,
+     "verified": 0,
+     "votes": 101
+    },
+    {
+     "reference": 81145408,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 62,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 81186560,
+     "verified": 0,
+     "votes": 348
+    },
+    {
+     "reference": 81825368,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineRigidBodyVelocityProbe.cpp",
+       "line": 18,
+       "symbol": "stamp"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 81867184,
+     "verified": 0,
+     "votes": 471
+    },
+    {
+     "reference": 81837728,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 504,
+       "symbol": "rva"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 550,
+       "symbol": "rva"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 1299,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 81879584,
+     "verified": 0,
+     "votes": 153
+    },
+    {
+     "reference": 81847408,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 108,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 81889312,
+     "verified": 0,
+     "votes": 90
+    },
+    {
+     "reference": 81847416,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 108,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 81889320,
+     "verified": 0,
+     "votes": 86
+    },
+    {
+     "reference": 82933572,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineCinematicState.h",
+       "line": 16,
+       "symbol": "FLAGS_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 82975480,
+     "verified": 0,
+     "votes": 82
+    },
+    {
+     "reference": 82933592,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 131,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 82975504,
+     "verified": 0,
+     "votes": 4
+    },
+    {
+     "reference": 82933600,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineChainswordRev.cpp",
+       "line": 66,
+       "symbol": ""
+      }
+     ],
+     "status": "ref-near",
+     "kind": "data",
+     "rva": 82975512,
+     "verified": 0,
+     "votes": 4,
+     "anchor": 82933592
+    },
+    {
+     "reference": 82933608,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipExperiment.h",
+       "line": 27,
+       "symbol": "MANAGER_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 82975520,
+     "verified": 0,
+     "votes": 54
+    },
+    {
+     "reference": 83040392,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePlayerPartVisibility.h",
+       "line": 187,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativePlayerPartVisibility.h",
+       "line": 188,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83082632,
+     "verified": 0,
+     "votes": 350
+    },
+    {
+     "reference": 83040400,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePlayerPartVisibility.h",
+       "line": 180,
+       "symbol": ""
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83082640,
+     "verified": 0,
+     "votes": 8
+    },
+    {
+     "reference": 83045376,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.h",
+       "line": 48,
+       "symbol": "SET_STATE_SLOT_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83087616,
+     "verified": 0,
+     "votes": 2
+    },
+    {
+     "reference": 83045384,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "EngineControllerRegistration.h",
+       "line": 47,
+       "symbol": "STATE_SLOT_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83087624,
+     "verified": 0,
+     "votes": 3
+    },
+    {
+     "reference": 83347144,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 71,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryPacket.h",
+       "line": 39,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativePipLens.h",
+       "line": 20,
+       "symbol": "LIST_RVA"
+      },
+      {
+       "file": "NativePipTonemap.cpp",
+       "line": 69,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeRenderProbe.h",
+       "line": 22,
+       "symbol": "LIST_RVA"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83389360,
+     "verified": 0,
+     "votes": 285
+    },
+    {
+     "reference": 83365248,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "FarLightCacheControl.h",
+       "line": 22,
+       "symbol": "REFERENCE_CACHE"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83407488,
+     "verified": 0,
+     "votes": 27
+    },
+    {
+     "reference": 83480592,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.cpp",
+       "line": 355,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryBloom.cpp",
+       "line": 358,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativePipTonemap.cpp",
+       "line": 58,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83522832,
+     "verified": 0,
+     "votes": 17
+    },
+    {
+     "reference": 83553992,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryVolumeFrame.h",
+       "line": 31,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83596600,
+     "verified": 0,
+     "votes": 93
+    },
+    {
+     "reference": 83554184,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 23,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowCache.h",
+       "line": 58,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowFit.h",
+       "line": 51,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 52,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 120,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 124,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83596488,
+     "verified": 0,
+     "votes": 45
+    },
+    {
+     "reference": 83554224,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryReflectionSelection.h",
+       "line": 98,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83596522,
+     "verified": 0,
+     "votes": 18
+    },
+    {
+     "reference": 83556368,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 70,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadingControl.h",
+       "line": 23,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 47,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryShadowLights.h",
+       "line": 53,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83598736,
+     "verified": 0,
+     "votes": 18
+    },
+    {
+     "reference": 83556416,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.cpp",
+       "line": 345,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryLateEffect.h",
+       "line": 34,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativePipTonemap.cpp",
+       "line": 71,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83598752,
+     "verified": 0,
+     "votes": 143
+    },
+    {
+     "reference": 83558280,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipTonemap.cpp",
+       "line": 73,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83600616,
+     "verified": 0,
+     "votes": 1
+    },
+    {
+     "reference": 83558284,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativePipTonemap.cpp",
+       "line": 74,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref-near",
+     "kind": "data",
+     "rva": 83600620,
+     "verified": 0,
+     "votes": 1,
+     "anchor": 83558280
+    },
+    {
+     "reference": 83823544,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeTextureContract.h",
+       "line": 121,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83866608,
+     "verified": 0,
+     "votes": 451
+    },
+    {
+     "reference": 83823560,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 47,
+       "symbol": ""
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83866584,
+     "verified": 0,
+     "votes": 1
+    },
+    {
+     "reference": 83823568,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 47,
+       "symbol": ""
+      },
+      {
+       "file": "NativeOrdinaryLightVisibility.h",
+       "line": 112,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeQueryDependencyProbe.h",
+       "line": 38,
+       "symbol": "rva"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 1079,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83866592,
+     "verified": 0,
+     "votes": 4
+    },
+    {
+     "reference": 83823624,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 100,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectConstantGetterProbe.h",
+       "line": 136,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 21,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeObjectConstantsSnapshot.h",
+       "line": 39,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryPacket.h",
+       "line": 39,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeQueryDependencyProbe.h",
+       "line": 38,
+       "symbol": "rva"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 1078,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83866664,
+     "verified": 0,
+     "votes": 1556
+    },
+    {
+     "reference": 83823632,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryPacket.h",
+       "line": 37,
+       "symbol": ""
+      },
+      {
+       "file": "NativeQueryDependencyProbe.h",
+       "line": 39,
+       "symbol": "rva"
+      },
+      {
+       "file": "Sm2Probe.cpp",
+       "line": 2439,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 83866672,
+     "verified": 0,
+     "votes": 2501
+    },
+    {
+     "reference": 84462248,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 84,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 87,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeQueryDependencyProbe.h",
+       "line": 31,
+       "symbol": "rva"
+      },
+      {
+       "file": "NativeTextureContract.h",
+       "line": 120,
+       "symbol": "rva"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 84506096,
+     "verified": 0,
+     "votes": 1793
+    },
+    {
+     "reference": 84462256,
+     "image": "exe",
+     "sites": [
+      {
+       "file": "NativeOrdinaryBloom.cpp",
+       "line": 45,
+       "symbol": ""
+      },
+      {
+       "file": "NativeOrdinaryTextureCreation.cpp",
+       "line": 25,
+       "symbol": ""
+      },
+      {
+       "file": "NativeTextureContract.h",
+       "line": 116,
+       "symbol": ""
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 84506112,
+     "verified": 0,
+     "votes": 2
+    }
+   ]
+  },
+  {
+   "image": "dll",
+   "name": "2026-11-27",
+   "reference_timestamp": 1791224681,
+   "timestamp": 1794952900,
+   "size_of_image": 73543680,
+   "entries": [
+    {
+     "reference": 14074224,
+     "image": "dll",
+     "sites": [
+      {
+       "file": "NativeFaultEvidence.h",
+       "line": 14,
+       "symbol": "FUNCTION_RVA"
+      },
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 57,
+       "symbol": "0x6ac3eb69"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 14075664,
+     "verified": 96,
+     "xor": [
+      [
+       10,
+       160
+      ],
+      [
+       11,
+       173
+      ]
+     ],
+     "delta": 1440
+    },
+    {
+     "reference": 14074268,
+     "image": "dll",
+     "sites": [
+      {
+       "file": "NativeFaultEvidence.h",
+       "line": 14,
+       "symbol": "RVA"
+      }
+     ],
+     "status": "leaf-moved",
+     "kind": "code",
+     "rva": 14075708,
+     "verified": 94,
+     "xor": [
+      [
+       69,
+       224
+      ],
+      [
+       70,
+       116
+      ],
+      [
+       71,
+       3
+      ],
+      [
+       76,
+       240
+      ],
+      [
+       77,
+       60
+      ],
+      [
+       78,
+       1
+      ],
+      [
+       86,
+       240
+      ],
+      [
+       87,
+       60
+      ],
+      [
+       88,
+       1
+      ]
+     ],
+     "delta": 1440
+    },
+    {
+     "reference": 20357344,
+     "image": "dll",
+     "sites": [
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 57,
+       "symbol": "0xd6c170"
+      }
+     ],
+     "status": "moved",
+     "kind": "code",
+     "rva": 20293632,
+     "verified": 95,
+     "xor": [
+      [
+       26,
+       160
+      ],
+      [
+       27,
+       20
+      ],
+      [
+       51,
+       96
+      ],
+      [
+       52,
+       235
+      ],
+      [
+       53,
+       3
+      ],
+      [
+       58,
+       224
+      ],
+      [
+       59,
+       171
+      ],
+      [
+       71,
+       224
+      ],
+      [
+       72,
+       171
+      ]
+     ]
+    },
+    {
+     "reference": 66876160,
+     "image": "dll",
+     "sites": [
+      {
+       "file": "NativeTrackerHandleGuard.h",
+       "line": 57,
+       "symbol": "0x136a0e0"
+      }
+     ],
+     "status": "ref",
+     "kind": "data",
+     "rva": 66839360,
+     "verified": 0,
+     "votes": 334
     }
    ]
   }

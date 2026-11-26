@@ -48,7 +48,7 @@ int main() {
         require(EngineWorldMarkers::matches_build(EngineCameraProbe::BUILD_TIMESTAMP,SYNTH(EngineWorldMarkers::PROLOGUE)),"verified marker function must match");
         auto bad=std::array<uint8_t,EngineWorldMarkers::PROLOGUE.size()>{};
         require(!EngineWorldMarkers::matches_build(0,SYNTH(EngineWorldMarkers::PROLOGUE)) && !EngineWorldMarkers::matches_build(EngineCameraProbe::BUILD_TIMESTAMP,bad),"different builds must be refused");
-        require(EngineWorldMarkers::matches_build(game_build_ported::EXE,game_build_ported::code(EngineWorldMarkers::WORLD_VIEW_RVA)),"the 2026-10-21 marker function matches");
+        require(EngineWorldMarkers::matches_build(game_build_ported::EXE,game_build_ported::code(EngineWorldMarkers::WORLD_VIEW_RVA)),"the ported build's marker function matches");
         require(probe.install(reinterpret_cast<void*>(&native_view),reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr))),"actual native detour must install");
         std::array<uint8_t,EngineCameraProbe::SOURCE_CAMERA_SIZE> camera{};
         std::array<uint8_t,0x28> object{};

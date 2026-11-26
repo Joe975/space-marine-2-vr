@@ -84,7 +84,6 @@ inline constexpr Delta DELTA_EXE_6AD10FCB_1EE1130[]{{26,0x80},{27,0x05},{49,0x80
 inline constexpr Delta DELTA_EXE_6AD10FCB_1EF8DD0[]{{77,0x40},{78,0x1d}};
 inline constexpr Delta DELTA_EXE_6AD10FCB_1EF97D9[]{{23,0x40},{24,0x05}};
 inline constexpr Delta DELTA_EXE_6AD10FCB_1EF97DE[]{{18,0x40},{19,0x05}};
-inline constexpr Delta DELTA_EXE_6AD10FCB_1EF9E99[]{{50,0x80},{51,0x03}};
 inline constexpr Delta DELTA_EXE_6AD10FCB_1F79C50[]{{13,0x80},{14,0x03}};
 inline constexpr Delta DELTA_EXE_6AD10FCB_1F79E80[]{{88,0x40},{89,0x07}};
 inline constexpr Delta DELTA_EXE_6AD10FCB_1F7A8E0[]{{72,0xc0},{73,0x07}};
@@ -234,7 +233,6 @@ inline constexpr Entry ENTRIES_EXE_6AD10FCB[]{
     {0x1e79294,0x1e795d4,96,{}},
     {0x1e798d0,0x1e79c10,90,{}},
     {0x1e8a900,0x1e8ac40,90,{}},
-    {0x1e8ac40,0x1e8af80,95,{}},
     {0x1e8d1c0,0x1e8d500,96,{}},
     {0x1e90410,0x1e90750,91,{}},
     {0x1e92740,0x1e92a80,96,DELTA_EXE_6AD10FCB_1E92740},
@@ -245,9 +243,7 @@ inline constexpr Entry ENTRIES_EXE_6AD10FCB[]{
     {0x1ef97d9,0x1ef9b19,91,DELTA_EXE_6AD10FCB_1EF97D9},
     {0x1ef97de,0x1ef9b1e,94,DELTA_EXE_6AD10FCB_1EF97DE},
     {0x1ef9b59,0x1ef9e99,94,{}},
-    {0x1ef9e99,0x1efa1d9,90,DELTA_EXE_6AD10FCB_1EF9E99},
     {0x1efae60,0x1efb1a0,94,{}},
-    {0x1efb1a0,0x1efb4e0,90,{}},
     {0x1f79c50,0x1f79f90,94,DELTA_EXE_6AD10FCB_1F79C50},
     {0x1f79d77,0x1f7a0b7,94,{}},
     {0x1f79d7c,0x1f7a0bc,92,{}},
@@ -363,7 +359,6 @@ inline constexpr Entry ENTRIES_EXE_6AD10FCB[]{
     {0x4f32c00,0x4f32bf0,0,{}},
     {0x4f32c08,0x4f32bf8,0,{}},
     {0x4f7c6c8,0x4f7c688,0,{}},
-    {0x4f80c60,0x4f80b40,0,{}},
     {0x4f80d80,0x4f80c60,0,{}},
     {0x4f9d010,0x4f9cee0,0,{}},
     {0x4faeec8,0x4faee88,0,{}},
@@ -392,7 +387,410 @@ inline constexpr Entry ENTRIES_DLL_6AD110A6[]{
     {0x3fc7300,0x3fc7300,0,{}},
 };
 
+inline constexpr Delta DELTA_EXE_6AFCCA92_318A00[]{{42,0x50},{43,0x49}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_319580[]{{9,0xf0},{10,0x8d},{11,0x01},{85,0xa0},{86,0x94}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_319590[]{{69,0xa0},{70,0x94},{88,0xa0},{89,0x94}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_31A0C0[]{{92,0x70},{93,0x46}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_322540[]{{9,0xc0},{10,0x86},{25,0xc0},{26,0x87},{56,0xf8},{57,0xe4}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_322550[]{{9,0xc0},{10,0x87},{40,0xf8},{41,0xe4},{92,0x18},{93,0xe5}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_400000[]{{71,0xa0},{72,0x97},{86,0x80},{87,0x70},{88,0x03}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_5623D0[]{{82,0x60},{83,0x42}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_BF3690[]{{67,0x10},{68,0x56}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_D6C170[]{{27,0xc0},{28,0x03},{68,0x60},{69,0x4f},{88,0x30},{89,0xa7}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_D6C19C[]{{24,0x60},{25,0x4f},{44,0x30},{45,0xa7}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_E3E350[]{{20,0x81},{21,0xb6},{22,0x03},{40,0xf8},{41,0x9b},{74,0x30},{75,0x4b},{87,0xd0},{88,0xb9}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_E46DC0[]{{24,0x80},{25,0xec},{26,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_E55820[]{{19,0x80},{20,0x93}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_E58010[]{{57,0xa0},{58,0xab},{59,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_F4FE30[]{{70,0x20},{71,0x63}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1007A20[]{{61,0x90},{62,0xb6},{63,0x03},{70,0x50},{71,0xcc},{90,0x30},{91,0xcc}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_12AED3E[]{{3,0x50},{4,0xe5},{13,0xf0},{14,0xde},{15,0x01},{20,0x80},{21,0xbe},{88,0xa2}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1343F10[]{{33,0x0b},{54,0x20},{55,0x78}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_134C2E0[]{{10,0x70},{11,0x9d},{12,0x3f}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_134C30C[]{{69,0xe0},{70,0xe9},{76,0xd0},{77,0x69},{86,0xd0},{87,0x69}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_136A0E0[]{{12,0x50},{13,0xf6},{14,0x03},{25,0x90},{26,0xc0},{69,0xf0},{70,0x6f}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_13A2000[]{{12,0xa8},{13,0xa1},{26,0x98},{27,0xa1},{40,0x68},{41,0xa2}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_13A4476[]{{6,0x23},{26,0x23},{32,0x70},{33,0x62},{45,0x70},{46,0x62}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_13A7400[]{{13,0x90},{14,0xa1},{15,0x07},{58,0xc0},{59,0x4d},{73,0x20},{74,0x3e}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_16EFA00[]{{29,0x10},{30,0xf6},{31,0x1f},{42,0x10},{43,0xf6},{44,0x1f},{88,0x60},{89,0x11}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_16EFD00[]{{2,0xf0},{3,0x70},{45,0x30},{46,0xf2},{47,0x1f},{58,0x30},{59,0xf2},{60,0x1f}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_17353B0[]{{2,0x5c},{3,0x56},{18,0xbc},{19,0x56},{50,0xc4},{51,0x56},{82,0xbc},{83,0x56}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_18033BF[]{{5,0xd0},{6,0x45},{18,0x50},{19,0x4e}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1804A70[]{{56,0xe0},{57,0x15},{63,0x80},{64,0xd6},{65,0x03},{81,0xb0},{82,0x11}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1805940[]{{27,0xf0},{28,0x47},{36,0xb0},{37,0x7c}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1805CAB[]{{1,0xf0},{2,0x14},{13,0xc0},{14,0x6a},{24,0x70},{25,0xa9},{26,0x01},{31,0x10},{32,0x74},{36,0x30},{37,0x2c},{43,0x30},{44,0xa9},{45,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1805CB0[]{{8,0xc0},{9,0x6a},{19,0x70},{20,0xa9},{21,0x01},{26,0x10},{27,0x74},{31,0x30},{32,0x2c},{38,0x30},{39,0xa9},{40,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1806490[]{{3,0x10},{4,0x59},{32,0xb0},{33,0x73},{72,0x30},{73,0x14},{83,0xd0},{84,0x74}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1806BD3[]{{58,0xd0},{59,0x3d},{89,0x30},{90,0x69}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1806FC6[]{{3,0x70},{4,0xb0},{5,0x03},{8,0x30},{9,0x26},{23,0x78},{24,0xfc},{30,0x10},{31,0xac},{42,0xf0},{43,0xeb},{44,0x0f},{49,0x78},{50,0x69},{61,0x30},{62,0x62},{78,0x10},{79,0x69},{85,0x10},{86,0x69}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A47E[]{{1,0xd0},{2,0x1d},{15,0x08},{16,0xd9},{27,0x10},{28,0xe2},{29,0x01},{46,0x18},{47,0xd9},{63,0x30},{64,0xe2},{65,0x01},{81,0x10},{82,0xd9}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A483[]{{10,0x08},{11,0xd9},{22,0x10},{23,0xe2},{24,0x01},{41,0x18},{42,0xd9},{58,0x30},{59,0xe2},{60,0x01},{76,0x10},{77,0xd9}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A643[]{{1,0xb0},{2,0x6b},{20,0x38},{21,0xd9},{25,0x10},{26,0xe6},{27,0x01},{39,0x30},{40,0xd9},{67,0x10},{68,0xd9}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A6D0[]{{13,0xf0},{14,0x6d},{61,0x50},{62,0x6d},{80,0x08},{81,0xdf},{85,0xf0},{86,0xe7},{87,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A6E1[]{{44,0x50},{45,0x6d},{63,0x08},{64,0xdf},{68,0xf0},{69,0xe7},{70,0x01},{91,0xf8},{92,0xdf}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A70C[]{{1,0x50},{2,0x6d},{20,0x08},{21,0xdf},{25,0xf0},{26,0xe7},{27,0x01},{48,0xf8},{49,0xdf},{53,0x30},{54,0xe6},{55,0x01},{74,0x08},{75,0xdc},{85,0xb0},{86,0x1d},{92,0x10},{93,0xdf}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A849[]{{1,0xb0},{2,0x6f},{20,0x08},{21,0xd9},{25,0x70},{26,0xe2},{27,0x01},{41,0x10},{42,0xd9},{77,0x38},{78,0xd9},{85,0xf0},{86,0xe2},{87,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A96F[]{{1,0x70},{2,0x37},{8,0xf0},{9,0xdb},{55,0x18},{56,0xdb},{67,0x10},{68,0xee},{69,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180A974[]{{3,0xf0},{4,0xdb},{50,0x18},{51,0xdb},{62,0x10},{63,0xee},{64,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180AA54[]{{1,0x50},{2,0x3b},{29,0x08},{30,0xd9},{37,0x10},{38,0xee},{39,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180AA59[]{{24,0x08},{25,0xd9},{32,0x10},{33,0xee},{34,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180AE4B[]{{39,0xb0},{40,0x37},{51,0x08},{52,0xe9},{59,0x30},{60,0xe6},{61,0x01},{75,0x38},{76,0xe9},{80,0x10},{81,0xe6},{82,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180AE76[]{{8,0x08},{9,0xe9},{16,0x30},{17,0xe6},{18,0x01},{32,0x38},{33,0xe9},{37,0x10},{38,0xe6},{39,0x01},{75,0x08},{76,0xef},{80,0x30},{81,0xe6},{82,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_180C150[]{{12,0xa0},{13,0x77},{17,0xa0},{18,0x77},{24,0x30},{25,0xeb},{34,0xb0},{35,0xc3},{70,0xa0},{71,0x77},{89,0x48},{90,0x40}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_185DE20[]{{13,0x30},{14,0x40},{28,0xd0},{29,0x7c}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1880E90[]{{89,0x68},{90,0xbd},{91,0x1f}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1881A70[]{{76,0x80},{77,0xf7},{78,0x0f}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_18827E0[]{{15,0x30},{16,0x20},{89,0x10},{90,0xa4},{91,0x1f}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1882910[]{{4,0x70},{5,0x46},{23,0x30},{24,0x41},{62,0x43}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1882918[]{{15,0x30},{16,0x41},{54,0x43}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1887940[]{{36,0x40},{37,0x31},{43,0x90},{44,0xf3},{45,0x01},{80,0xf0},{81,0x31},{88,0x40},{89,0x31}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1887A60[]{{27,0x40},{28,0x33},{34,0x90},{35,0xf1},{36,0x01},{69,0xd0},{70,0x37}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1887D50[]{{5,0xc0},{6,0x11},{12,0xf0},{13,0xf3},{14,0x01},{31,0xb0},{32,0x31},{58,0xd0},{59,0x31},{85,0xc0},{86,0x12},{92,0x90},{93,0xf2},{94,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_189DA30[]{{26,0xe8},{27,0x73},{69,0x80},{70,0xd4},{84,0xdc},{85,0x72},{91,0x70},{92,0x77}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_18A1DC0[]{{25,0x10},{26,0xaa},{27,0x01},{70,0xe4},{71,0xf3}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_18A20F0[]{{13,0x10},{14,0xaa},{15,0x01},{52,0xa4},{53,0xf1},{88,0xc0},{89,0x17}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_18E4E60[]{{35,0x80},{36,0xf0}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_19463C0[]{{26,0x30},{27,0x13},{51,0x70},{52,0x13},{58,0xc0},{59,0x53},{71,0xc0},{72,0x53}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D63870[]{{27,0x60},{82,0x70},{83,0x20}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D6C300[]{{9,0x90},{10,0xc3},{24,0x20},{25,0xde},{26,0x1f},{88,0x20},{89,0xd2},{90,0x1f}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D6ECA0[]{{31,0x90},{32,0x47},{41,0xe0},{42,0xde},{47,0x88},{48,0xee},{60,0x20},{61,0xdd},{66,0x88},{67,0xee},{84,0xf0},{85,0x43}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D76B50[]{{48,0x90},{49,0xc2},{50,0x01},{59,0x70},{60,0x30}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D7709D[]{{48,0x10},{49,0x31}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D77410[]{{44,0xd0},{45,0x3f},{70,0xf0},{71,0x2d},{87,0xd0},{88,0x2d}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D774A0[]{{7,0x50},{8,0x2e}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D7FA70[]{{9,0xf0},{10,0x45},{85,0x50},{86,0xc2},{87,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D90F60[]{{43,0x70},{44,0x0d},{68,0x90},{69,0x13}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D92E40[]{{46,0x40},{47,0x22}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D93150[]{{59,0x40},{60,0x22}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1D95680[]{{22,0x20},{23,0x27},{69,0x70},{70,0xf3},{71,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1DB9535[]{{9,0x26},{10,0x4d},{27,0x90},{28,0xc2},{34,0xb0},{35,0xc2},{45,0x90},{46,0xc2}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1E208BE[]{{1,0xf0},{2,0x10}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1E2D9BF[]{{1,0xf0},{2,0x30},{75,0x50},{76,0x42},{89,0x50},{90,0x42}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1E2D9C4[]{{70,0x50},{71,0x42},{84,0x50},{85,0x42}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1E778F0[]{{75,0xd0},{76,0x46}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1E7928F[]{{1,0x90},{2,0x0e},{49,0x40},{50,0x22}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1E79294[]{{44,0x40},{45,0x22}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1E8D1C0[]{{80,0x80},{81,0x62}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1E92740[]{{35,0xb0},{36,0x51},{45,0x5e},{46,0xcd},{47,0x03},{81,0xd0},{82,0x50}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1EDEAA0[]{{23,0xb0},{24,0x01},{35,0xf0},{36,0x01},{42,0x80},{43,0x5b}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1EE1130[]{{26,0x80},{27,0xc1},{28,0x01},{49,0x32},{50,0xc0},{51,0x01},{59,0x60},{60,0xc7},{61,0x01},{66,0x40},{67,0xd3}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1EF8DD0[]{{70,0x50},{71,0x02},{77,0x80},{78,0xdc},{79,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1EF97D9[]{{1,0x20},{2,0x0e},{23,0x80},{24,0xc4},{25,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1EF97DE[]{{18,0x80},{19,0xc4},{20,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1EFAE60[]{{72,0xf0},{73,0x0c}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F79C50[]{{13,0xa0},{14,0xc0}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F79D77[]{{1,0xc0},{2,0x32}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F79E80[]{{88,0x20},{89,0x76}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F7A8E0[]{{72,0xe0},{73,0xc5},{74,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F7BF10[]{{52,0xa0},{53,0x45}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F7C980[]{{92,0xc0},{93,0x1d}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F7D934[]{{23,0x20},{24,0x25},{63,0x60},{64,0x43}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F7D939[]{{18,0x20},{19,0x25},{58,0x60},{59,0x43}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F7F0F0[]{{57,0x60},{58,0xd2}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F84E40[]{{76,0xc0},{77,0x1d}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F891F0[]{{26,0xa0},{27,0xc3}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F8B2C0[]{{16,0x70},{17,0x47}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F8EB70[]{{73,0xf2},{74,0xdb},{83,0xc0},{84,0x42},{88,0x40},{89,0x75}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F8FAF0[]{{77,0xc0},{78,0x43}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F90B20[]{{57,0x90},{58,0xb4},{59,0x03},{75,0x10},{76,0x1f},{89,0x10},{90,0x1d}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F95590[]{{3,0x08},{4,0xc1},{10,0x68},{11,0x4e},{32,0x40},{33,0x73},{53,0x40},{54,0x13},{60,0xa8},{61,0x4d},{74,0x18},{75,0xdf}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1F99260[]{{80,0x60},{81,0xc1}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1FAB630[]{{47,0xf0},{48,0xf4},{90,0x10},{91,0x25}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1FAB68E[]{{17,0x30},{18,0x2b},{30,0x10},{31,0x27}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1FABAE0[]{{38,0xe0},{39,0x40},{45,0xd0},{46,0xef},{52,0x58},{53,0xc2},{64,0xc0},{65,0x36},{71,0x68},{72,0xc2},{86,0x40},{87,0x37}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1FABDD0[]{{36,0xa0},{37,0x40},{44,0xd0},{45,0xe1},{85,0x68},{86,0xc2}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1FAC000[]{{69,0x40},{70,0xc6},{82,0x40},{83,0xc6}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1FAC430[]{{58,0xe8},{59,0xce}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1FB2714[]{{1,0xc0},{2,0x0f}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_1FB27B7[]{{1,0x40},{2,0x0d}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_20000B0[]{{3,0x40},{4,0x2a},{70,0x30},{71,0x8a}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2079230[]{{387,0x40},{475,0xc0},{476,0x15}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2082760[]{{70,0xfd},{71,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2088E50[]{{9,0xfb},{10,0x01},{21,0x55},{30,0x57},{39,0xdb},{40,0x01},{48,0x3d},{57,0xcb},{58,0x01},{65,0x78},{66,0xcc},{74,0x68},{75,0x3c},{84,0xfd},{85,0x01},{93,0xfd},{94,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_208C720[]{{25,0x4d},{32,0x4d},{56,0x4d},{73,0x4b},{80,0x4b}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_208C800[]{{25,0x35},{32,0x35},{56,0x35},{73,0x35},{80,0x3b}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_208C8E0[]{{25,0x3b},{32,0x3b},{56,0x3b},{73,0x3b},{80,0x3b}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_209FAC0[]{{32,0x30},{33,0x55},{50,0xe0},{51,0x2a},{58,0x57},{67,0x70},{68,0x55},{78,0xdb},{79,0x03}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_20BD700[]{{39,0xe0},{40,0xee},{41,0x03},{85,0x60},{86,0x73}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2100620[]{{68,0x28},{69,0x25}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2100640[]{{36,0x28},{37,0x25}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2110800[]{{89,0xe0},{90,0xca},{91,0x03}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2119040[]{{24,0xb0},{25,0xfd},{53,0xc0}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2222960[]{{28,0x40},{29,0x21}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2650DE0[]{{22,0x40},{23,0x3b},{77,0xc0},{78,0x3b}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_2650DFA[]{{51,0xc0},{52,0x3b},{68,0xc0},{69,0x3b}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_26E0840[]{{23,0x98},{24,0x37},{87,0x98},{88,0x37}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_26F3C40[]{{10,0x60},{11,0x0a},{76,0x50},{77,0x1e}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_31678C0[]{{3,0xf0},{4,0x60},{19,0x50},{20,0x60},{28,0x50},{29,0x60},{84,0xb0},{85,0x61},{90,0xb0},{91,0x61}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_316BE80[]{{8,0x70},{9,0xe0},{10,0x01},{47,0xa0},{48,0x16},{49,0x03},{54,0xd0},{55,0xe0},{56,0x01},{68,0x30},{83,0xb0},{84,0xe0},{85,0x01}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_316EF10[]{{12,0x50},{13,0x60},{76,0xf0},{77,0x0a},{81,0x70},{82,0x0b},{83,0x03},{88,0x70},{89,0x60}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_3170C40[]{{17,0xd0},{18,0x27},{36,0xa0},{37,0x09},{38,0x03},{43,0x70},{44,0x20},{57,0x50},{73,0xb0},{74,0x20}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_3171DE0[]{{8,0xb0},{9,0x20},{47,0xa0},{48,0xe8},{49,0x07},{54,0xd0},{55,0x23},{68,0xf0},{69,0x07},{79,0xf0},{80,0x23}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_3172C80[]{{41,0xf0},{42,0xe7},{49,0xf0},{50,0x0f},{78,0x70}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_3172F00[]{{6,0xf0},{7,0xe1},{25,0x50},{77,0x50},{78,0xe0},{85,0x30}};
+inline constexpr Delta DELTA_EXE_6AFCCA92_3172F30[]{{29,0x50},{30,0xe0},{37,0x30},{74,0xb0},{75,0x1a},{81,0xf0},{82,0x1a},{87,0xd0},{88,0xe1}};
+inline constexpr Entry ENTRIES_EXE_6AFCCA92[]{
+    {0x3188a0,0x3178d0,92,{}},
+    {0x318a00,0x317a30,94,DELTA_EXE_6AFCCA92_318A00},
+    {0x319580,0x3185b0,94,DELTA_EXE_6AFCCA92_319580},
+    {0x319590,0x3185c0,95,DELTA_EXE_6AFCCA92_319590},
+    {0x319900,0x318930,96,{}},
+    {0x31a080,0x3190b0,96,{}},
+    {0x31a0a0,0x3190d0,95,{}},
+    {0x31a0c0,0x3190f0,96,DELTA_EXE_6AFCCA92_31A0C0},
+    {0x322540,0x321a40,96,DELTA_EXE_6AFCCA92_322540},
+    {0x322550,0x321a50,96,DELTA_EXE_6AFCCA92_322550},
+    {0x400000,0x3ff130,96,DELTA_EXE_6AFCCA92_400000},
+    {0x5623d0,0x5656c0,95,DELTA_EXE_6AFCCA92_5623D0},
+    {0xb85260,0xb88b40,92,{}},
+    {0xbf3690,0xbf6870,90,DELTA_EXE_6AFCCA92_BF3690},
+    {0xbf4596,0xbf7776,93,{}},
+    {0xbf45a0,0xbf7780,92,{}},
+    {0xbf596b,0xbf8b4b,93,{}},
+    {0xd6c170,0xd6f020,96,DELTA_EXE_6AFCCA92_D6C170},
+    {0xd6c19c,0xd6f04c,96,DELTA_EXE_6AFCCA92_D6C19C},
+    {0xe31800,0xe344e0,94,{}},
+    {0xe3e350,0xe41040,93,DELTA_EXE_6AFCCA92_E3E350},
+    {0xe46dc0,0xe49ab0,93,DELTA_EXE_6AFCCA92_E46DC0},
+    {0xe55820,0xe58510,89,DELTA_EXE_6AFCCA92_E55820},
+    {0xe58010,0xe5ad00,94,DELTA_EXE_6AFCCA92_E58010},
+    {0xf4fe30,0xf52cd0,95,DELTA_EXE_6AFCCA92_F4FE30},
+    {0x1000000,0x1003000,3,{}},
+    {0x1007a20,0x100aa20,94,DELTA_EXE_6AFCCA92_1007A20},
+    {0x12aed3e,0x12b2bbe,94,DELTA_EXE_6AFCCA92_12AED3E},
+    {0x1343f10,0x1347a40,96,DELTA_EXE_6AFCCA92_1343F10},
+    {0x134c2e0,0x134fe10,96,DELTA_EXE_6AFCCA92_134C2E0},
+    {0x134c30c,0x134fe3c,94,DELTA_EXE_6AFCCA92_134C30C},
+    {0x136a0e0,0x136e220,96,DELTA_EXE_6AFCCA92_136A0E0},
+    {0x13a2000,0x13a62d0,94,DELTA_EXE_6AFCCA92_13A2000},
+    {0x13a4476,0x13a8746,91,DELTA_EXE_6AFCCA92_13A4476},
+    {0x13a7400,0x13ab6d0,94,DELTA_EXE_6AFCCA92_13A7400},
+    {0x16efa00,0x16f4f30,92,DELTA_EXE_6AFCCA92_16EFA00},
+    {0x16efd00,0x16f5230,93,DELTA_EXE_6AFCCA92_16EFD00},
+    {0x171d2f0,0x1722460,94,{}},
+    {0x17353b0,0x173a520,96,DELTA_EXE_6AFCCA92_17353B0},
+    {0x18033bf,0x18084ef,92,DELTA_EXE_6AFCCA92_18033BF},
+    {0x18049d5,0x1809b05,96,{}},
+    {0x1804a70,0x1809ba0,93,DELTA_EXE_6AFCCA92_1804A70},
+    {0x1805940,0x180aa70,93,DELTA_EXE_6AFCCA92_1805940},
+    {0x1805cab,0x180addb,92,DELTA_EXE_6AFCCA92_1805CAB},
+    {0x1805cb0,0x180ade0,94,DELTA_EXE_6AFCCA92_1805CB0},
+    {0x1806490,0x180b5c0,94,DELTA_EXE_6AFCCA92_1806490},
+    {0x1806bd3,0x180bd03,93,DELTA_EXE_6AFCCA92_1806BD3},
+    {0x1806fc6,0x180c0f6,96,DELTA_EXE_6AFCCA92_1806FC6},
+    {0x180a47e,0x180f5ae,95,DELTA_EXE_6AFCCA92_180A47E},
+    {0x180a483,0x180f5b3,96,DELTA_EXE_6AFCCA92_180A483},
+    {0x180a643,0x180f773,95,DELTA_EXE_6AFCCA92_180A643},
+    {0x180a6d0,0x180f800,96,DELTA_EXE_6AFCCA92_180A6D0},
+    {0x180a6e1,0x180f811,95,DELTA_EXE_6AFCCA92_180A6E1},
+    {0x180a70c,0x180f83c,96,DELTA_EXE_6AFCCA92_180A70C},
+    {0x180a849,0x180f979,96,DELTA_EXE_6AFCCA92_180A849},
+    {0x180a96f,0x180fa9f,95,DELTA_EXE_6AFCCA92_180A96F},
+    {0x180a974,0x180faa4,96,DELTA_EXE_6AFCCA92_180A974},
+    {0x180aa54,0x180fb84,92,DELTA_EXE_6AFCCA92_180AA54},
+    {0x180aa59,0x180fb89,93,DELTA_EXE_6AFCCA92_180AA59},
+    {0x180ae4b,0x180ff7b,95,DELTA_EXE_6AFCCA92_180AE4B},
+    {0x180ae76,0x180ffa6,95,DELTA_EXE_6AFCCA92_180AE76},
+    {0x180c150,0x1811280,93,DELTA_EXE_6AFCCA92_180C150},
+    {0x185de20,0x1862f50,95,DELTA_EXE_6AFCCA92_185DE20},
+    {0x1880e90,0x18860a0,96,DELTA_EXE_6AFCCA92_1880E90},
+    {0x1881a30,0x1886c40,95,{}},
+    {0x1881a70,0x1886c80,94,DELTA_EXE_6AFCCA92_1881A70},
+    {0x1881cb0,0x1886ec0,96,{}},
+    {0x18827e0,0x18879f0,96,DELTA_EXE_6AFCCA92_18827E0},
+    {0x1882910,0x1887b20,96,DELTA_EXE_6AFCCA92_1882910},
+    {0x1882918,0x1887b28,95,DELTA_EXE_6AFCCA92_1882918},
+    {0x1887940,0x188cb50,92,DELTA_EXE_6AFCCA92_1887940},
+    {0x1887a60,0x188cc70,89,DELTA_EXE_6AFCCA92_1887A60},
+    {0x1887d50,0x188cf60,96,DELTA_EXE_6AFCCA92_1887D50},
+    {0x189da30,0x18a2c40,95,DELTA_EXE_6AFCCA92_189DA30},
+    {0x18a1dc0,0x18a6fd0,96,DELTA_EXE_6AFCCA92_18A1DC0},
+    {0x18a20f0,0x18a7300,95,DELTA_EXE_6AFCCA92_18A20F0},
+    {0x18e4e60,0x18ea120,91,DELTA_EXE_6AFCCA92_18E4E60},
+    {0x19463c0,0x194b680,95,DELTA_EXE_6AFCCA92_19463C0},
+    {0x1d63870,0x1d69e00,94,DELTA_EXE_6AFCCA92_1D63870},
+    {0x1d6c300,0x1d72890,92,DELTA_EXE_6AFCCA92_1D6C300},
+    {0x1d6c380,0x1d72910,91,{}},
+    {0x1d6eca0,0x1d75230,93,DELTA_EXE_6AFCCA92_1D6ECA0},
+    {0x1d75d30,0x1d7c080,95,{}},
+    {0x1d76b50,0x1d7cea0,92,DELTA_EXE_6AFCCA92_1D76B50},
+    {0x1d7709d,0x1d7d3ed,96,DELTA_EXE_6AFCCA92_1D7709D},
+    {0x1d77410,0x1d7d760,91,DELTA_EXE_6AFCCA92_1D77410},
+    {0x1d774a0,0x1d7d7f0,96,DELTA_EXE_6AFCCA92_1D774A0},
+    {0x1d7fa70,0x1d85dc0,95,DELTA_EXE_6AFCCA92_1D7FA70},
+    {0x1d8b0f0,0x1d91440,92,{}},
+    {0x1d90f60,0x1d972b0,96,DELTA_EXE_6AFCCA92_1D90F60},
+    {0x1d92e40,0x1d99190,91,DELTA_EXE_6AFCCA92_1D92E40},
+    {0x1d93150,0x1d994a0,95,DELTA_EXE_6AFCCA92_1D93150},
+    {0x1d95680,0x1d9b9d0,96,DELTA_EXE_6AFCCA92_1D95680},
+    {0x1db9535,0x1dbf885,88,DELTA_EXE_6AFCCA92_1DB9535},
+    {0x1db9cb0,0x1dc0000,96,{}},
+    {0x1e208be,0x1e26c0e,94,DELTA_EXE_6AFCCA92_1E208BE},
+    {0x1e208c3,0x1e26c13,94,{}},
+    {0x1e2d9bf,0x1e33d0f,93,DELTA_EXE_6AFCCA92_1E2D9BF},
+    {0x1e2d9c4,0x1e33d14,96,DELTA_EXE_6AFCCA92_1E2D9C4},
+    {0x1e778f0,0x1e7dc40,95,DELTA_EXE_6AFCCA92_1E778F0},
+    {0x1e78931,0x1e7ec81,93,{}},
+    {0x1e7928f,0x1e7f5df,93,DELTA_EXE_6AFCCA92_1E7928F},
+    {0x1e79294,0x1e7f5e4,96,DELTA_EXE_6AFCCA92_1E79294},
+    {0x1e798d0,0x1e7fc20,90,{}},
+    {0x1e8a900,0x1e90c50,90,{}},
+    {0x1e8d1c0,0x1e93510,96,DELTA_EXE_6AFCCA92_1E8D1C0},
+    {0x1e90410,0x1e96760,91,{}},
+    {0x1e92740,0x1e98a90,96,DELTA_EXE_6AFCCA92_1E92740},
+    {0x1ed7ba0,0x1ede0a0,93,{}},
+    {0x1edeaa0,0x1ee4fa0,96,DELTA_EXE_6AFCCA92_1EDEAA0},
+    {0x1ee1130,0x1ee7630,94,DELTA_EXE_6AFCCA92_1EE1130},
+    {0x1ef8dd0,0x1eff2d0,92,DELTA_EXE_6AFCCA92_1EF8DD0},
+    {0x1ef97d9,0x1effcd9,91,DELTA_EXE_6AFCCA92_1EF97D9},
+    {0x1ef97de,0x1effcde,94,DELTA_EXE_6AFCCA92_1EF97DE},
+    {0x1ef9b59,0x1f00059,94,{}},
+    {0x1efae60,0x1f01360,94,DELTA_EXE_6AFCCA92_1EFAE60},
+    {0x1f79c50,0x1f80230,94,DELTA_EXE_6AFCCA92_1F79C50},
+    {0x1f79d77,0x1f80357,94,DELTA_EXE_6AFCCA92_1F79D77},
+    {0x1f79d7c,0x1f8035c,92,{}},
+    {0x1f79e80,0x1f80460,92,DELTA_EXE_6AFCCA92_1F79E80},
+    {0x1f7a8e0,0x1f80ec0,94,DELTA_EXE_6AFCCA92_1F7A8E0},
+    {0x1f7bcc0,0x1f822a0,96,{}},
+    {0x1f7bf10,0x1f824f0,96,DELTA_EXE_6AFCCA92_1F7BF10},
+    {0x1f7c980,0x1f82f60,96,DELTA_EXE_6AFCCA92_1F7C980},
+    {0x1f7d934,0x1f83f14,95,DELTA_EXE_6AFCCA92_1F7D934},
+    {0x1f7d939,0x1f83f19,95,DELTA_EXE_6AFCCA92_1F7D939},
+    {0x1f7f0f0,0x1f856d0,94,DELTA_EXE_6AFCCA92_1F7F0F0},
+    {0x1f7fb90,0x1f86170,93,{}},
+    {0x1f84e40,0x1f8b420,92,DELTA_EXE_6AFCCA92_1F84E40},
+    {0x1f86a60,0x1f8d040,94,{}},
+    {0x1f86a65,0x1f8d045,94,{}},
+    {0x1f86f27,0x1f8d507,89,{}},
+    {0x1f86f2c,0x1f8d50c,93,{}},
+    {0x1f891f0,0x1f8f7d0,94,DELTA_EXE_6AFCCA92_1F891F0},
+    {0x1f8b2c0,0x1f918a0,92,DELTA_EXE_6AFCCA92_1F8B2C0},
+    {0x1f8eb70,0x1f95150,96,DELTA_EXE_6AFCCA92_1F8EB70},
+    {0x1f8faf0,0x1f960d0,94,DELTA_EXE_6AFCCA92_1F8FAF0},
+    {0x1f90b20,0x1f97100,93,DELTA_EXE_6AFCCA92_1F90B20},
+    {0x1f95590,0x1f9bb70,95,DELTA_EXE_6AFCCA92_1F95590},
+    {0x1f95610,0x1f9bbf0,95,{}},
+    {0x1f99260,0x1f9f840,93,DELTA_EXE_6AFCCA92_1F99260},
+    {0x1fab630,0x1fb1c10,94,DELTA_EXE_6AFCCA92_1FAB630},
+    {0x1fab68e,0x1fb1c6e,95,DELTA_EXE_6AFCCA92_1FAB68E},
+    {0x1fabae0,0x1fb20c0,90,DELTA_EXE_6AFCCA92_1FABAE0},
+    {0x1fabdd0,0x1fb23b0,92,DELTA_EXE_6AFCCA92_1FABDD0},
+    {0x1fac000,0x1fb25e0,92,DELTA_EXE_6AFCCA92_1FAC000},
+    {0x1fac430,0x1fb2a10,94,DELTA_EXE_6AFCCA92_1FAC430},
+    {0x1fb2714,0x1fb8cf4,95,DELTA_EXE_6AFCCA92_1FB2714},
+    {0x1fb2719,0x1fb8cf9,94,{}},
+    {0x1fb27b7,0x1fb8d97,96,DELTA_EXE_6AFCCA92_1FB27B7},
+    {0x1fb27bc,0x1fb8d9c,96,{}},
+    {0x1fe3dd0,0x1fea3b0,96,{}},
+    {0x20000b0,0x2006600,96,DELTA_EXE_6AFCCA92_20000B0},
+    {0x2079230,0x2080550,544,DELTA_EXE_6AFCCA92_2079230},
+    {0x2082760,0x2089a80,94,DELTA_EXE_6AFCCA92_2082760},
+    {0x2088e50,0x2090170,96,DELTA_EXE_6AFCCA92_2088E50},
+    {0x208c720,0x2093a40,91,DELTA_EXE_6AFCCA92_208C720},
+    {0x208c800,0x2093b20,91,DELTA_EXE_6AFCCA92_208C800},
+    {0x208c8e0,0x2093c00,91,DELTA_EXE_6AFCCA92_208C8E0},
+    {0x2093860,0x209ab80,96,{}},
+    {0x209fac0,0x20a6de0,94,DELTA_EXE_6AFCCA92_209FAC0},
+    {0x20bd700,0x20c4a20,92,DELTA_EXE_6AFCCA92_20BD700},
+    {0x2100620,0x2107940,95,DELTA_EXE_6AFCCA92_2100620},
+    {0x2100640,0x2107960,96,DELTA_EXE_6AFCCA92_2100640},
+    {0x2110800,0x2117b20,94,DELTA_EXE_6AFCCA92_2110800},
+    {0x2110f60,0x2118280,96,{}},
+    {0x2113cc0,0x211afe0,96,{}},
+    {0x2119040,0x2120360,96,DELTA_EXE_6AFCCA92_2119040},
+    {0x213d690,0x21449b0,93,{}},
+    {0x213d6a0,0x21449c0,90,{}},
+    {0x213dfe0,0x2145300,93,{}},
+    {0x2141f10,0x2149230,94,{}},
+    {0x21426d0,0x21499f0,94,{}},
+    {0x2142ba0,0x2149ec0,96,{}},
+    {0x2142bb0,0x2149ed0,96,{}},
+    {0x220d0c0,0x2214580,95,{}},
+    {0x2222960,0x2229ba0,94,DELTA_EXE_6AFCCA92_2222960},
+    {0x2224490,0x222b6d0,96,{}},
+    {0x225c310,0x2263790,96,{}},
+    {0x225c340,0x22637c0,93,{}},
+    {0x264b7b0,0x2653880,91,{}},
+    {0x2650de0,0x2658eb0,93,DELTA_EXE_6AFCCA92_2650DE0},
+    {0x2650dfa,0x2658eca,96,DELTA_EXE_6AFCCA92_2650DFA},
+    {0x2653c20,0x265bcf0,96,{}},
+    {0x26e0840,0x26e8dd0,96,DELTA_EXE_6AFCCA92_26E0840},
+    {0x26e29d0,0x26eaf60,96,{}},
+    {0x26f3c40,0x26fc1d0,95,DELTA_EXE_6AFCCA92_26F3C40},
+    {0x2b21390,0x2b2a150,92,{}},
+    {0x31678c0,0x3170670,94,DELTA_EXE_6AFCCA92_31678C0},
+    {0x3169190,0x3171f40,96,{}},
+    {0x3169490,0x3172240,96,{}},
+    {0x316be80,0x3174c30,94,DELTA_EXE_6AFCCA92_316BE80},
+    {0x316ef10,0x3177cc0,92,DELTA_EXE_6AFCCA92_316EF10},
+    {0x3170c40,0x31799f0,94,DELTA_EXE_6AFCCA92_3170C40},
+    {0x3171de0,0x317ab90,95,DELTA_EXE_6AFCCA92_3171DE0},
+    {0x3172c80,0x317ba30,95,DELTA_EXE_6AFCCA92_3172C80},
+    {0x3172f00,0x317bcb0,92,DELTA_EXE_6AFCCA92_3172F00},
+    {0x3172f30,0x317bce0,91,DELTA_EXE_6AFCCA92_3172F30},
+    {0x35ea010,0x35f31b0,0,{}},
+    {0x363fd10,0x36490b0,0,{}},
+    {0x366bb20,0x3674ed0,0,{}},
+    {0x366bfe0,0x3675390,0,{}},
+    {0x36d0c98,0x36da060,0,{}},
+    {0x36d0cb0,0x36da078,0,{}},
+    {0x37a4840,0x37adbf0,0,{}},
+    {0x37a4b18,0x37adec8,0,{}},
+    {0x37d7d80,0x37e1130,0,{}},
+    {0x3c8435c,0x3c8d75c,0,{}},
+    {0x3c844b4,0x3c8d8b4,0,{}},
+    {0x4ca400b,0x4cae069,0,{}},
+    {0x4cb4003,0x4cbe079,0,{}},
+    {0x4cb4075,0x4cbe0e3,0,{}},
+    {0x4cb4080,0x4cbe0f0,0,{}},
+    {0x4cb73ee,0x4cc1bcc,0,{}},
+    {0x4d47f00,0x4d51f80,0,{}},
+    {0x4d47f3c,0x4d51fbc,0,{}},
+    {0x4d62e40,0x4d6cf00,0,{}},
+    {0x4e08e58,0x4e131b0,0,{}},
+    {0x4e0bea0,0x4e16220,0,{}},
+    {0x4e0e470,0x4e18820,0,{}},
+    {0x4e0e478,0x4e18828,0,{}},
+    {0x4f17744,0x4f21af8,0,{}},
+    {0x4f17758,0x4f21b10,0,{}},
+    {0x4f17760,0x4f21b18,0,{}},
+    {0x4f17768,0x4f21b20,0,{}},
+    {0x4f31888,0x4f3bd88,0,{}},
+    {0x4f31890,0x4f3bd90,0,{}},
+    {0x4f32c00,0x4f3d100,0,{}},
+    {0x4f32c08,0x4f3d108,0,{}},
+    {0x4f7c6c8,0x4f86bb0,0,{}},
+    {0x4f80d80,0x4f8b280,0,{}},
+    {0x4f9d010,0x4fa7510,0,{}},
+    {0x4faeec8,0x4fb9538,0,{}},
+    {0x4faef88,0x4fb94c8,0,{}},
+    {0x4faefb0,0x4fb94ea,0,{}},
+    {0x4faf810,0x4fb9d90,0,{}},
+    {0x4faf840,0x4fb9da0,0,{}},
+    {0x4faff88,0x4fba4e8,0,{}},
+    {0x4faff8c,0x4fba4ec,0,{}},
+    {0x4ff0bb8,0x4ffb3f0,0,{}},
+    {0x4ff0bc8,0x4ffb3d8,0,{}},
+    {0x4ff0bd0,0x4ffb3e0,0,{}},
+    {0x4ff0c08,0x4ffb428,0,{}},
+    {0x4ff0c10,0x4ffb430,0,{}},
+    {0x508caa8,0x50975f0,0,{}},
+    {0x508cab0,0x5097600,0,{}},
+};
+
+inline constexpr Delta DELTA_DLL_6AFCCEC4_D6C170[]{{10,0xa0},{11,0xad}};
+inline constexpr Delta DELTA_DLL_6AFCCEC4_D6C19C[]{{69,0xe0},{70,0x74},{71,0x03},{76,0xf0},{77,0x3c},{78,0x01},{86,0xf0},{87,0x3c},{88,0x01}};
+inline constexpr Delta DELTA_DLL_6AFCCEC4_136A0E0[]{{26,0xa0},{27,0x14},{51,0x60},{52,0xeb},{53,0x03},{58,0xe0},{59,0xab},{71,0xe0},{72,0xab}};
+inline constexpr Entry ENTRIES_DLL_6AFCCEC4[]{
+    {0xd6c170,0xd6c710,96,DELTA_DLL_6AFCCEC4_D6C170},
+    {0xd6c19c,0xd6c73c,94,DELTA_DLL_6AFCCEC4_D6C19C},
+    {0x136a0e0,0x135a800,95,DELTA_DLL_6AFCCEC4_136A0E0},
+    {0x3fc7300,0x3fbe340,0,{}},
+};
+
 inline constexpr Build PORTED_BUILDS[]{
     {Image::exe,0x6ac3e716,0x6ad10fcb,0x556f000,"2026-10-21",ENTRIES_EXE_6AD10FCB},
     {Image::dll,0x6ac3eb69,0x6ad110a6,0x462d000,"2026-10-21",ENTRIES_DLL_6AD110A6},
+    {Image::exe,0x6ac3e716,0x6afcca92,0x557a000,"2026-11-27",ENTRIES_EXE_6AFCCA92},
+    {Image::dll,0x6ac3eb69,0x6afccec4,0x4623000,"2026-11-27",ENTRIES_DLL_6AFCCEC4},
 };

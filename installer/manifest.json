@@ -2,14 +2,14 @@
   "schema": 1,
   "channels": {
     "stable": {
-      "version": "1.0.0",
-      "url": "https://github.com/Joe975/space-marine-2-vr/releases/download/v1.0.0/SM2VR-1.0.0.zip",
-      "sha256": "ff9dc0e85dbf4bd67d5f41b0808bff02e419640b28a5c6a42235f724d77ab35c",
-      "size": 15696763,
-      "game_exe_timestamp": "0x6ad10fcb",
-      "game_build_date": "2026-10-21",
-      "changelog": "Initial rough-alpha release: two-hand firearm grabs and native aimed mode, left-handed controls, forearm parry, motion controls, room walking and camera-mode photos. Large battles perform poorly.",
-      "published_utc": "2026-11-02T20:45:54.578402+00:00"
+      "version": "1.0.1",
+      "url": "https://github.com/Joe975/space-marine-2-vr/releases/download/v1.0.1/SM2VR-1.0.1.zip",
+      "sha256": "a35d088cfddc14f8b4ef3f6f34a90e4dad5eb5a1ca0015f3dda614f131b4a57f",
+      "size": 17935635,
+      "game_exe_timestamp": "0x6afcca92",
+      "game_build_date": "2026-11-27",
+      "changelog": "Adds support for Space Marine 2 patch 16.0 (Decimation).",
+      "published_utc": "2026-11-26T20:48:07.0618015Z"
     }
   }
 }

@@ -42,7 +42,7 @@ int main(){try {
     using Tone=NativePipTonemap;
     require(Tone::matches(0x6ac3e716,SYNTH(Tone::BYTES)) && !Tone::matches(0,SYNTH(Tone::BYTES)),"unknown native build rejected");
     auto changed=SYNTH(Tone::BYTES);changed[0]^=1;require(!Tone::matches(0x6ac3e716,changed),"changed HDR prologue rejected");
-    require(Tone::matches(game_build_ported::EXE,game_build_ported::code(Tone::RVA)),"the 2026-10-21 HDR function matches");
+    require(Tone::matches(game_build_ported::EXE,game_build_ported::code(Tone::RVA)),"the ported build's HDR function matches");
     std::array<uint8_t,0xa60> entry{};std::array<uint8_t,0x148> renderer{};
     auto world=vr_camera::IDENTITY;world[10]=-1;const auto pointer=reinterpret_cast<uintptr_t>(entry.data());
     std::memcpy(renderer.data()+0x140,&pointer,8);uint64_t view_flags=0x40;std::memcpy(entry.data(),&view_flags,8);

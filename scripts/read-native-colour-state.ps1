@@ -22,8 +22,8 @@ function Pointer([long]$address){[BitConverter]::ToInt64((Bytes $address 8),0)}
 try {
  $peOffset=[BitConverter]::ToInt32((Bytes ($imageBase+0x3c) 4),0)
  if($peOffset -lt 0 -or $peOffset -gt 0x100000 ){throw 'Unknown native build'}
- # Globals per verified build (reference 2026-10-05, port 2026-10-21; mod/src/GameBuildTable.inc).
- $builds=@{0x6ac3e716=@{list=0x4f7c6c8;hdr=0x4f9d010;pipeline=0x4faf840;scale=0x4faff88};0x6ad10fcb=@{list=0x4f7c688;hdr=0x4f9cee0;pipeline=0x4faf800;scale=0x4faff48}}
+ # Globals per verified build (reference 2026-10-05, ports 2026-10-21 and 2026-11-27; mod/src/GameBuildTable.inc).
+ $builds=@{0x6ac3e716=@{list=0x4f7c6c8;hdr=0x4f9d010;pipeline=0x4faf840;scale=0x4faff88};0x6ad10fcb=@{list=0x4f7c688;hdr=0x4f9cee0;pipeline=0x4faf800;scale=0x4faff48};0x6afcca92=@{list=0x4f86bb0;hdr=0x4fa7510;pipeline=0x4fb9da0;scale=0x4fba4e8}}
  $stamp=[int64][BitConverter]::ToUInt32((Bytes ($imageBase+$peOffset+8) 4),0)
  if(-not $builds.ContainsKey($stamp)){throw 'Unknown native build'}
  $g=$builds[$stamp]

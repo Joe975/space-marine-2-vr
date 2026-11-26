@@ -236,8 +236,8 @@ int main(int argc,char** argv) {
         auto matches = [&] (uint32_t stamp) { return registration.matches_build(stamp,bytes[0],bytes[1],bytes[2],bytes[3],bytes[4]); };
         require(matches(0x6ac3e716) && !matches(0),"native registration must require exact build timestamp");
         { using R=EngineControllerRegistration;namespace p=game_build_ported;
-          require(registration.matches_build(p::EXE,p::code(R::UPDATE_RVA),p::code(R::CONSTRUCT_RVA),p::code(R::ALLOCATE_RVA),p::code(R::REGISTER_RVA),p::code(R::INITIALIZE_RVA)),"the 2026-10-21 registration functions must match");
-          require(!matches(p::EXE),"reference rip/call bytes must not pass on the 2026-10-21 build"); }
+          require(registration.matches_build(p::EXE,p::code(R::UPDATE_RVA),p::code(R::CONSTRUCT_RVA),p::code(R::ALLOCATE_RVA),p::code(R::REGISTER_RVA),p::code(R::INITIALIZE_RVA)),"the ported build's registration functions must match");
+          require(!matches(p::EXE),"reference rip/call bytes must not pass on the ported build"); }
         for (auto& function:bytes) { function[0] ^= 1; require(!matches(0x6ac3e716),"changed native function bytes must reject integration"); function[0] ^= 1; }
         registration.uninstall(); tick(manager.data()); require(devices.empty(),"uninstall must restore original update with no registration");
         require(get_state == original_state && set_state == original_set,"uninstall must restore owned native dispatch and rumble");

@@ -1,4 +1,5 @@
 #pragma once
+#include "GameBuild.h"
 #include "NativeOrdinaryShadowCache.h"
 #include <MinHook.h>
 #include <array>
@@ -18,16 +19,16 @@
 // for camera 1 a light flips between the two tests in a fixed cycle at a still view, and the cached
 // test fails for camera 1's view (build/flicker_re/NOTES.md). Turning the whole cache off stopped the
 // slot-1 flicker. With "plain" in the control file, camera 1's records always take the plain test.
-// Addresses: 0x1efae60 in the reference build, 0x1efb1a0 in 0x6ad10fcb (found by its first bytes in
-// build/gamebin; not in GameBuildTable.inc); both checked against the same 16 prologue bytes.
+// Address: 0x1efae60 in the reference build, placed in ported builds by GameBuildTable.inc
+// (0x1efb1a0 in 0x6ad10fcb); its first 16 bytes are checked as the verified port of the reference's.
 class NativeSecondCameraPlainLightTest {
 public:
     using Native=void(*)(uintptr_t,uintptr_t,uint32_t,uintptr_t);
     enum class Mode {native,plain};
-    static constexpr uint32_t REFERENCE_BUILD=0x6ac3e716,PATCHED_BUILD=0x6ad10fcb;
-    static constexpr sha256::Digest PROLOGUE=sha256::parse("3f8510cf75e6358b11eb586b66d90ccf5031e986abc4cf4636db267aaedea0dc");  // its first 16 bytes
+    static constexpr uintptr_t REFERENCE_PREPARE=0x1efae60;
+    static constexpr game_build::Code PROLOGUE=game_build::hashed(0x1efae60,16,"3f8510cf75e6358b11eb586b66d90ccf5031e986abc4cf4636db267aaedea0dc");  // its first 16 bytes
     static constexpr size_t LISTS=0x9b9a8,LIST=0x10,RECORD=0x278,TEST_BYTE=0x4f;
-    static uintptr_t prepare_rva(uint32_t timestamp){return timestamp==REFERENCE_BUILD?0x1efae60:timestamp==PATCHED_BUILD?0x1efb1a0:0;}
+    static uintptr_t prepare_rva(uint32_t timestamp){return game_build::rva(timestamp,REFERENCE_PREPARE);}
     static std::optional<Mode> parse(std::string_view line){
         if(!line.empty() && line.back()=='\r')line.remove_suffix(1);
         if(line=="native")return Mode::native;
@@ -50,7 +51,7 @@ public:
     static NativeSecondCameraPlainLightTest& get(){static auto* p=new NativeSecondCameraPlainLightTest;return *p;}
     bool install_in_game(uintptr_t base,uint32_t timestamp,const std::filesystem::path& path){
         const auto rva=prepare_rva(timestamp);std::array<uint8_t,16> bytes{};
-        if(m_native || !rva || !path.is_absolute() || !ordinary_scene_scope::read(base+rva,bytes) || sha256::hash(bytes)!=PROLOGUE)return false;
+        if(m_native || !rva || !path.is_absolute() || !ordinary_scene_scope::read(base+rva,bytes) || !game_build::code(timestamp,REFERENCE_PREPARE,bytes,PROLOGUE))return false;
         const auto init=MH_Initialize();if(init!=MH_OK && init!=MH_ERROR_ALREADY_INITIALIZED)return false;
         auto* target=reinterpret_cast<void*>(base+rva);
         if(MH_CreateHook(target,reinterpret_cast<void*>(&on_call),reinterpret_cast<void**>(&m_native))!=MH_OK)return false;

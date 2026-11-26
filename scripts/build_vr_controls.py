@@ -46,13 +46,19 @@ PICKUP_TIPS = {
 STIM_GLYPH = ('"textures/ui/nav_panel/xbox/gamepad_xbox_dpad_right.asset/gamepad_xbox_dpad_right.texture.asset"',
               '"textures/ui/nav_panel/ps/gamepad_tpad_right.asset/gamepad_tpad_right.texture.asset"')
 TIP_NATIVE, TIP_VR = (1300, 540), (1390, 630)
+# Game patch of 27 Nov 2026 (Steam 26944055, docs/GAME_PATCH_2026-11-27.md): KEYMAP and PROJECT_ACTIONS
+# re-pinned after an audit. Only additions: the grappling hook's abort command (fired by native Dodge,
+# melee, parry, aim, fire, weapon select and movement), a held IngameMenu without a shortcut, and a 1.5 s
+# hold of native Start for chat consoles (the DLL pulses Start for 150 ms only), plus one filter rule
+# renamed. Every patch below applied unchanged; the patched entries differ from the 2026-10-21 pack
+# only by those native lines.
 SOURCE_SHA256 = {
     INPUT: "fada0ad131cecaa0d504c76b30b16b8dc4396d0c649bfcb772047ea03c28290c",
     PRESET: "58bd7902a06ef95a21336abd35ba7d7b8a7af11ac9436bed189b8fd23eedf954",
     EDITABLE: "62647c64f77ba3b7ac4d98f62c38a0d4114ba88521b8e01b7e1f717c902452e4",
-    KEYMAP: "94fca69cb12b69ffb604f7397c3a3dcac9f1b6e7e16c950ec11a0898b0ac2537",
+    KEYMAP: "3ad187141bb341a3b3e27521d157a79a297aa3c5b2ee203dcab2383fae8cfe25",
     PRESET_LIBRARY: "b3ee90cd843c71158e03b0bf989c9d65b02195fb5c3ebcd41727e9ac7d0732a0",
-    PROJECT_ACTIONS: "f81b79312fc6b9af7f8192a38d1e423c5df9cccef87bce1c899075f7439273cd",
+    PROJECT_ACTIONS: "3e7d0a1b9dbbf182b274782bade1f4a950bbfcfd53238167f1a47494f1ca9e1f",
     MELTA_HINT: "ea18e124fbc3dfd68b9e96cf635eaa7db18454df533caaaea17fcd320b1eb833",
     HUB_SCREEN: "f89ebeb23612a4191faaf24cb85b3265af4d86a9905153f271df66195e42750b",
     SQUAD_PANEL: "7c9bbf6d9351ea075d2b2a6f0b21687b8099511b50dcd1b5b246cbb729637586",

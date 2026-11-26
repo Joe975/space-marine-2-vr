@@ -117,7 +117,7 @@ int main() {
         require(probe.matches_build(0x6ac3e716,update_bytes,world_bytes) && !probe.matches_build(0,update_bytes,world_bytes),"native layout requires correct executable build");
         update_bytes[15]^=1; require(!probe.matches_build(0x6ac3e716,update_bytes,world_bytes),"changed update prologue must fail closed");
         update_bytes[15]^=1; world_bytes[15]^=1; require(!probe.matches_build(0x6ac3e716,update_bytes,world_bytes),"changed tracker prologue must fail closed");
-        require(probe.matches_build(game_build_ported::EXE,game_build_ported::code(EngineBodyProbe::BODY_UPDATE_RVA),game_build_ported::code(EngineBodyProbe::TRACKER_WORLD_RVA)),"the 2026-10-21 body update and tracker world must match");
+        require(probe.matches_build(game_build_ported::EXE,game_build_ported::code(EngineBodyProbe::BODY_UPDATE_RVA),game_build_ported::code(EngineBodyProbe::TRACKER_WORLD_RVA)),"the ported build's body update and tracker world must match");
         probe.uninstall(); tick(body.data(),args.data()); require(updates == 4,"uninstall must restore original update");
         std::cout << "passive native body/tracker ABI, collection, isolation and build guards passed\n";
         return 0;

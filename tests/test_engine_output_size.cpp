@@ -90,10 +90,10 @@ void builds() {
     changed[0] ^= 1;
     require(!matches(REFERENCE_EXE, Target::resize, changed), "different code refused");
     require(!matches(0x12345678, Target::create, SYNTH(CREATE_CODE)), "unknown build refused");
-    // Patched build of 2026-10-21: addresses moved, the table's verified bytes match.
+    // Newest patched build (2026-11-27): addresses moved, the table's verified bytes match.
     const auto ported = game_build_ported::EXE;
-    require(rva(ported, Target::create) == 0x2110b40 && rva(ported, Target::resize) == 0x21112a0 &&
-            rva(ported, Target::load) == 0x2089190 && rva(REFERENCE_EXE, Target::create) == CREATE_RVA && rva(0x12345678, Target::load) == 0, "ported addresses");
+    require(rva(ported, Target::create) == 0x2117b20 && rva(ported, Target::resize) == 0x2118280 &&
+            rva(ported, Target::load) == 0x2090170 && rva(REFERENCE_EXE, Target::create) == CREATE_RVA && rva(0x12345678, Target::load) == 0, "ported addresses");
     require(matches(ported, Target::create, game_build_ported::code(CREATE_RVA)) && matches(ported, Target::resize, game_build_ported::code(RESIZE_RVA)) &&
             matches(ported, Target::load, game_build_ported::code(LOAD_RVA)), "ported code matches within the verified prefix");
     require(!matches(ported, Target::load, SYNTH(LOAD_CODE)), "the reference rip displacements must not pass on the patched build");

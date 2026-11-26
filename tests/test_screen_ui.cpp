@@ -18,7 +18,7 @@ int main() {
     try {
         require(EngineScreenUi::matches_build(EngineCameraProbe::BUILD_TIMESTAMP,SYNTH(EngineScreenUi::PROLOGUE)),"known build");
         require(!EngineScreenUi::matches_build(0,SYNTH(EngineScreenUi::PROLOGUE)),"reject changed build");
-        require(EngineScreenUi::matches_build(game_build_ported::EXE,game_build_ported::code(EngineScreenUi::LAYOUT_RVA)),"the 2026-10-21 layout function matches");
+        require(EngineScreenUi::matches_build(game_build_ported::EXE,game_build_ported::code(EngineScreenUi::LAYOUT_RVA)),"the ported build's layout function matches");
         auto bytes=SYNTH(EngineScreenUi::PROLOGUE);bytes[0]^=1;
         require(!EngineScreenUi::matches_build(EngineCameraProbe::BUILD_TIMESTAMP,bytes),"reject changed code");
         auto& probe=EngineScreenUi::get();require(probe.install(reinterpret_cast<void*>(&native_layout),0),"real detour installation");

@@ -1,6 +1,6 @@
 // Deterministic tests for the per-build address table (GameBuild.h, GameBuildTable.inc):
-// build identification, reference -> ported RVA translation (a fixed old/new table checked
-// against the 2026-10-21 patch), SHA-256, digest comparison on the reference and ported builds
+// build identification, reference -> ported RVA translation (fixed old/new tables checked
+// against the 2026-10-21 and 2026-11-27 patches; both stay in the table), SHA-256, digest comparison on the reference and ported builds
 // failing closed, and the module matchers that consult the table (on synthetic code).
 #include "synthetic_code.h"
 #include "GameBuild.h"
@@ -22,12 +22,18 @@ void require(bool value, const char* message) { if (!value) throw std::runtime_e
 
 constexpr uint32_t NEW_EXE = 0x6ad10fcb;  // CLIENT 15.2.PATCH.1454884/1455141, installed 2026-10-21
 constexpr uint32_t NEW_DLL = 0x6ad110a6;
+constexpr uint32_t LATEST_EXE = 0x6afcca92;  // Steam build 26944055, installed 2026-11-27
+constexpr uint32_t LATEST_DLL = 0x6afccec4;
 
-std::vector<uint8_t> ported(uintptr_t reference, gb::Image image = gb::Image::exe)
+std::vector<uint8_t> ported_at(uint32_t stamp, uintptr_t reference, gb::Image image = gb::Image::exe)
 {
-    auto out = gb::testing::ported(image == gb::Image::dll ? NEW_DLL : NEW_EXE, reference, image);
+    auto out = gb::testing::ported(stamp, reference, image);
     require(!out.empty(), "reference RVA is in the ported table");
     return out;
+}
+std::vector<uint8_t> ported(uintptr_t reference, gb::Image image = gb::Image::exe)
+{
+    return ported_at(image == gb::Image::dll ? NEW_DLL : NEW_EXE, reference, image);
 }
 
 std::string hex(const sha256::Digest& d)
@@ -88,6 +94,10 @@ void identification()
     require(gb::known(gb::REFERENCE_DLL, gb::Image::dll) && gb::known(NEW_DLL, gb::Image::dll), "reference and ported dll builds are known");
     require(!gb::known(NEW_EXE + 1) && !gb::known(NEW_DLL) && !gb::known(NEW_EXE, gb::Image::dll), "other timestamps and images are unknown");
     require(std::string_view{gb::name(NEW_EXE)} == "2026-10-21", "build name");
+    require(gb::known(LATEST_EXE) && gb::known(LATEST_DLL, gb::Image::dll) && !gb::known(LATEST_EXE, gb::Image::dll), "the 2026-11-27 builds are known");
+    require(std::string_view{gb::name(LATEST_EXE)} == "2026-11-27" && std::string_view{gb::name(NEW_DLL, gb::Image::dll)} == "2026-10-21",
+            "each ported build keeps its own name");
+    require(std::size(gb::PORTED_BUILDS) == 4, "a new port keeps the earlier ported build (exe and dll of each)");
     for (const auto& b : gb::PORTED_BUILDS) {
         for (size_t i = 1; i < b.entries.size(); ++i) require(b.entries[i - 1].reference < b.entries[i].reference, "entries sorted and unique");
         require(b.size_of_image > 0x4000000, "image size recorded");
@@ -114,6 +124,25 @@ void translation()
     };
     for (const auto& r : rows) {
         const auto stamp = r.image == gb::Image::dll ? NEW_DLL : NEW_EXE;
+        if (gb::rva(stamp, r.old_rva, r.image) != r.new_rva) { std::cerr << r.what << '\n'; require(false, "ported RVA"); }
+    }
+    // The same evidence on the 2026-11-27 build (Steam 26944055): code moved further, globals were
+    // reordered (the HZB switch byte is no longer at a uniform shift from its neighbours).
+    constexpr Row latest[]{
+        {0x1d76b50, 0x1d7cea0, gb::Image::exe, "camera list add (2026-11-27)"},
+        {0x18033bf, 0x18084ef, gb::Image::exe, "main view return address (2026-11-27)"},
+        {0x1805cab, 0x180addb, gb::Image::exe, "volume frame call site (2026-11-27)"},
+        {0x134c2e0, 0x134fe10, gb::Image::exe, "tracker world getter (2026-11-27)"},
+        {0x4f7c6c8, 0x4f86bb0, gb::Image::exe, "camera list global (2026-11-27)"},
+        {0x4f17744, 0x4f21af8, gb::Image::exe, "cinematic flags global (2026-11-27)"},
+        {0x4faff8c, 0x4fba4ec, gb::Image::exe, "field inside a referenced data object (2026-11-27)"},
+        {0x4cb4003, 0x4cbe079, gb::Image::exe, "HZB switch byte (2026-11-27)"},
+        {0xd6c170, 0xd6c710, gb::Image::dll, "server tracker getter (2026-11-27)"},
+        {0x136a0e0, 0x135a800, gb::Image::dll, "server two-handle validity (2026-11-27)"},
+        {0x3fc7300, 0x3fbe340, gb::Image::dll, "server sentinel global (2026-11-27)"},
+    };
+    for (const auto& r : latest) {
+        const auto stamp = r.image == gb::Image::dll ? LATEST_DLL : LATEST_EXE;
         if (gb::rva(stamp, r.old_rva, r.image) != r.new_rva) { std::cerr << r.what << '\n'; require(false, "ported RVA"); }
     }
     require(gb::rva(NEW_EXE, 0x1d76b51) == 0, "an address outside the table is never guessed");
@@ -152,10 +181,24 @@ void module_matchers()
     std::memcpy(copy.data(), release.data(), copy.size());
     require(native_pool_membership::matches(NEW_EXE, copy), "pool release on the ported build");
     require(vr_arm_cache::matches(NEW_EXE, 0x556f000, ported(vr_arm_cache::RVA)), "arm pose invalidation on the ported build");
+    // The same matchers on the 2026-11-27 build.
+    require(EngineCinematicState::matches_build(LATEST_EXE, ported_at(LATEST_EXE, EngineCinematicState::GETTER_RVA)), "cinematic getter on 2026-11-27");
+    require(P::matches(LATEST_EXE, ported_at(LATEST_EXE, P::GET_RVA), ported_at(LATEST_EXE, P::REGISTER_RVA), ported_at(LATEST_EXE, P::RELEASE_RVA)),
+            "PIP experiment functions on 2026-11-27");
+    const auto latest_release = ported_at(LATEST_EXE, native_pool_membership::RELEASE_RVA);
+    require(latest_release.size() >= copy.size(), "the whole release function is verified on 2026-11-27");
+    std::memcpy(copy.data(), latest_release.data(), copy.size());
+    require(native_pool_membership::matches(LATEST_EXE, copy), "pool release on 2026-11-27");
+    require(vr_arm_cache::matches(LATEST_EXE, 0x557a000, ported_at(LATEST_EXE, vr_arm_cache::RVA)), "arm pose invalidation on 2026-11-27");
     // HZB switch: refused on an unknown build without reading; accepted on a supported one.
     bool read_called = false;
     const auto unknown = native_hzb_culling::apply(NEW_EXE + 1, false, [&](uint8_t& v) { read_called = true; v = 1; return true; }, [](uint8_t) { return true; });
     require(unknown == native_hzb_culling::Result::unsupported_build && !read_called, "HZB refuses an unknown build before reading");
+    gb::override_active_for_testing(LATEST_EXE);
+    uint8_t flag = 1;
+    const auto latest = native_hzb_culling::apply(LATEST_EXE, false, [&](uint8_t& v) { v = flag; return true; }, [&](uint8_t v) { flag = v; return true; });
+    gb::override_active_for_testing(0);
+    require(latest == native_hzb_culling::Result::disabled && flag == 0, "HZB switch written on the running 2026-11-27 build");
 }
 
 void active_build()

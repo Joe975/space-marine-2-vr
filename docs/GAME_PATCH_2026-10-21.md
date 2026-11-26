@@ -1,7 +1,8 @@
 # Porting to a game patch
 
-The mod's native hooks are tied to exact builds. The supported Steam patch is 15.2
-(`Retail.exe` timestamp `0x6ad10fcb`); the 5 October patch 15.1 reference build is also supported.
+The mod's native hooks are tied to exact builds. The supported Steam patch is 16.0
+(`Retail.exe` timestamp `0x6afcca92`); patch 15.2 (`0x6ad10fcb`) and the 5 October patch 15.1
+reference build are also supported.
 Unknown builds fail closed. The filename is retained for existing contributor links.
 
 ## Address and hash contract

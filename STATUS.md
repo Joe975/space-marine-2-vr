@@ -4,12 +4,14 @@ This is an experimental PC VR mod. I recommend it for the experience of standing
 and exploring its scale. Large battles are slow even on an RTX 4090.
 
 Version 1.0.0 includes two-hand firearm grabs, left-handed controls and a higher parry floor.
+Version 1.0.1 supports the game's patch 16.0 (27 November 2026) and changes nothing else.
 It remains a rough alpha: the version number starts
 the release sequence and does not mean the campaign or every control has been tested.
 
 ## Supported setup
 
-- Space Marine 2 on Steam, patch 15.2. The installer checks the exact supported game build.
+- Space Marine 2 on Steam, patch 16.0. The installer checks the exact supported game build.
+  Patch 16.0's new content, such as the grappling hook, hasn't been played in VR yet.
 - SteamVR as the OpenXR runtime. Valve Index is the headset used for development and playtests;
   it has also been played a little on a Meta Quest 3 over Steam Link.
 - Index controllers for first person, or an Xbox-compatible gamepad for the chase camera and the

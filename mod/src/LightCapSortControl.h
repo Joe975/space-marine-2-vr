@@ -1,4 +1,5 @@
 #pragma once
+#include "GameBuild.h"
 #include <array>
 #include <cstdint>
 #include <filesystem>
@@ -16,15 +17,14 @@
 // view only, even at a still view (build/flicker_re/NOTES.md). In stereo the second view goes over
 // the cap at views where the first doesn't. With "distance" in the control file the immediate of
 // that instruction is 0, so the cap keeps the 240 nearest lights instead, a key that holds still.
-// The same 8 bytes (JLE +4; MOV BL,1; JMP +2; XOR BL,BL) are at 0x1ef9b59 in the reference build
-// and 0x1ef9e99 in 0x6ad10fcb (+0x340, build/gamebin images); the write is checked against them.
+// The same 8 bytes (JLE +4; MOV BL,1; JMP +2; XOR BL,BL) are at 0x1ef9b59 in the reference build;
+// GameBuildTable.inc places them in every ported build (0x1ef9e99 in 0x6ad10fcb, 0x1f00059 in
+// 0x6afcca92); the write is checked against them.
 namespace light_cap_sort {
-constexpr uint32_t REFERENCE_BUILD = 0x6ac3e716, PATCHED_BUILD = 0x6ad10fcb;
+constexpr uintptr_t REFERENCE_SITE = 0x1ef9b59;
 constexpr std::array<uint8_t, 8> NATIVE{0x7e, 0x04, 0xb3, 0x01, 0xeb, 0x02, 0x32, 0xdb};
 constexpr size_t IMMEDIATE = 3;  // the 01 of MOV BL,1
-inline uintptr_t site_rva(uint32_t timestamp) {
-    return timestamp == REFERENCE_BUILD ? 0x1ef9b59 : timestamp == PATCHED_BUILD ? 0x1ef9e99 : 0;
-}
+inline uintptr_t site_rva(uint32_t timestamp) { return game_build::rva(timestamp, REFERENCE_SITE); }
 enum class Mode { native, distance };
 enum class Result { applied, unchanged, unsupported_build, unexpected_bytes, write_failed };
 inline const char* name(Result r) {

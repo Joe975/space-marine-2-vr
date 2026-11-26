@@ -5,8 +5,9 @@ import json
 from pathlib import Path
 import struct
 
-# Reference build (2026-10-05) and its verified port of 2026-10-21 (mod/src/GameBuildTable.inc).
-SIGNATURES={0x6ac3eb69:('dll',0xd6c19c),0x6ac3e716:('executable',0x134c30c),0x6ad110a6:('dll',0xd6c3fc),0x6ad10fcb:('executable',0x134c0dc)}
+# Reference build (2026-10-05) and its verified ports of 2026-10-21 and 2026-11-27 (mod/src/GameBuildTable.inc).
+SIGNATURES={0x6ac3eb69:('dll',0xd6c19c),0x6ac3e716:('executable',0x134c30c),0x6ad110a6:('dll',0xd6c3fc),0x6ad10fcb:('executable',0x134c0dc),
+            0x6afccec4:('dll',0xd6c73c),0x6afcca92:('executable',0x134fe3c)}
 HEADER=struct.Struct('<9I9Q');REGION=struct.Struct('<4Q4I512s')
 LABELS=('rbx_object','stack','r8_table','object_vtable','object_handle_table')
 

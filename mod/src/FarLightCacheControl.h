@@ -1,4 +1,5 @@
 #pragma once
+#include "GameBuild.h"
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
@@ -14,14 +15,13 @@
 // nothing moves (build/flicker_re/NOTES.md). Byte cache+0x1b1d8 = 1 disables the cache: the light
 // job then uses the plain test for every light. Side effect: shadow-capable lights beyond their
 // range are no longer kept. A one-word control file ("native" | "off"), polled once a second on the
-// Present thread. The cache address per build: reference 0x4f80d80; 0x6ad10fcb 0x4f80c60 (ported
-// from the LEA before the call to 0x1e8aa30 in 0x1efa550, build/gamebin images; not in the table).
+// Present thread. The cache address comes from GameBuildTable.inc for every known build (0x4f80c60 in
+// 0x6ad10fcb, as first ported by hand from the LEA before the call to 0x1e8aa30 in 0x1efa550). The
+// field offset is assumed unchanged on ported builds; the switch refuses a byte that is not 0 or 1.
 namespace far_light_cache {
-constexpr uint32_t REFERENCE_BUILD = 0x6ac3e716, PATCHED_BUILD = 0x6ad10fcb;
+constexpr uintptr_t REFERENCE_CACHE = 0x4f80d80;
 constexpr uintptr_t DISABLE_OFFSET = 0x1b1d8;
-inline uintptr_t cache_rva(uint32_t timestamp) {
-    return timestamp == REFERENCE_BUILD ? 0x4f80d80 : timestamp == PATCHED_BUILD ? 0x4f80c60 : 0;
-}
+inline uintptr_t cache_rva(uint32_t timestamp) { return game_build::rva(timestamp, REFERENCE_CACHE); }
 enum class Mode { native, off };
 enum class Result { applied, unchanged, unsupported_build, unexpected_value, write_failed };
 inline const char* name(Result r) {

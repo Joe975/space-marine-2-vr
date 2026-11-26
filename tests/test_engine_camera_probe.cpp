@@ -134,7 +134,7 @@ int main()
         require(!EngineCameraProbe::matches_build(EngineCameraProbe::BUILD_TIMESTAMP + 1, good), "another build's timestamp must be refused");
         require(!EngineCameraProbe::matches_build(EngineCameraProbe::BUILD_TIMESTAMP, bad), "changed function bytes must be refused");
         require(!EngineCameraProbe::matches_build(EngineCameraProbe::BUILD_TIMESTAMP, std::span{ good.data(), 8 }), "short read must be refused");
-        require(EngineCameraProbe::matches_build(game_build_ported::EXE, game_build_ported::code(EngineCameraProbe::ADD_CAMERA_RVA)), "the 2026-10-21 build's add function must match");
+        require(EngineCameraProbe::matches_build(game_build_ported::EXE, game_build_ported::code(EngineCameraProbe::ADD_CAMERA_RVA)), "the ported build's add function must match");
         require(!EngineCameraProbe::matches_build(game_build_ported::EXE + 1, good), "an unported build must be refused");
 
         auto&      probe  = EngineCameraProbe::get();

@@ -6,7 +6,9 @@ using namespace far_light_cache;
 void check(bool ok, const char* label) { if (!ok) { std::cerr << label << '\n'; std::exit(1); } }
 int main() {
     check(parse("off") == Mode::off && parse("native\r") == Mode::native && !parse("") && !parse("of"), "control words");
-    check(cache_rva(REFERENCE_BUILD) == 0x4f80d80 && cache_rva(PATCHED_BUILD) == 0x4f80c60 && cache_rva(PATCHED_BUILD + 1) == 0, "known builds only");
+    // Reference, the 2026-10-21 build (the hand-ported value the table must reproduce) and 2026-11-27.
+    check(cache_rva(game_build::REFERENCE_EXE) == 0x4f80d80 && cache_rva(0x6ad10fcb) == 0x4f80c60 && cache_rva(0x6afcca92) == 0x4f8b280 &&
+          cache_rva(0x6ad10fcb + 1) == 0, "known builds only");
     std::map<uintptr_t, uint8_t> memory{{0x5000, 0}};
     unsigned writes{};
     const auto read = [&](uintptr_t at, uint8_t& v) { auto it = memory.find(at); if (it == memory.end()) return false; v = it->second; return true; };

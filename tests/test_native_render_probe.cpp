@@ -138,7 +138,7 @@ int main() {
         require(output_receipt.status==P::OutputStatus::changed,"wrapper replacement while collecting descriptor evidence refuses attribution");
         std::memcpy(wrapper.data()+0x278,&candidate,sizeof(candidate));
         auto bytes=SYNTH(P::PROLOGUE);bytes[2]^=1;require(!P::matches(P::TIMESTAMP,bytes) && !P::matches(0,SYNTH(P::PROLOGUE)),"unknown native dispatch bytes/timestamp rejected");
-        require(P::matches(game_build_ported::EXE,game_build_ported::code(P::DISPATCH_RVA)) && P::matches_scene(game_build_ported::EXE,game_build_ported::code(P::SCENE_RVA)),"the 2026-10-21 dispatch and scene functions match");
+        require(P::matches(game_build_ported::EXE,game_build_ported::code(P::DISPATCH_RVA)) && P::matches_scene(game_build_ported::EXE,game_build_ported::code(P::SCENE_RVA)),"the ported build's dispatch and scene functions match");
         active_list=reinterpret_cast<uintptr_t>(list.data());const int32_t count=2;put(0x29968,count);
         auto world=vr_camera::IDENTITY;world[10]=-1;world[12]=10;const auto view=vr_camera::inverse(world);
         auto projection=vr_camera::IDENTITY;projection[11]=1;projection[15]=0;
@@ -170,7 +170,7 @@ int main() {
         require(NativeCameraTransfer::matches(NativeCameraTransfer::TIMESTAMP,SYNTH(NativeCameraTransfer::RESET_BYTES),SYNTH(NativeCameraTransfer::COPY_BYTES)),"known native list reset/exchange bytes accepted");
         auto changed_bytes=SYNTH(NativeCameraTransfer::COPY_BYTES);changed_bytes[3]^=1;
         require(!NativeCameraTransfer::matches(NativeCameraTransfer::TIMESTAMP,SYNTH(NativeCameraTransfer::RESET_BYTES),changed_bytes),"changed native transfer implementation refuses installation");
-        require(NativeCameraTransfer::matches(game_build_ported::EXE,game_build_ported::code(NativeCameraTransfer::RESET_RVA),game_build_ported::code(NativeCameraTransfer::COPY_RVA)),"the 2026-10-21 list reset/exchange match");
+        require(NativeCameraTransfer::matches(game_build_ported::EXE,game_build_ported::code(NativeCameraTransfer::RESET_RVA),game_build_ported::code(NativeCameraTransfer::COPY_RVA)),"the ported build's list reset/exchange match");
         require(transfer.install(reinterpret_cast<void*>(&fake_reset),reinterpret_cast<void*>(&fake_copy)),"actual reset/exchange detours install in native fixture");
         std::vector<uint8_t> destination(NativeCameraTransfer::BYTES);
         const auto source_add=active_list+0x160;const auto target_add=reinterpret_cast<uintptr_t>(destination.data());

@@ -193,11 +193,11 @@ std::optional<std::string> Sm2Probe::on_initialize()
     if(m_ordinary_headset && GetEnvironmentVariableW(L"SM2VR_DIAG_LIGHT_LIST_LOG",list_log,8)==1 && list_log[0]==L'1'){
         const auto base=reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr));
         const auto stamp=reinterpret_cast<const IMAGE_NT_HEADERS64*>(base+reinterpret_cast<const IMAGE_DOS_HEADER*>(base)->e_lfanew)->FileHeader.TimeDateStamp;
-        // 0x1e8a900 (cache membership, read-only) is 0x1e8ac40 in 0x6ad10fcb; checked by the digest of its first 16 bytes.
-        constexpr auto prologue=sha256::parse("8fda219747513f201b35b1f98ecd9837937a1cc2ec76b4985e1af61acde1814c");
-        const uintptr_t fn_rva=stamp==far_light_cache::REFERENCE_BUILD?0x1e8a900:stamp==far_light_cache::PATCHED_BUILD?0x1e8ac40:0;
+        // 0x1e8a900 (cache membership, read-only), placed by the table on ported builds; its first 16 bytes are checked.
+        constexpr auto prologue=game_build::hashed(0x1e8a900,16,"8fda219747513f201b35b1f98ecd9837937a1cc2ec76b4985e1af61acde1814c");
+        const uintptr_t fn_rva=game_build::rva(stamp,0x1e8a900);
         std::array<uint8_t,16> bytes{};SIZE_T n{};
-        const bool ok=fn_rva && far_light_cache::cache_rva(stamp) && ReadProcessMemory(GetCurrentProcess(),reinterpret_cast<void*>(base+fn_rva),bytes.data(),16,&n) && n==16 && sha256::hash(bytes)==prologue;
+        const bool ok=fn_rva && far_light_cache::cache_rva(stamp) && ReadProcessMemory(GetCurrentProcess(),reinterpret_cast<void*>(base+fn_rva),bytes.data(),16,&n) && n==16 && game_build::code(stamp,0x1e8a900,bytes,prologue);
         NativeOrdinaryLightVisibility::get().configure_list_log(ok?base+far_light_cache::cache_rva(stamp):0,ok?reinterpret_cast<bool(*)(uintptr_t,uintptr_t)>(base+fn_rva):nullptr);
         spdlog::warn("LightList: logging on, cache membership {} (diagnostic)",ok?"read":"unavailable");
     }

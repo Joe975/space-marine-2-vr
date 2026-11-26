@@ -158,15 +158,15 @@ void builds() {
     pair=SYNTH(G::EXE.pair_bytes);getter[3]^=1;require(!G::matches(G::EXE,G::EXE.timestamp,getter,pair),"a changed getter prologue refuses");
     require(!G::matches(G::DLL,G::DLL.timestamp,SYNTH(G::EXE.getter_bytes),SYNTH(G::EXE.pair_bytes)),"executable bytes do not pass the DLL guard");
     {namespace p=game_build_ported;using I=game_build::Image;
-     require(G::matches(G::EXE,p::EXE,p::code(G::EXE.getter_rva),p::code(G::EXE.pair_rva)),"the 2026-10-21 executable getter/validity match");
-     require(G::matches(G::DLL,p::DLL,p::code(G::DLL.getter_rva,I::dll),p::code(G::DLL.pair_rva,I::dll)),"the 2026-10-21 server DLL getter/validity match");
+     require(G::matches(G::EXE,p::EXE,p::code(G::EXE.getter_rva),p::code(G::EXE.pair_rva)),"the ported build's executable getter/validity match");
+     require(G::matches(G::DLL,p::DLL,p::code(G::DLL.getter_rva,I::dll),p::code(G::DLL.pair_rva,I::dll)),"the ported build's server DLL getter/validity match");
      require(!G::matches(G::DLL,p::EXE,p::code(G::DLL.getter_rva,I::dll),p::code(G::DLL.pair_rva,I::dll)),"the exe timestamp does not unlock the DLL guard");
-     require(!G::matches(G::EXE,p::EXE,SYNTH(G::EXE.getter_bytes),SYNTH(G::EXE.pair_bytes)),"reference rip/call bytes do not pass on the 2026-10-21 build");
+     require(!G::matches(G::EXE,p::EXE,SYNTH(G::EXE.getter_bytes),SYNTH(G::EXE.pair_bytes)),"reference rip/call bytes do not pass on the ported build");
      std::array<uint8_t,16> function{};std::array<uint8_t,7> fault{};
      std::memcpy(function.data(),p::code(NativeFaultEvidence::FUNCTION_RVA,I::dll).data(),16);std::memcpy(fault.data(),p::code(NativeFaultEvidence::RVA,I::dll).data(),7);
-     require(NativeFaultEvidence::matches(p::DLL,function,fault,NativeFaultEvidence::Image::dll),"fault pod guard accepts the 2026-10-21 DLL");
+     require(NativeFaultEvidence::matches(p::DLL,function,fault,NativeFaultEvidence::Image::dll),"fault pod guard accepts the ported DLL");
      std::memcpy(function.data(),p::code(NativeFaultEvidence::EXE_FUNCTION_RVA).data(),16);std::memcpy(fault.data(),p::code(NativeFaultEvidence::EXE_RVA).data(),7);
-     require(NativeFaultEvidence::matches(p::EXE,function,fault,NativeFaultEvidence::Image::executable),"fault pod guard accepts the 2026-10-21 exe");}
+     require(NativeFaultEvidence::matches(p::EXE,function,fault,NativeFaultEvidence::Image::executable),"fault pod guard accepts the ported exe");}
     auto& guard=G::get();
     require(!guard.install_in_module(G::Image::executable,GetModuleHandleW(nullptr)) && guard.stats().refused[0] && !guard.stats().installed[0],
         "a foreign executable image is refused and nothing is hooked");

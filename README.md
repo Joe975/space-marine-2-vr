@@ -171,7 +171,7 @@ you. Aiming works: the game's crosshair sits on whatever your gun's pointed at, 
 included. Steering the Marine around up there is still confusing as all hell, so RC car experience
 will probably serve you well.
 
-Space Marine 2 on Steam at patch 15.2, a PC VR headset with SteamVR as its OpenXR runtime, Valve
+Space Marine 2 on Steam at patch 16.0, a PC VR headset with SteamVR as its OpenXR runtime, Valve
 Index controllers for motion controls (Quest and Rift S Touch controllers have their own layout,
 played a little on a Quest 3 over Steam Link), or an Xbox-compatible gamepad for the chase camera and third-person views.
 Details and what to expect from the frame rate (terrible):

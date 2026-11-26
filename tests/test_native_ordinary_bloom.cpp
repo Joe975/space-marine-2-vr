@@ -214,7 +214,7 @@ void harvest_once(){
     // Second camera's light queries take the plain proxy test (NativeSecondCameraPlainLightTest.h).
     using P=NativeSecondCameraPlainLightTest;
     require(P::parse("plain")==P::Mode::plain && P::parse("native\r")==P::Mode::native && !P::parse("plai"),"plain-test control words");
-    require(P::prepare_rva(P::REFERENCE_BUILD)==0x1efae60 && P::prepare_rva(P::PATCHED_BUILD)==0x1efb1a0 && !P::prepare_rva(P::PATCHED_BUILD+1),"known builds only");
+    require(P::prepare_rva(game_build::REFERENCE_EXE)==0x1efae60 && P::prepare_rva(0x6ad10fcb)==0x1efb1a0 && P::prepare_rva(0x6afcca92)==0x1f01360 && !P::prepare_rva(0x6ad10fcb+1),"known builds only");
     require(P::last_record(0x10000,3)==0x10000+2*0x278 && !P::last_record(0,3) && !P::last_record(0x10000,0) && !P::last_record(0x10000,5000),"the appended record is the list's last");
     require(P::decide(P::Mode::plain,1,true,0x10000,uint8_t(1))==P::Change::cleared,"camera 1's cached test is cleared in plain mode");
     require(P::decide(P::Mode::plain,1,true,0x10000,uint8_t(0))==P::Change::already_plain,"a plain record is left as it is");

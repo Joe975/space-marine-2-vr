@@ -129,7 +129,7 @@ int main(int argc,char** argv) {
         auto bad = std::array<uint8_t,EngineProjectionHook::PROLOGUE.size()>{};
         require(!EngineProjectionHook::matches_build(EngineCameraProbe::BUILD_TIMESTAMP,bad) &&
             !EngineProjectionHook::matches_build(0,SYNTH(EngineProjectionHook::PROLOGUE)), "changed projection function/build must be refused");
-        require(EngineProjectionHook::matches_build(game_build_ported::EXE,game_build_ported::code(EngineProjectionHook::BUILD_RVA)), "the 2026-10-21 projection builder must match");
+        require(EngineProjectionHook::matches_build(game_build_ported::EXE,game_build_ported::code(EngineProjectionHook::BUILD_RVA)), "the ported build's projection builder must match");
         auto& camera_probe = EngineCameraProbe::get();
         const auto module = reinterpret_cast<uintptr_t>(GetModuleHandleW(nullptr));
         require(camera_probe.install(reinterpret_cast<void*>(&fake_add),module,0x10000000) == EngineCameraProbe::State::installed,"camera fixture hook must install");

@@ -30,7 +30,7 @@ int main(int argc,char** argv){try{
     require(P::matches(NativeRenderProbe::TIMESTAMP,SYNTH(P::POST_BYTES),SYNTH(P::COMPOSITOR_BYTES)),"known ordinary native ABI accepted");
     auto altered=SYNTH(P::POST_BYTES);altered[4]^=1;require(!P::matches(NativeRenderProbe::TIMESTAMP,altered,SYNTH(P::COMPOSITOR_BYTES)) &&
         !P::matches(0,SYNTH(P::POST_BYTES),SYNTH(P::COMPOSITOR_BYTES)),"unknown post/compositor implementations refused");
-    require(P::matches(game_build_ported::EXE,game_build_ported::code(P::POST_RVA),game_build_ported::code(P::COMPOSITOR_RVA)),"the 2026-10-21 post/compositor match");
+    require(P::matches(game_build_ported::EXE,game_build_ported::code(P::POST_RVA),game_build_ported::code(P::COMPOSITOR_RVA)),"the ported build's post/compositor match");
     for(auto ordinary:{"","0","1","true"}) for(auto pip:{"","0","1"}) for(auto vr:{"","0","1","invalid"})
         for(auto xr:{"","0","1","invalid"}) for(auto synthetic:{"","0","1"}) {
             const auto off=[](std::string_view value){return value.empty() || value=="0";};

@@ -22,6 +22,8 @@ import scan_game_build  # noqa: E402
 from port_rvas import BuildMap  # noqa: E402
 
 NEW_EXE, NEW_DLL = 0x6AD10FCB, 0x6AD110A6
+# (exe, dll) of every ported build: 2026-10-21 and 2026-11-27 (Steam 26944055).
+PORTED_PAIRS = ((NEW_EXE, NEW_DLL), (0x6AFCCA92, 0x6AFCCEC4))
 SRC = ROOT / "mod" / "src"
 DLL_REFERENCES = {0xD6C170, 0xD6C19C, 0x136A0E0, 0x3FC7300}
 
@@ -63,10 +65,11 @@ class TableTest(unittest.TestCase):
         self.assertNotIn("Signature", table)
 
     def test_every_translated_reference_is_in_the_table(self):
-        exe = game_build.ported(NEW_EXE).entries
-        dll = game_build.ported(NEW_DLL, "dll").entries
-        missing = sorted(v for v in translated_references() if v not in exe and not (v in DLL_REFERENCES and v in dll))
-        self.assertEqual([hex(v) for v in missing], [])
+        for exe_stamp, dll_stamp in PORTED_PAIRS:
+            exe = game_build.ported(exe_stamp).entries
+            dll = game_build.ported(dll_stamp, "dll").entries
+            missing = sorted(v for v in translated_references() if v not in exe and not (v in DLL_REFERENCES and v in dll))
+            self.assertEqual([hex(v) for v in missing], [], hex(exe_stamp))
 
     def test_identity_and_fail_closed(self):
         self.assertEqual(game_build.rva(game_build.REFERENCE_EXE, 0x1D76B50), 0x1D76B50)
@@ -108,6 +111,8 @@ class TableTest(unittest.TestCase):
         analyzer = (ROOT / "scripts" / "analyze_native_fault_pod.py").read_text()
         self.assertIn("0x6ad110a6", analyzer.lower())
         self.assertIn("0x6ad10fcb", analyzer.lower())
+        for b in game_build.builds():  # every build the table ports, exe and dll
+            self.assertIn(f"{b.timestamp:#x}", analyzer.lower(), b.name)
 
 
 NAMED_ALLOWED = {
@@ -172,6 +177,31 @@ class NamedConstantTest(unittest.TestCase):
                             continue  # range-for over reference RVAs, each translated in the body
                     bad.append(f"{name}:{n}: {sym}")
         self.assertEqual(bad, [])
+
+
+class MergeTest(unittest.TestCase):
+    """gen_game_build_table --merge-inventory: a new port keeps the earlier ported builds."""
+
+    def test_earlier_builds_are_kept_unless_regenerated(self):
+        import gen_game_build_table as gen
+        older = {"name": "2026-10-21", "builds": [
+            {"image": "exe", "timestamp": 1, "entries": [{"reference": 0x200000}]},
+            {"image": "dll", "timestamp": 2, "entries": []}]}
+        merged = {"name": "2026-11-27", "builds": [
+            {"image": "exe", "name": "2026-11-27", "timestamp": 3, "entries": []},
+            {"image": "exe", "name": "2026-10-21", "timestamp": 1, "entries": []}]}
+        fresh = [{"image": "exe", "timestamp": 3}, {"image": "dll", "timestamp": 4}]
+        kept = gen.merge_builds(fresh, [older, merged])
+        self.assertEqual([(b["image"], b["timestamp"], b["name"]) for b in kept],
+                         [("exe", 1, "2026-10-21"), ("dll", 2, "2026-10-21")], "regenerated and duplicate builds dropped")
+        self.assertEqual(gen.stale_literals(kept[0], {(0x200000, "exe"): [], (0x300000, "exe"): [], (0x300000, "dll"): []}),
+                         [0x300000], "a literal the kept build never translated is reported")
+        self.assertEqual(gen.merge_builds(fresh, []), [])
+
+    def test_committed_table_keeps_both_ported_builds(self):
+        names = {(b.image, b.timestamp): b.name for b in game_build.builds()}
+        self.assertEqual(names, {("exe", NEW_EXE): "2026-10-21", ("dll", NEW_DLL): "2026-10-21",
+                                 ("exe", 0x6AFCCA92): "2026-11-27", ("dll", 0x6AFCCEC4): "2026-11-27"})
 
 
 class BuildMapTest(unittest.TestCase):

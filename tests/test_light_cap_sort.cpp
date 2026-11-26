@@ -5,7 +5,8 @@ using namespace light_cap_sort;
 void check(bool ok, const char* label) { if (!ok) { std::cerr << label << '\n'; std::exit(1); } }
 int main() {
     check(parse("distance") == Mode::distance && parse("native\r") == Mode::native && !parse("dist"), "control words");
-    check(site_rva(REFERENCE_BUILD) == 0x1ef9b59 && site_rva(PATCHED_BUILD) == 0x1ef9e99 && !site_rva(1), "known builds only");
+    check(site_rva(game_build::REFERENCE_EXE) == 0x1ef9b59 && site_rva(0x6ad10fcb) == 0x1ef9e99 && site_rva(0x6afcca92) == 0x1f00059 &&
+          !site_rva(1), "known builds only");
     Bytes code = NATIVE; unsigned writes{};
     const auto read = [&](uintptr_t at, Bytes& b) { if (at != 0x5000) return false; b = code; return true; };
     const auto write = [&](uintptr_t at, uint8_t v) { ++writes; if (at != 0x5000 + IMMEDIATE) return false; code[IMMEDIATE] = v; return true; };

@@ -8,9 +8,9 @@ problems. Developers building from source: [DEVELOPING.md](DEVELOPING.md).
 - **Space Marine 2 on Steam**, on the exact game version the release supports. The installer
   window checks it. Steam updates the game on its own, and the mod refuses to start on a version
   it doesn't know (its hooks are tied to one build), so after a game patch you wait for a mod
-  update. There's no way to roll the game back. Supported now: **patch 15.2**, the Steam build of
-  21 October 2026 (`CLIENT 15.2.PATCH.1454884` in the window title, `Retail.exe` timestamp
-  `0x6ad10fcb`).
+  update. There's no way to roll the game back. Supported now: **patch 16.0**, the Steam build of
+  27 November 2026 (`CLIENT 16.0.PATCH.1533309` in the window title, `Retail.exe` timestamp
+  `0x6afcca92`).
 - **A PC VR headset with SteamVR set as the OpenXR runtime.** It's been played on a Valve Index,
   and a little on a Meta Quest 3 over Steam Link. OpenXR is the default and should reach other
   headsets through SteamVR.

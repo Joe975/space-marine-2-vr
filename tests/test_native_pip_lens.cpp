@@ -89,7 +89,7 @@ int main() {
         auto wrong_render=SYNTH(Lens::RENDER_BYTES);wrong_render[0]^=1;auto wrong_cache=cache_bytes;wrong_cache[0]^=1;auto wrong_frustum=frustum_bytes;wrong_frustum[0]^=1;
         require(!Lens::matches(0,SYNTH(Lens::RENDER_BYTES),cache_bytes,frustum_bytes) && !Lens::matches(Lens::TIMESTAMP,wrong_render,cache_bytes,frustum_bytes) &&
             !Lens::matches(Lens::TIMESTAMP,SYNTH(Lens::RENDER_BYTES),wrong_cache,frustum_bytes) && !Lens::matches(Lens::TIMESTAMP,SYNTH(Lens::RENDER_BYTES),cache_bytes,wrong_frustum),"unknown build or either changed native helper cannot be called");
-        require(Lens::matches(game_build_ported::EXE,game_build_ported::code(Lens::RENDER_RVA),game_build_ported::code(Lens::CACHE_RVA),game_build_ported::code(Lens::FRUSTUM_RVA)),"the 2026-10-21 renderer and helpers match");
+        require(Lens::matches(game_build_ported::EXE,game_build_ported::code(Lens::RENDER_RVA),game_build_ported::code(Lens::CACHE_RVA),game_build_ported::code(Lens::FRUSTUM_RVA)),"the ported build's renderer and helpers match");
         for(float angle:{0.f,.4f,1.5f}) for(float horizontal:{-.25f,0.f,.15f}) for(float vertical:{-.1f,0.f,.25f}) {
             auto world=vr_camera::IDENTITY;world[0]=std::cos(angle);world[2]=-std::sin(angle);world[8]=-std::sin(angle);world[10]=-std::cos(angle);world[12]=-156;world[13]=67;world[14]=-371;
             pip_lens::Geometry geometry;require(pip_lens::build({-.075f,-.042f,.15f,.084f},world,.1f,250000,horizontal,vertical,geometry),"asymmetric geometry for rotated native camera");
